@@ -1,0 +1,132 @@
+{
+  "strategy": {
+    "rsi_period": 14,
+    "rsi_buy_low": 32,
+    "rsi_buy_high": 62,
+    "rsi_overbought": 72,
+    "vol_surge_ratio": 1.5,
+    "min_score_buy_interest": 70,
+    "stop_loss_pct": -0.05,
+    "take_profit_pct": 0.12,
+    "fee_slippage_pct": 0.0025
+  },
+  "kr_tickers": [
+    {
+      "symbol": "005930.KS",
+      "name": "삼성전자",
+      "sector": "반도체"
+    },
+    {
+      "symbol": "000660.KS",
+      "name": "SK하이닉스",
+      "sector": "반도체"
+    },
+    {
+      "symbol": "005380.KS",
+      "name": "현대차",
+      "sector": "자동차"
+    },
+    {
+      "symbol": "012450.KS",
+      "name": "한화에어로스페이스",
+      "sector": "방산"
+    },
+    {
+      "symbol": "035420.KS",
+      "name": "NAVER",
+      "sector": "IT/플랫폼"
+    },
+    {
+      "symbol": "035720.KS",
+      "name": "카카오",
+      "sector": "IT/플랫폼"
+    },
+    {
+      "symbol": "373220.KS",
+      "name": "LG에너지솔루션",
+      "sector": "2차전지"
+    },
+    {
+      "symbol": "207940.KS",
+      "name": "삼성바이오로직스",
+      "sector": "바이오"
+    },
+    {
+      "symbol": "003230.KS",
+      "name": "삼양식품",
+      "sector": "K-푸드"
+    },
+    {
+      "symbol": "278470.KS",
+      "name": "에이피알",
+      "sector": "K-뷰티"
+    },
+    {
+      "symbol": "069500.KS",
+      "name": "KODEX 200",
+      "sector": "지수ETF"
+    }
+  ],
+  "us_tickers": [
+    {
+      "symbol": "NVDA",
+      "name": "NVIDIA",
+      "sector": "AI/반도체"
+    },
+    {
+      "symbol": "AAPL",
+      "name": "Apple",
+      "sector": "빅테크"
+    },
+    {
+      "symbol": "MSFT",
+      "name": "Microsoft",
+      "sector": "빅테크"
+    },
+    {
+      "symbol": "GOOGL",
+      "name": "Alphabet",
+      "sector": "빅테크"
+    },
+    {
+      "symbol": "AMZN",
+      "name": "Amazon",
+      "sector": "빅테크"
+    },
+    {
+      "symbol": "META",
+      "name": "Meta",
+      "sector": "빅테크"
+    },
+    {
+      "symbol": "TSLA",
+      "name": "Tesla",
+      "sector": "전기차/AI"
+    },
+    {
+      "symbol": "AVGO",
+      "name": "Broadcom",
+      "sector": "AI/반도체"
+    },
+    {
+      "symbol": "AMD",
+      "name": "AMD",
+      "sector": "AI/반도체"
+    },
+    {
+      "symbol": "PLTR",
+      "name": "Palantir",
+      "sector": "AI/소프트웨어"
+    },
+    {
+      "symbol": "SPY",
+      "name": "S&P 500 ETF",
+      "sector": "지수ETF"
+    },
+    {
+      "symbol": "QQQ",
+      "name": "Nasdaq 100 ETF",
+      "sector": "지수ETF"
+    }
+  ]
+}
