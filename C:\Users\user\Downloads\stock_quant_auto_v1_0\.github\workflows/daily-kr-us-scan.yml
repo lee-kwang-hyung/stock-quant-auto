@@ -1,1 +1,36 @@
-111
+name: daily-kr-us-stock-scan
+
+on:
+  schedule:
+    # 평일(월~금) 오전 07:30 KST (= 일~목 22:30 UTC): 미장 마감 직후 & 국장 개장 전 자동 스캔
+    - cron: "30 22 * * 0-4"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  daily_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install packages
+        run: pip install -r requirements.txt
+      - name: Run daily KR/US scan & track past signal performance
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python scripts/self_test.py
+          python scripts/stock_analyzer.py
+          python scripts/track_performance.py
+      - name: Commit reports & signal history DB
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/ data/
+          git diff --cached --quiet || git commit -m "data: daily KR/US stock scan & signal tracking"
+          git push
