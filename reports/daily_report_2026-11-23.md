@@ -21,13 +21,13 @@
 
 ### 정부 정책 · 주도 테마 수혜
 - [[ETF 시황] 코스닥 700선 회복에 관련 ETF 급등…반도체 상품도 강세 - 뉴스핌](https://news.google.com/rss/articles/CBMiXEFVX3lxTE1NcVJ2OHRfWGRoVmo0WFNkT1o5bFpzQWZmODRzVmJCaTJpWU42ZnlfMHVzRkl1NjgtcEpuUnBJRkdlOE96UEFKajV6a2lTem1VZUp6OW5uTGtsWUxq?oc=5)
-- [11월12(목) 장전 예상 테마 - 네이버 프리미엄콘텐츠](https://news.google.com/rss/articles/CBMiggFBVV95cUxQSWxjTVJjQUU0bE45RjJ3MlBNWnJuaHJvdktCTjdrNzF4Wl9Rb01OT3pIU2RlVTQ1WE9ZRlJIcmdvQmpaOUFZa0VmMVAzZllpSnk0cjNwbGptY0ZZTkE0U1VHdURvenlLbEJuRVRVc21JdGlmWlBqM0tvdkVMNEVGMnJ3?oc=5)
 - [코스피, 역대급 변동성…'순환매 온기' 코스닥, 6~7%대 급등 - 연합뉴스](https://news.google.com/rss/articles/CBMiW0FVX3lxTE1FVkxYcXk5d2FJWmE1OTUxZnFqaDBNbWwwWUtDZEtDWndHaDVfRFNZY0V2NUNQNjh6SFgyR2JyRl9BcHJDNEdsSmszQ2xHWGNtdFVrUEhMNWlmbHfSAWBBVV95cUxQQmpjRENkS1I0YVhHaXRtT0tDSDc5VGhLY1pVMkJmRm14THdxbjBrVmhERmY2b0d6VjBrS1BLYlFsdlhUSHY2eWY3dUJGelZfUXVPOXpEX1NwRFhCVng2ckI?oc=5)
+- [[테마시황] 코스피·코스닥 7%대 폭락에 상승 테마 실종…반도체·자동차·증권 일제히 하락 By 인포스탁데일리 - Investing.com 한국어](https://news.google.com/rss/articles/CBMicEFVX3lxTE9GU0h6RzB3Y0NNRko1VzZiYTBOYnZHT053RkN0YTZLU0pac2RVRDVXWktKaHBqVDdPZVN3c180ZklYMXcweHljTjgySnI2SGFaTDJxRDhWSUZoYk1yRDJ4NzNwU3BVQm42T1JoODl5bVU?oc=5)
 
 ### 미국 증시 핵심 급등 촉매
+- [Three New Stock Themes Are in Focus as the AI Trade Gyrates - Goldman Sachs](https://news.google.com/rss/articles/CBMiqgFBVV95cUxOc3VTUWRYaHNZWjJWanNsMS1uaUo3cDZCbGFNaU5NaU1Mek15V0NTcHBYVFZmYU96Y3Q1UVVJZFhCV290LTU0SDA2Z2xiSE1WYUFpRDFnb041OHBnZGUyR1ZLazl5SDBTQXhKbjBtQVoyT01EekZVck9LUzZpNklKbElpQ3FOSkkxLTRhcVhBdE5vZTJIekdmRXZwZ0F3djFZYkpVZGxNNUVWdw?oc=5)
 - [Today’s top U.S. stock movers: Fermi, NIQ and others surge on AI and biotech catalysts - Investing.com](https://news.google.com/rss/articles/CBMi2wFBVV95cUxNNGduVjFqQkNBQmlFTm52bHpUUHRKOUNrXy1XSXJQcERXS2NSMG5XSmtESjY5a2FIb3dKRk5SVUVZYzd1UUdaMXVVa2ZuR1czcjNnVDNYN3Qya05WU2RVanE3N1d4a2JLa01FODRqRm5RaHlycHh0bHY0SVctOEgybkNwV0d4aXpWWkNTZmtBcWt3MVBvbS1ZOVlrZ0p4d08wMTNtRE03cHJhNklXb1h3T2pBWGRRR1JFLW1ReWtfaHhqX29pdDdzUVlCb1FIVEMzTzEta04yVG9sbFE?oc=5)
 - [Tempus AI Surges on Earnings Beat, But Can the Rally Last? - MarketBeat](https://news.google.com/rss/articles/CBMimAFBVV95cUxQNDlmajFKQWNHbVJIWktFbWI4TldDT3V0TFd1UWo5U2lXYkpiS29LaHVVQkprSnc1YXcyVFAyOWFQY3BUSDJMN2FOZ3ljRGZfdXRNR0FtVENZZThBWjFGMnhmZFVSd2Y1VmxSR3dlandjUlV5aWJwcFY0ZExiVHhlaFhKWVJwZF8tajdVSjNBMzYwakxBSVQ4MA?oc=5)
-- [Samsung Operating Profit Surges 783% to Record US$80 Billion as AI Memory Boom Explodes - Stocks Down Under](https://news.google.com/rss/articles/CBMiekFVX3lxTFBjRmxKUXJwdTdPdXdZa1l5TlZwSHhDUjlHcEtLRXJTenVDNWR5STNGMWRwMkdwN185ZUNpYUNMS1FjTHUzaF9BWC1HSlFWVzRZUnlDbWJDRTQ1ZmlWeVBlZTl2N050TEw0eFNGVzI2VEdqTGZjeDRhVmR3?oc=5)
 
 ## 2. 한국 전 종목 급등 초입 포착 (+3~15% · 거래대금 50억+ · 실전 가격 시나리오)
 
@@ -41,17 +41,17 @@
 
 | 순위 | 종목 | 점수(등급) | 종가(일간) | 진입 참고 구간 | 손절 기준가 | 1차 목표가 | 2차 목표가 | 핵심 근거 |
 | :---: | :--- | :---: | ---: | :--- | :--- | :--- | :--- | :--- |
-| 1 | **에이피알** (`278470.KS`) | **78점** (매수 관심) | 255,000원 (+8.3%) | 251,175원 ~ 256,275원 | 234,600원 (-8.0%) | 291,720원 (+14.4%) | 316,200원 (+24.0%) | 20일선 상회 / MACD 상승 가속 |
-| 2 | **삼성바이오로직스** (`207940.KS`) | **50점** (관찰) | 1,274,000원 (-6.0%) | 1,254,890원 ~ 1,280,370원 | 1,229,410원 (-3.5%) | 1,354,262원 (+6.3%) | 1,407,770원 (+10.5%) | 중립 흐름 |
-| 3 | **한화에어로스페이스** (`012450.KS`) | **49점** (관찰) | 573,000원 (-5.3%) | 564,405원 ~ 575,865원 | 552,945원 (-3.5%) | 609,099원 (+6.3%) | 633,165원 (+10.5%) | 하락 역배열 주의 / RSI 과매도(24.8) |
-| 4 | **삼양식품** (`003230.KS`) | **43점** (주의) | 1,186,000원 (-3.8%) | 1,168,210원 ~ 1,191,930원 | 1,126,620원 (-5.0%) | 1,292,884원 (+9.0%) | 1,364,140원 (+15.0%) | 하락 역배열 주의 |
-| 5 | **삼성전자** (`005930.KS`) | **41점** (주의) | 172,400원 (-5.8%) | 169,814원 ~ 173,262원 | 166,366원 (-3.5%) | 183,261원 (+6.3%) | 190,502원 (+10.5%) | 하락 역배열 주의 / RSI 과매도(31.2) |
-| 6 | **현대차** (`005380.KS`) | **41점** (주의) | 241,500원 (-5.3%) | 237,878원 ~ 242,707원 | 233,048원 (-3.5%) | 256,714원 (+6.3%) | 266,858원 (+10.5%) | 하락 역배열 주의 / RSI 과매도(27.3) |
-| 7 | **NAVER** (`035420.KS`) | **41점** (주의) | 145,600원 (-9.9%) | 143,416원 ~ 146,328원 | 140,504원 (-3.5%) | 154,773원 (+6.3%) | 160,888원 (+10.5%) | 하락 역배열 주의 / RSI 과매도(26.4) |
-| 8 | **카카오** (`035720.KS`) | **41점** (주의) | 28,400원 (-8.4%) | 27,974원 ~ 28,542원 | 27,406원 (-3.5%) | 30,189원 (+6.3%) | 31,382원 (+10.5%) | 하락 역배열 주의 / RSI 과매도(31.7) |
-| 9 | **LG에너지솔루션** (`373220.KS`) | **41점** (주의) | 288,000원 (-3.8%) | 283,680원 ~ 289,440원 | 277,920원 (-3.5%) | 306,144원 (+6.3%) | 318,240원 (+10.5%) | 하락 역배열 주의 / RSI 과매도(28.6) |
-| 10 | **KODEX 200** (`069500.KS`) | **41점** (주의) | 72,080원 (-5.4%) | 70,999원 ~ 72,440원 | 69,557원 (-3.5%) | 76,621원 (+6.3%) | 79,648원 (+10.5%) | 하락 역배열 주의 / RSI 과매도(30.4) |
-| 11 | **SK하이닉스** (`000660.KS`) | **35점** (주의) | 1,050,500원 (-5.6%) | 1,034,742원 ~ 1,055,752원 | 1,013,732원 (-3.5%) | 1,116,682원 (+6.3%) | 1,160,802원 (+10.5%) | 하락 역배열 주의 |
+| 1 | **에이피알** (`278470.KS`) | **78점** (매수 관심) | 259,500원 (+11.6%) | 255,608원 ~ 260,797원 | 238,740원 (-8.0%) | 296,868원 (+14.4%) | 321,780원 (+24.0%) | 20일선 상회 / MACD 상승 가속 |
+| 2 | **LG에너지솔루션** (`373220.KS`) | **54점** (관찰) | 292,000원 (-1.9%) | 287,620원 ~ 293,460원 | 281,780원 (-3.5%) | 310,396원 (+6.3%) | 322,660원 (+10.5%) | 하락 역배열 주의 / RSI 과매도(30.4) |
+| 3 | **삼성바이오로직스** (`207940.KS`) | **50점** (관찰) | 1,287,000원 (-3.7%) | 1,267,695원 ~ 1,293,435원 | 1,241,955원 (-3.5%) | 1,368,081원 (+6.3%) | 1,422,135원 (+10.5%) | 중립 흐름 |
+| 4 | **현대차** (`005380.KS`) | **49점** (관찰) | 247,000원 (-2.4%) | 243,295원 ~ 248,235원 | 238,095원 (-3.6%) | 263,029원 (+6.5%) | 273,715원 (+10.8%) | 하락 역배열 주의 / RSI 과매도(31.4) |
+| 5 | **한화에어로스페이스** (`012450.KS`) | **49점** (관찰) | 579,000원 (-4.0%) | 570,315원 ~ 581,895원 | 558,735원 (-3.5%) | 615,477원 (+6.3%) | 639,795원 (+10.5%) | 하락 역배열 주의 / RSI 과매도(27.5) |
+| 6 | **삼양식품** (`003230.KS`) | **43점** (주의) | 1,188,000원 (-2.7%) | 1,170,180원 ~ 1,193,940원 | 1,126,620원 (-5.2%) | 1,298,484원 (+9.3%) | 1,372,140원 (+15.5%) | 하락 역배열 주의 |
+| 7 | **NAVER** (`035420.KS`) | **41점** (주의) | 150,200원 (-6.6%) | 147,947원 ~ 150,951원 | 143,451원 (-4.5%) | 162,348원 (+8.1%) | 170,447원 (+13.5%) | 하락 역배열 주의 / RSI 과매도(30.9) |
+| 8 | **삼성전자** (`005930.KS`) | **35점** (주의) | 178,200원 (-1.5%) | 175,527원 ~ 179,091원 | 169,785원 (-4.7%) | 193,347원 (+8.5%) | 203,445원 (+14.2%) | 하락 역배열 주의 |
+| 9 | **SK하이닉스** (`000660.KS`) | **35점** (주의) | 1,091,000원 (-0.8%) | 1,074,635원 ~ 1,096,455원 | 1,033,560원 (-5.3%) | 1,194,392원 (+9.5%) | 1,263,320원 (+15.8%) | 하락 역배열 주의 |
+| 10 | **카카오** (`035720.KS`) | **35점** (주의) | 29,000원 (-5.4%) | 28,565원 ~ 29,145원 | 27,985원 (-3.5%) | 30,827원 (+6.3%) | 32,045원 (+10.5%) | 하락 역배열 주의 |
+| 11 | **KODEX 200** (`069500.KS`) | **35점** (주의) | 74,075원 (-2.8%) | 72,964원 ~ 74,445원 | 70,993원 (-4.2%) | 79,623원 (+7.5%) | 83,321원 (+12.5%) | 하락 역배열 주의 |
 
 ## 5. 미국 핵심 관심 종목 실전 가격 시나리오
 
