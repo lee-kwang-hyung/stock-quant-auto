@@ -15,6 +15,10 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from indicators import compute_indicators, score_latest_row
 from kr_price_feed import fetch_kr_ohlcv_exact
 from market_scanner_v2 import collect_catalyst_issues, fetch_rss_news, scan_kr_full_market_movers
+from build_pwa_feed import build_and_save_pwa_feed
+from trusted_fundamentals import fetch_kr_fundamentals, fetch_us_fundamentals, fetch_dart_recent_disclosures, fetch_kr_investor_flow
+from issue_catalyst_engine import score_issue_mover
+from precision_engine import detect_market_regime, compute_sr_precision_plan, compute_historical_accuracy
 
 
 def fetch_ohlcv_yfinance(symbol: str, period: str = "6mo") -> pd.DataFrame:
@@ -73,7 +77,7 @@ def send_telegram_if_configured(text: str):
         print(f"[Telegram 알림 경고] {e}")
 
 
-def run_analysis(config_path: pathlib.Path, out_dir: pathlib.Path, data_dir: pathlib.Path, fetcher=None, news_fetcher=None, full_scanner=None):
+def run_analysis(config_path: pathlib.Path, out_dir: pathlib.Path, data_dir: pathlib.Path, fetcher=None, news_fetcher=None, full_scanner=None, intraday: bool = False):
     cfg = json.loads(config_path.read_text(encoding="utf-8"))
     strategy = cfg.get("strategy", {})
     kst_now = dt.datetime.now(dt.timezone(dt.timedelta(hours=9)))
@@ -195,8 +199,66 @@ def run_analysis(config_path: pathlib.Path, out_dir: pathlib.Path, data_dir: pat
         tg_lines.append(f"- [{r['market']}] {r['name']}({r['score']:.0f}점) 진입:{r['entry_zone']} / 손절:{r['stop_loss']} / 목표1:{r['target_1']}")
     if kr_movers.get("breakout"):
         tg_lines.append(f"- 국장 급등초입 포착: {', '.join(x['name'] for x in kr_movers['breakout'][:5])}")
-    send_telegram_if_configured("\n".join(tg_lines))
-    print(f"[v2.0 스캔 완료] 관심 {len(all_rows)}종목 + 급등초입 {len(kr_movers.get('breakout', []))}종목 -> {report_path}")
+    # [v4.0 시장 국면(KOSPI/S&P500) + 지지/저항선 정밀 매매가 + 손익비 검증 + 사후 승률]
+    market_regime = {}
+    if fetcher is None:
+        try:
+            kr_idx = fetch_ohlcv_yfinance("^KS11", period="6mo")
+            us_idx = fetch_ohlcv_yfinance("^GSPC", period="6mo")
+            market_regime["KR"] = detect_market_regime(kr_idx, "국장(KOSPI)")
+            market_regime["US"] = detect_market_regime(us_idx, "미장(S&P500)")
+        except Exception:
+            pass
+    else:
+        market_regime["KR"] = detect_market_regime(fetcher("^KS11"), "국장(KOSPI)")
+        market_regime["US"] = detect_market_regime(fetcher("^GSPC"), "미장(S&P500)")
+
+    for r in all_rows:
+        reg = market_regime.get(r["market"])
+        if reg:
+            r["score"] = max(0, min(100, float(r["score"]) + reg.get("score_adj", 0)))
+        try:
+            df_sr = fetcher(r["symbol"]) if fetcher is not None else fetch_ohlcv_yfinance(r["symbol"], period="6mo")
+            if df_sr is not None and not df_sr.empty and len(df_sr) >= 20:
+                sr = compute_sr_precision_plan(df_sr, market=r["market"])
+                r["entry_zone"] = sr["entry_zone"]
+                r["stop_loss"] = sr["stop_loss"]
+                r["target_1"] = sr["target_1"]
+                r["target_2"] = sr["target_2"]
+                r["rr_ratio"] = sr["rr_ratio"]
+                r["stop_num"] = sr["stop_num"]
+                r["target1_num"] = sr["target1_num"]
+                r["support_text"] = sr["support_text"]
+                r["resist_text"] = sr["resist_text"]
+        except Exception:
+            pass
+
+    accuracy_info = compute_historical_accuracy(data_dir / "signals_history.csv")
+
+    # [v3.5 공신력 재무/공시 + 이슈 상승 후보 정밀 채점]
+    dart_items = [] if fetcher is not None else fetch_dart_recent_disclosures(days=3)
+    for r in all_rows:
+        if fetcher is None:
+            finfo = fetch_kr_fundamentals(r["symbol"]) if r["market"] == "KR" else fetch_us_fundamentals(r["symbol"])
+            r["trust_label"] = finfo.get("trust_label", "보통")
+            r["trust_note"] = finfo.get("trust_note", "기본 재무 확인")
+            r["score"] = max(0, min(100, float(r["score"]) + finfo.get("trust_bonus", 0)))
+            if r["market"] == "KR":
+                fl = fetch_kr_investor_flow(r["symbol"], days=5)
+                r["flow_label"] = fl.get("flow_label", "")
+                r["score"] = max(0, min(100, float(r["score"]) + fl.get("flow_bonus", 0)))
+        else:
+            r.setdefault("trust_label", "보통")
+            r.setdefault("trust_note", "정량 추세 검증")
+    if kr_movers and kr_movers.get("breakout"):
+        scored_br = [score_issue_mover(m, dart_list=dart_items) for m in kr_movers["breakout"]]
+        scored_br.sort(key=lambda x: (-x["issue_score"], -x.get("trade_val_eok", 0)))
+        kr_movers["breakout"] = scored_br
+    pwa_out = ROOT / "docs/data/live_feed.json"
+    build_and_save_pwa_feed(all_rows, kr_movers, catalysts, out_path=pwa_out, market_regime=market_regime, accuracy=accuracy_info)
+    if not intraday:
+        send_telegram_if_configured("\n".join(tg_lines))
+    print(f"[v3.0 스캔 완료] 관심 {len(all_rows)}종목 + 급등초입 {len(kr_movers.get('breakout', []))}종목 -> {report_path} & {pwa_out}")
     return report_path, all_rows
 
 
@@ -205,8 +267,9 @@ def main():
     ap.add_argument("--config", default=str(ROOT / "config/watchlist.json"))
     ap.add_argument("--out", default=str(ROOT / "reports"))
     ap.add_argument("--data", default=str(ROOT / "data"))
+    ap.add_argument("--intraday", action="store_true")
     a = ap.parse_args()
-    run_analysis(pathlib.Path(a.config), pathlib.Path(a.out), pathlib.Path(a.data))
+    run_analysis(pathlib.Path(a.config), pathlib.Path(a.out), pathlib.Path(a.data), intraday=a.intraday)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,37 @@
+plugins {
+    id("com.android.application")
+}
+
+android {
+    namespace = "com.mystock.assistant"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.mystock.assistant"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 45
+        versionName = "4.5"
+        buildConfigField("String", "APP_URL", "\"https://lee-kwang-hyung.github.io/stock-quant-auto/\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+}

@@ -89,3 +89,155 @@ with tempfile.TemporaryDirectory() as td2:
     tp.update_signal_performance(cpath, fetcher=lambda s, d: df_nv[["Close"]])
 print("[PASS 6/6] v2.1 네이버 금융 KRX 1원 정확 시세 파서 & 구버전 CSV 자동 마이그레이션 검증 통과")
 print("=== ALL 6 STOCK QUANT V2.1 SELF-TESTS PASSED ===")
+
+
+import json as _json_v3
+
+def test_pwa_aes_roundtrip_and_beginner_schema():
+    from build_pwa_feed import build_and_save_pwa_feed, decrypt_envelope
+    sample_rows = [
+        {
+            "market": "KR", "symbol": "005930.KS", "name": "삼성전자", "sector": "반도체",
+            "close": 75000, "ret_1d": 2.4, "ret_20d": 8.1, "score": 76, "grade": "매수 관심",
+            "reasons": "정배열 상승 / 거래량 증가", "entry_zone": "73,500~75,500원",
+            "stop_loss": "72,300원 (-3.5%)", "target_1": "79,700원 (+6.3%)", "target_2": "82,900원 (+10.5%)",
+        },
+        {
+            "market": "US", "symbol": "NVDA", "name": "NVIDIA", "sector": "AI",
+            "close": 140.5, "ret_1d": -1.2, "ret_20d": 4.0, "score": 32, "grade": "주의",
+            "reasons": "단기 과열", "entry_zone": "$138~$141",
+            "stop_loss": "$135 (-3.5%)", "target_1": "$149 (+6.3%)", "target_2": "$155 (+10.5%)",
+        },
+    ]
+    with tempfile.TemporaryDirectory() as td:
+        p = pathlib.Path(td) / "live_feed.json"
+        build_and_save_pwa_feed(sample_rows, {"breakout": [], "limit_up": []}, [], out_path=p, pin="MySecret2026!")
+        env = _json_v3.loads(p.read_text(encoding="utf-8"))
+        assert env["encrypted"] is True and env["alg"] == "AES-256-GCM"
+        failed = False
+        try:
+            decrypt_envelope(env, "WrongPin999")
+        except Exception:
+            failed = True
+        assert failed, "Wrong PIN should fail decryption"
+        dec = decrypt_envelope(env, "MySecret2026!")
+        assert dec["summary"]["buy_count"] == 1
+        assert len(dec["recommendations"]) == 1 and dec["recommendations"][0]["name"] == "삼성전자"
+        assert dec["recommendations"][0]["badge"] == "분할매수 관심"
+    print("[PASS 7/8] PWA 초보자 스키마 + AES-256-GCM 암호화/복호화 및 오답 PIN 차단 검증 통과")
+
+
+def test_pwa_static_assets():
+    idx = (ROOT / "docs/index.html").read_text(encoding="utf-8")
+    man = _json_v3.loads((ROOT / "docs/manifest.json").read_text(encoding="utf-8"))
+    sw = (ROOT / "docs/sw.js").read_text(encoding="utf-8")
+    assert "crypto.subtle" in idx and "PBKDF2" in idx and "AES-GCM" in idx
+    assert "오늘 추천" in idx and "매수 구간" in idx and "목표 매도가" in idx and "손절 기준가" in idx
+    assert man["display"] == "standalone"
+    assert "live_feed.json" in sw
+    print("[PASS 8/8] PWA 앱 화면(index.html·manifest·sw.js) 및 Web Crypto 복호화 검증 통과")
+
+
+test_pwa_aes_roundtrip_and_beginner_schema()
+test_pwa_static_assets()
+print("=== ALL 8 STOCK QUANT V3.0 PRIVATE PWA SELF-TESTS PASSED ===")
+
+
+def test_v35_trusted_fundamentals():
+    from trusted_fundamentals import parse_kr_fundamental_html, score_fundamentals
+    sample_html = '<html><body><em id="_per">12.5</em><em id="_pbr">1.15</em><em id="_market_sum">450조 1,000억</em></body></html>'
+    f = parse_kr_fundamental_html(sample_html)
+    assert f["per"] == 12.5 and f["pbr"] == 1.15
+    good = score_fundamentals(dict(f), market="KR", disclosures=[{"report_nm": "단일판매·공급계약체결"}])
+    assert good["trust_label"] == "재무 탄탄" and good["trust_bonus"] > 0
+    bad = score_fundamentals({"per": -15.0, "pbr": 3.0}, market="KR", disclosures=[{"report_nm": "유상증자 결정"}])
+    assert "주의" in bad["trust_label"] and bad["trust_bonus"] < 0
+    print("[PASS 9/10] v3.5 KRX 재무 파서·흑자/적자 판별 및 DART 위험공시(유상증자) 경고 검증 통과")
+
+
+def test_v35_issue_engine_and_oneclick():
+    from issue_catalyst_engine import score_issue_mover
+    good_m = score_issue_mover({
+        "name": "테스트조선", "ticker": "000001", "close": 50000, "chg_pct": 6.5,
+        "trade_val_eok": 420, "news_title": "[연합뉴스] 테스트조선, 대규모 미 해군 함정 수주 계약",
+    })
+    assert good_m["issue_score"] >= 72 and not good_m["risk_flag"]
+    bad_m = score_issue_mover({
+        "name": "위험소형주", "ticker": "000002", "close": 3000, "chg_pct": 25.0,
+        "trade_val_eok": 30, "news_title": "위험소형주 대규모 유상증자 결정",
+    })
+    assert bad_m["risk_flag"] is True and bad_m["issue_score"] < 50
+    assert (ROOT / "내_주식비서_바로실행.bat").exists()
+    assert (ROOT / "scripts/run_local_app.py").exists()
+    print("[PASS 10/10] v3.5 신뢰 언론/수급 이슈 채점·위험주 필터링 및 PC 원클릭 실행기 검증 통과")
+
+
+test_v35_trusted_fundamentals()
+test_v35_issue_engine_and_oneclick()
+print("=== ALL 10 STOCK QUANT V3.5 TRUSTED ONE-CLICK SELF-TESTS PASSED ===")
+
+
+def test_v40_precision_engine():
+    from precision_engine import detect_market_regime, compute_sr_precision_plan, compute_historical_accuracy
+    df_up = make_synthetic_ohlcv("005930.KS", 120)
+    reg = detect_market_regime(df_up, "국장(KOSPI)")
+    assert reg["regime"] in ("강세장", "혼조세", "약세 주의")
+    plan = compute_sr_precision_plan(df_up, market="KR")
+    assert plan["rr_ratio"] >= 1.5 and "원" in plan["entry_zone"] and "%" in plan["stop_loss"]
+    with tempfile.TemporaryDirectory() as td:
+        p = pathlib.Path(td) / "hist.csv"
+        p.write_text("date,symbol,d5_ret_pct\n2026-11-01,005930.KS,3.2\n2026-11-02,NVDA,-1.1\n2026-11-03,005380.KS,2.5\n", encoding="utf-8")
+        acc = compute_historical_accuracy(p)
+        assert acc["tracked"] == 3 and acc["win_rate"] == 66.7
+    print(f"[PASS 11/12] v4.0 시장 국면 필터·지지/저항 정밀 매매가(손익비 1:{plan['rr_ratio']})·사후 승률 집계 검증 통과")
+
+
+def test_v40_android_apk_project():
+    req_files = [
+        "android/settings.gradle",
+        "android/build.gradle",
+        "android/app/build.gradle",
+        "android/app/src/main/AndroidManifest.xml",
+        "android/app/src/main/java/com/mystock/assistant/MainActivity.java",
+        ".github/workflows/build-android-apk.yml",
+    ]
+    for rf in req_files:
+        assert (ROOT / rf).exists(), f"Missing {rf}"
+    wf = (ROOT / ".github/workflows/build-android-apk.yml").read_text(encoding="utf-8")
+    assert "assembleDebug" in wf and "MyStockAssistant-v4.5.apk" in wf
+    print("[PASS 12/12] v4.0 안드로이드 단독 APK 프로젝트 및 GitHub Actions 자동 빌드 구성 검증 통과")
+
+
+test_v40_precision_engine()
+test_v40_android_apk_project()
+print("=== ALL 12 STOCK QUANT V4.0 ANDROID PRECISION SELF-TESTS PASSED ===")
+
+
+def test_v45_investor_flow():
+    from trusted_fundamentals import parse_kr_investor_flow_html, score_investor_flow
+    html_buy = """<table class="type2">
+      <tr><td>2026.11.24</td><td>75,000</td><td>1,000</td><td>+1.3%</td><td>100000</td><td>+50,000</td><td>+120,000</td></tr>
+      <tr><td>2026.11.23</td><td>74,000</td><td>500</td><td>+0.7%</td><td>90000</td><td>+30,000</td><td>+80,000</td></tr>
+    </table>"""
+    fl = parse_kr_investor_flow_html(html_buy, days=5)
+    assert fl["days"] == 2 and fl["inst_5d"] == 80000 and fl["frgn_5d"] == 200000
+    sc = score_investor_flow(fl)
+    assert sc["flow_bonus"] == 10 and "쌍끌이" in sc["flow_label"]
+
+    sc_bad = score_investor_flow({"days": 5, "inst_5d": -10000, "frgn_5d": -25000})
+    assert sc_bad["flow_bonus"] == -8 and "주의" in sc_bad["flow_label"]
+    print("[PASS 13/14] v4.5 외국인·기관 5일 수급 파서 및 쌍끌이 매수/동반 매도 점수화 검증 통과")
+
+
+def test_v45_position_sizing_and_portfolio_ui():
+    idx = (ROOT / "docs/index.html").read_text(encoding="utf-8")
+    assert "calcPositionSize" in idx and "budgetMan" in idx and "riskPct" in idx
+    assert "tab-my" in idx and "내 보유" in idx and "손절 기준가" in idx and "목표 매도가" in idx
+    wf = (ROOT / ".github/workflows/build-android-apk.yml").read_text(encoding="utf-8")
+    assert "MyStockAssistant-v4.5.apk" in wf
+    print("[PASS 14/14] v4.5 투자금 기반 자동 매수량 계산기·내 보유 익절/손절 트래커·APK v4.5 구성 검증 통과")
+
+
+test_v45_investor_flow()
+test_v45_position_sizing_and_portfolio_ui()
+print("=== ALL 14 STOCK QUANT V4.5 PRO PROFIT KIT SELF-TESTS PASSED ===")
