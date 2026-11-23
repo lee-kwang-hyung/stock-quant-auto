@@ -31,6 +31,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase --autostash || true
           git add reports/ data/
           git diff --cached --quiet || git commit -m "data: daily KR/US stock scan & signal tracking"
           git push
