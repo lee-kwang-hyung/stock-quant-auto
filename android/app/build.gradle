@@ -1,22 +1,22 @@
 plugins {
-    id("com.android.application")
+    id 'com.android.application'
 }
 
 android {
-    namespace = "com.mystock.assistant"
-    compileSdk = 34
+    namespace 'com.mystock.assistant'
+    compileSdk 34
 
     defaultConfig {
-        applicationId = "com.mystock.assistant"
-        minSdk = 24
-        targetSdk = 34
-        versionCode = 45
-        versionName = "4.5"
-        buildConfigField("String", "APP_URL", "\"https://lee-kwang-hyung.github.io/stock-quant-auto/\"")
+        applicationId 'com.mystock.assistant'
+        minSdk 24
+        targetSdk 34
+        versionCode 45
+        versionName '4.5'
+        buildConfigField 'String', 'APP_URL', '"https://lee-kwang-hyung.github.io/stock-quant-auto/"'
     }
 
     buildFeatures {
-        buildConfig = true
+        buildConfig true
     }
 
     buildTypes {
@@ -26,12 +26,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.22')
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 }
