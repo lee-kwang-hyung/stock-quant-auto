@@ -1,0 +1,40 @@
+name: intraday-live-pwa-scan
+
+on:
+  schedule:
+    # 평일(월~금) 한국 장중 09:00 ~ 15:45 KST (= 00:00 ~ 06:45 UTC) 15분 간격 자동 갱신
+    - cron: "*/15 0-6 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stock-quant-data-update
+  cancel-in-progress: true
+
+jobs:
+  intraday_scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install packages
+        run: pip install -r requirements.txt
+      - name: Run intraday scan & update encrypted PWA live feed
+        env:
+          APP_PIN: ${{ secrets.APP_PIN }}
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
+        run: |
+          python scripts/stock_analyzer.py --intraday
+      - name: Commit updated PWA live feed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase --autostash || true
+          git add docs/data/ reports/latest_daily_report.md
+          git diff --cached --quiet || git commit -m "data: intraday live PWA feed update"
+          git push

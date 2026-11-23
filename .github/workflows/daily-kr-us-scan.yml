@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: stock-quant-data-update
+  cancel-in-progress: false
+
 jobs:
   daily_scan:
     runs-on: ubuntu-latest
@@ -19,19 +23,21 @@ jobs:
           python-version: "3.11"
       - name: Install packages
         run: pip install -r requirements.txt
-      - name: Run daily KR/US scan & track past signal performance
+      - name: Run daily KR/US scan, build encrypted PWA feed & track performance
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          APP_PIN: ${{ secrets.APP_PIN }}
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
         run: |
           python scripts/self_test.py
           python scripts/stock_analyzer.py
           python scripts/track_performance.py
-      - name: Commit reports & signal history DB
+      - name: Commit reports, signal DB & PWA live feed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase --autostash || true
-          git add reports/ data/
-          git diff --cached --quiet || git commit -m "data: daily KR/US stock scan & signal tracking"
+          git add reports/ data/ docs/data/
+          git diff --cached --quiet || git commit -m "data: daily KR/US stock scan & PWA feed update"
           git push
