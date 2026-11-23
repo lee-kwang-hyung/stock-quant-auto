@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 for sp in sorted((ROOT / "scripts").glob("*.py")):
     py_compile.compile(str(sp), doraise=True)
-print("[PASS 1/5] 전체 파이썬 스크립트 문법 검증 통과")
+print("[PASS 1/6] 전체 파이썬 스크립트 문법 검증 통과")
 
 import stock_analyzer as sa
 import backtester as bt
@@ -36,7 +36,7 @@ def make_synthetic_ohlcv(symbol: str, days: int = 360) -> pd.DataFrame:
 
 plan_kr = compute_trade_plan(50000, 1800, 47000, market="KR")
 assert "원" in plan_kr["entry_zone"] and "1 :" in plan_kr["rr_ratio"]
-print(f"[PASS 2/5] ATR 기반 실전 매매 시나리오(진입·손절·1/2차 목표·손익비) 계산 검증 통과 ({plan_kr['rr_ratio']})")
+print(f"[PASS 2/6] ATR 기반 실전 매매 시나리오(진입·손절·1/2차 목표·손익비) 계산 검증 통과 ({plan_kr['rr_ratio']})")
 
 with tempfile.TemporaryDirectory() as td:
     td_p = pathlib.Path(td)
@@ -65,16 +65,27 @@ with tempfile.TemporaryDirectory() as td:
     )
     rep_txt = rep.read_text(encoding="utf-8")
     assert "샘플수주테크" in rep_txt and "샘플상한바이오" in rep_txt and "진입 참고 구간" in rep_txt
-    print("[PASS 3/5] v2.0 5대 투자 촉매 뉴스 · 국장 급등초입 · 상한가 원인 · 실전 가격표 생성 검증 통과")
+    print("[PASS 3/6] v2.0 5대 투자 촉매 뉴스 · 국장 급등초입 · 상한가 원인 · 실전 가격표 생성 검증 통과")
 
     md_bt, bt_rows = bt.run_backtest(ROOT / "config/watchlist.json", out_d, data_d, fetcher=lambda sym: make_synthetic_ohlcv(sym, 520))
     assert md_bt.exists() and len(bt_rows) == 23
-    print(f"[PASS 4/5] 2단계 3년 백테스트 검증 통과 ({len(bt_rows)}종목)")
+    print(f"[PASS 4/6] 2단계 3년 백테스트 검증 통과 ({len(bt_rows)}종목)")
 
     hist_csv = data_d / "signals_history.csv"
     hist_csv.write_text(hist_csv.read_text(encoding="utf-8").replace(rows[0]["date"], "2025-06-01"), encoding="utf-8")
     res_tp = tp.update_signal_performance(hist_csv, fetcher=lambda sym, start_date: make_synthetic_ohlcv(sym, 360)[["Close"]])
     assert res_tp["updated"] > 0
-    print(f"[PASS 5/5] 3단계 준비용 D+1/D+5/D+20 사후 수익률 자동 채점 검증 통과 ({res_tp['updated']}셀)")
+    print(f"[PASS 5/6] 3단계 준비용 D+1/D+5/D+20 사후 수익률 자동 채점 검증 통과 ({res_tp['updated']}셀)")
 
-print("=== ALL 5 STOCK QUANT V2.0 SELF-TESTS PASSED ===")
+from kr_price_feed import parse_naver_fchart_xml
+sample_xml = '<protocol><chartdata><item data="20261120|245000|249000|244000|247000|812345"/><item data="20261123|246000|248500|245500|247000|512345"/></chartdata></protocol>'
+df_nv = parse_naver_fchart_xml(sample_xml)
+assert len(df_nv) == 2 and float(df_nv["Close"].iloc[-1]) == 247000.0
+# v1.0(16컬럼) -> v2.1(20컬럼) 마이그레이션 무오류 검증
+with tempfile.TemporaryDirectory() as td2:
+    cpath = pathlib.Path(td2) / "signals_history.csv"
+    cpath.write_text("date,market,symbol,name,sector,close,ret_1d,ret_20d,rsi,vol_ratio,score,grade,reasons,d1_ret_pct,d5_ret_pct,d20_ret_pct\n2026-11-20,KR,005380.KS,현대차,자동차,247000,0,0,50,1,60,관찰,중립,,,\n", encoding="utf-8")
+    sa.append_signals_history([{"date": "2026-11-23", "market": "KR", "symbol": "005380.KS", "name": "현대차", "sector": "자동차", "close": 247000, "ret_1d": 0, "ret_20d": 0, "rsi": 50, "vol_ratio": 1, "score": 60, "grade": "관찰", "reasons": "중립", "entry_zone": "243,295원~248,235원", "stop_loss": "238,355원", "target_1": "262,500원", "target_2": "272,900원"}], cpath)
+    tp.update_signal_performance(cpath, fetcher=lambda s, d: df_nv[["Close"]])
+print("[PASS 6/6] v2.1 네이버 금융 KRX 1원 정확 시세 파서 & 구버전 CSV 자동 마이그레이션 검증 통과")
+print("=== ALL 6 STOCK QUANT V2.1 SELF-TESTS PASSED ===")

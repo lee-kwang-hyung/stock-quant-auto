@@ -12,6 +12,7 @@ import pandas as pd
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from indicators import compute_indicators, score_latest_row
+from kr_price_feed import fetch_kr_ohlcv_exact
 
 
 def backtest_single_series(df: pd.DataFrame, strategy: dict) -> dict:
@@ -75,8 +76,12 @@ def backtest_single_series(df: pd.DataFrame, strategy: dict) -> dict:
 
 
 def fetch_3y_yfinance(symbol: str) -> pd.DataFrame:
+    if str(symbol).endswith((".KS", ".KQ")):
+        df_kr = fetch_kr_ohlcv_exact(symbol, count=750)
+        if not df_kr.empty:
+            return df_kr
     import yfinance as yf
-    df = yf.Ticker(symbol).history(period="3y", auto_adjust=True)
+    df = yf.Ticker(symbol).history(period="3y", auto_adjust=False)
     if df is None or df.empty:
         return pd.DataFrame()
     return df[["Open", "High", "Low", "Close", "Volume"]].dropna()

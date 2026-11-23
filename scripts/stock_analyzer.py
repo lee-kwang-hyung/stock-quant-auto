@@ -13,12 +13,18 @@ import requests
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from indicators import compute_indicators, score_latest_row
+from kr_price_feed import fetch_kr_ohlcv_exact
 from market_scanner_v2 import collect_catalyst_issues, fetch_rss_news, scan_kr_full_market_movers
 
 
 def fetch_ohlcv_yfinance(symbol: str, period: str = "6mo") -> pd.DataFrame:
+    # [v2.1 정확 시세 보정]: 한국 주식(.KS/.KQ)은 네이버 금융/KRX 실제 시세 최우선! (yfinance 왜곡 원천 차단)
+    if str(symbol).endswith((".KS", ".KQ")):
+        df_kr = fetch_kr_ohlcv_exact(symbol, count=180)
+        if not df_kr.empty:
+            return df_kr
     import yfinance as yf
-    df = yf.Ticker(symbol).history(period=period, auto_adjust=True)
+    df = yf.Ticker(symbol).history(period=period, auto_adjust=False)
     if df is None or df.empty or len(df) < 30:
         return pd.DataFrame()
     return df[["Open", "High", "Low", "Close", "Volume"]].dropna()
@@ -32,20 +38,24 @@ def append_signals_history(rows: list, csv_path: pathlib.Path):
         "score", "grade", "reasons", "entry_zone", "stop_loss", "target_1", "target_2",
         "d1_ret_pct", "d5_ret_pct", "d20_ret_pct",
     ]
+    # [v2.1 CSV 스키마 자동 마이그레이션]: 구버전(v1.0) CSV 컬럼 수와 달라도 안전하게 병합 재저장!
+    merged = []
     existing = set()
-    file_exists = csv_path.exists() and csv_path.stat().st_size > 0
-    if file_exists:
+    if csv_path.exists() and csv_path.stat().st_size > 0:
         with open(csv_path, "r", encoding="utf-8", newline="") as f:
             for r in csv.DictReader(f):
-                existing.add((r.get("date"), r.get("symbol")))
-    with open(csv_path, "a", encoding="utf-8", newline="") as f:
+                clean_r = {k: r.get(k, "") for k in fieldnames}
+                merged.append(clean_r)
+                existing.add((clean_r["date"], clean_r["symbol"]))
+    for r in rows:
+        key = (r["date"], r["symbol"])
+        if key not in existing:
+            merged.append({k: r.get(k, "") for k in fieldnames})
+            existing.add(key)
+    with open(csv_path, "w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)
-        if not file_exists:
-            w.writeheader()
-        for r in rows:
-            if (r["date"], r["symbol"]) in existing:
-                continue
-            w.writerow({k: r.get(k, "") for k in fieldnames})
+        w.writeheader()
+        w.writerows(merged)
 
 
 def send_telegram_if_configured(text: str):
