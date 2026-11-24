@@ -1,0 +1,50 @@
+name: kis-paper-autotrade
+
+on:
+  schedule:
+    # 평일 한국 장중 09:20, 11:20, 13:20, 14:50 KST (= 00:20, 02:20, 04:20, 05:50 UTC) 모의 자동매매 점검
+    - cron: "20 0,2,4 * * 1-5"
+    - cron: "50 5 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stock-quant-data-update
+  cancel-in-progress: false
+
+jobs:
+  paper_trade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install packages
+        run: pip install -r requirements.txt
+      - name: Run KIS Paper Auto-Trader (Mock Only)
+        env:
+          APP_PIN: ${{ secrets.APP_PIN }}
+          KIS_PAPER_APP_KEY: ${{ secrets.KIS_PAPER_APP_KEY }}
+          KIS_PAPER_APP_SECRET: ${{ secrets.KIS_PAPER_APP_SECRET }}
+          KIS_PAPER_ACCOUNT_NO: ${{ secrets.KIS_PAPER_ACCOUNT_NO }}
+        run: |
+          python scripts/kis_paper_trader.py
+      - name: Refresh encrypted PWA feed with updated paper trading report
+        env:
+          APP_PIN: ${{ secrets.APP_PIN }}
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
+          MY_HOLDINGS_JSON: ${{ secrets.MY_HOLDINGS_JSON }}
+        run: |
+          python scripts/stock_analyzer.py --intraday
+      - name: Commit paper ledger & updated feed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase --autostash || true
+          git add data/paper_ledger.json data/paper_trading_summary.json docs/data/
+          git diff --cached --quiet || git commit -m "paper: KIS mock autotrade update"
+          git push
