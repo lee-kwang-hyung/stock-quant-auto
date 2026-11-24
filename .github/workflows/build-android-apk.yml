@@ -33,11 +33,11 @@ jobs:
         run: gradle assembleDebug --no-daemon
 
       - name: Rename APK for easy download
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk MyStockAssistant-v5.0.apk
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk MyStockAssistant-v5.1.apk
 
-      - name: Upload MyStockAssistant-v5.0.apk
+      - name: Upload MyStockAssistant-v5.1.apk
         uses: actions/upload-artifact@v4
         with:
-          name: MyStockAssistant-v5.0-APK
-          path: MyStockAssistant-v5.0.apk
+          name: MyStockAssistant-v5.1-APK
+          path: MyStockAssistant-v5.1.apk
           retention-days: 30
