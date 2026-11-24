@@ -20,9 +20,9 @@
 - [[HIT알공] 페니트리움바이오, 고형암 임상 2a상 FDA 승인 - 히트뉴스](https://news.google.com/rss/articles/CBMia0FVX3lxTE9XZHRNUWpoNTBLQWNWdm44WUEwTlRRNkR2eVNHQ2ZJZXlUaGNYZ3VNYXRNSjNkQWNkUmh5aGc0Y1pZS3JYbEJpd0xtUUVOenlBTE1vV1JQMVlackxoY3luRklTb1VjOXFncWVN?oc=5)
 
 ### 정부 정책 · 주도 테마 수혜
-- ['로봇 테마' 에스비비테크, 젠슨황 효과 매수세 유입에 급등 - 파이낸셜포스트](https://news.google.com/rss/articles/CBMidEFVX3lxTFBNOU9zMzhjeWlubU9HWE9UaV9EaGk3cExzRzZzRmNDekhWbDhXLU5QSzNLSzgzU2tLeHFRNGhjZTRySHVYeWxINW5hLWdrWF9fMlpIWmQ5cW42SHRMNzdFajFpWEhWTks2Z1RNekc3eXl6UGM2?oc=5)
 - [[ETF 시황] 코스닥 700선 회복에 관련 ETF 급등…반도체 상품도 강세 - 뉴스핌](https://news.google.com/rss/articles/CBMiXEFVX3lxTE1NcVJ2OHRfWGRoVmo0WFNkT1o5bFpzQWZmODRzVmJCaTJpWU42ZnlfMHVzRkl1NjgtcEpuUnBJRkdlOE96UEFKajV6a2lTem1VZUp6OW5uTGtsWUxq?oc=5)
 - [11월12(목) 장전 예상 테마 - 네이버 프리미엄콘텐츠](https://news.google.com/rss/articles/CBMiggFBVV95cUxQSWxjTVJjQUU0bE45RjJ3MlBNWnJuaHJvdktCTjdrNzF4Wl9Rb01OT3pIU2RlVTQ1WE9ZRlJIcmdvQmpaOUFZa0VmMVAzZllpSnk0cjNwbGptY0ZZTkE0U1VHdURvenlLbEJuRVRVc21JdGlmWlBqM0tvdkVMNEVGMnJ3?oc=5)
+- [코스피 내린 틈에…코스닥 후끈, 8%↑ 역대 두번째 상승률(종합) - 연합뉴스](https://news.google.com/rss/articles/CBMiW0FVX3lxTE5pdEVvZnR4bTZfWTBFRFpxWTZQLWRuejBfQ1pxaVZDWHd3aS1BVzBpYWJEbEw5U2pnYnlsOUFzNVVMWnNRNklFdy1nbk1ReFJQXzJKQ1UtYTR1LWfSAWBBVV95cUxQV1ZobHhmRFBSSzNORjVPTDVIVllTdjhwSzhfNEEwZGNMOVo4VUk3VWttY1E3MG5YQ2M5bk5ybXpIdGRDTThLdkFPSHpkVHhGRUZlT3J1ZExOcTNoQUJRNVY?oc=5)
 
 ### 미국 증시 핵심 급등 촉매
 - [What Drove Glaukos Stock's 48% Rally Since the End of September? - TradingView](https://news.google.com/rss/articles/CBMiugFBVV95cUxPY1B0UC05Yl9uWXVkNHJvV3d6bUpsWlUxUzFsQzI3WUZVU3ByMW0zSk42cUJya2VObm1wQ3RjMjBXNDZWRndERWNDYllmbXFoUktha21YdkRQQ3pkQUtJNFdZeDlDNkt3dVhtWUowUkNRVDBtVjQ5blRMbExrWWRZTzRJdXFSY3VwNTBzVFhCNmt0VnBGR2NsUm5PR1RyYldlU3VwNWZLc1RXVTRJZDVNVS1pTDh6ZnlvM3c?oc=5)
