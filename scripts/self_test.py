@@ -204,7 +204,7 @@ def test_v40_android_apk_project():
     for rf in req_files:
         assert (ROOT / rf).exists(), f"Missing {rf}"
     wf = (ROOT / ".github/workflows/build-android-apk.yml").read_text(encoding="utf-8")
-    assert "assembleDebug" in wf and "MyStockAssistant-v4.6.apk" in wf
+    assert "assembleDebug" in wf and "MyStockAssistant-v4.7.apk" in wf
     print("[PASS 12/12] v4.0 안드로이드 단독 APK 프로젝트 및 GitHub Actions 자동 빌드 구성 검증 통과")
 
 
@@ -234,7 +234,7 @@ def test_v45_position_sizing_and_portfolio_ui():
     assert "calcPositionSize" in idx and "budgetMan" in idx and "riskPct" in idx
     assert "tab-my" in idx and "내 보유" in idx and "손절 기준가" in idx and "목표 매도가" in idx
     wf = (ROOT / ".github/workflows/build-android-apk.yml").read_text(encoding="utf-8")
-    assert "MyStockAssistant-v4.6.apk" in wf
+    assert "MyStockAssistant-v4.7.apk" in wf
     print("[PASS 14/14] v4.5 투자금 기반 자동 매수량 계산기·내 보유 익절/손절 트래커·APK v4.5 구성 검증 통과")
 
 
@@ -265,3 +265,19 @@ def test_v46_portfolio_and_refresh():
 
 test_v46_portfolio_and_refresh()
 print("=== ALL 15 STOCK QUANT V4.6 SELF-TESTS PASSED ===")
+
+
+def test_v47_realtime_bridge_and_beginner_ui():
+    java = (ROOT / "android/app/src/main/java/com/mystock/assistant/MainActivity.java").read_text(encoding="utf-8")
+    assert "AndroidStockBridge" in java and "fetchLiveQuotes" in java and "onLiveQuotesUpdated" in java
+    assert "triggerAppRefresh" in java and "m.stock.naver.com" in java and "query1.finance.yahoo.com" in java
+    idx = (ROOT / "docs/index.html").read_text(encoding="utf-8")
+    for tok in ("computeBeginnerAction", "buildPriceGaugeHTML", "onLiveQuotesUpdated", "AndroidStockBridge", "guideModal", "editMyPortfolio", "① 살 때", "② 팔 때", "③ 멈출 때"):
+        assert tok in idx, f"Missing v4.7 UI token: {tok}"
+    bg = (ROOT / "android/app/build.gradle").read_text(encoding="utf-8")
+    assert "versionCode 47" in bg and "versionName '4.7'" in bg
+    print("[PASS 16/16] v4.7 안드로이드 실시간 시세 브릿지·초보자 신호등/게이지/3단계 매매 UI 검증 통과")
+
+
+test_v47_realtime_bridge_and_beginner_ui()
+print("=== ALL 16 STOCK QUANT V4.7 SELF-TESTS PASSED ===")

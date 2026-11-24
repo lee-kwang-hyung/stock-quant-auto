@@ -10,8 +10,8 @@ android {
         applicationId 'com.mystock.assistant'
         minSdk 24
         targetSdk 34
-        versionCode 46
-        versionName '4.6'
+        versionCode 47
+        versionName '4.7'
         buildConfigField 'String', 'APP_URL', '"https://lee-kwang-hyung.github.io/stock-quant-auto/"'
     }
 

@@ -9,12 +9,14 @@
   <meta name="apple-mobile-web-app-title" content="내 주식 비서" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./icon.svg" type="image/svg+xml" />
-  <title>나만의 주식 비서 v4.6</title>
+  <title>나만의 주식 비서 v4.7</title>
   <style>
     :root {
-      --bg: #F3F5F8; --card: #FFFFFF; --ink: #0F172A; --ink2: #475569; --mute: #64748B; --line: #E2E8F0;
-      --buy-bg: #ECFDF5; --buy-fg: #047857; --watch-bg: #FEF9C3; --watch-fg: #A16207;
-      --caution-bg: #FEF2F2; --caution-fg: #B91C1C; --accent: #2563EB; --nav-h: 64px;
+      --bg: #F3F5F8; --card: #FFFFFF; --ink: #0F172A; --ink2: #334155; --mute: #64748B; --line: #E2E8F0;
+      --buy-bg: #ECFDF5; --buy-fg: #047857; --buy-bd: #A7F3D0;
+      --watch-bg: #FEF9C3; --watch-fg: #A16207; --watch-bd: #FDE047;
+      --caution-bg: #FEF2F2; --caution-fg: #B91C1C; --caution-bd: #FECACA;
+      --accent: #2563EB; --nav-h: 64px;
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body {
@@ -23,6 +25,7 @@
       font-size: 15px; line-height: 1.5;
     }
     .app-wrap { max-width: 560px; margin: 0 auto; min-height: 100vh; padding-bottom: calc(var(--nav-h) + 36px + env(safe-area-inset-bottom)); }
+
     .lock-screen { position: fixed; inset: 0; z-index: 999; background: #0F172A; color: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 24px; }
     .lock-box { width: 100%; max-width: 360px; background: #1E293B; border-radius: 24px; padding: 28px 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
     .lock-box h1 { margin: 8px 0 6px; font-size: 22px; font-weight: 800; }
@@ -30,30 +33,38 @@
     .pin-input { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid #334155; background: #0F172A; color: #FFFFFF; font-size: 18px; text-align: center; letter-spacing: 3px; outline: none; }
     .remember-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px 0 18px; font-size: 13px; color: #CBD5E1; }
     .btn-primary { width: 100%; padding: 13px; border: none; border-radius: 12px; background: #2563EB; color: #FFFFFF; font-size: 15px; font-weight: 700; cursor: pointer; }
-    .btn-ghost { border: 1px solid var(--line); background: #FFFFFF; color: var(--ink2); border-radius: 10px; padding: 7px 11px; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .btn-ghost { border: 1px solid var(--line); background: #FFFFFF; color: var(--ink2); border-radius: 10px; padding: 7px 11px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
     .lock-err { margin-top: 12px; font-size: 13px; color: #FCA5A5; min-height: 18px; }
 
-    .topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); padding: 13px 16px 11px; display: flex; align-items: center; justify-content: space-between; }
-    .brand { display: flex; flex-direction: column; }
-    .brand-title { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
-    .brand-time { font-size: 12px; color: var(--mute); margin-top: 2px; }
-    .top-actions { display: flex; gap: 6px; }
-    .icon-btn { border: 1px solid var(--line); background: #FFFFFF; color: var(--ink); border-radius: 10px; padding: 7px 11px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+    .topbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,0.97); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); padding: 12px 14px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .brand { display: flex; flex-direction: column; min-width: 0; }
+    .brand-title { font-size: 17px; font-weight: 800; letter-spacing: -0.02em; }
+    .brand-time { font-size: 11.5px; color: var(--mute); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .brand-time.live { color: var(--buy-fg); font-weight: 700; }
+    .top-actions { display: flex; gap: 5px; flex-shrink: 0; }
+    .icon-btn { border: 1px solid var(--line); background: #FFFFFF; color: var(--ink); border-radius: 10px; padding: 7px 10px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .icon-btn.primary-outline { border-color: #93C5FD; background: #EFF6FF; color: #1D4ED8; }
     .icon-btn:disabled { opacity: 0.6; }
 
-    .toast { position: fixed; left: 50%; bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 90; background: rgba(15,23,42,0.92); color: #FFFFFF; padding: 10px 16px; border-radius: 999px; font-size: 13px; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,0.25); transition: opacity 0.25s; pointer-events: none; }
+    .toast { position: fixed; left: 50%; bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 90; background: rgba(15,23,42,0.94); color: #FFFFFF; padding: 10px 16px; border-radius: 999px; font-size: 12.5px; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,0.25); max-width: 92vw; text-align: center; pointer-events: none; }
 
-    .banner { margin: 10px 16px 0; padding: 10px 13px; border-radius: 12px; font-size: 12.5px; background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
+    .guide-modal-bg { position: fixed; inset: 0; z-index: 95; background: rgba(15,23,42,0.55); display: flex; align-items: center; justify-content: center; padding: 18px; }
+    .guide-modal { width: 100%; max-width: 400px; background: #FFFFFF; border-radius: 20px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
+    .guide-modal h3 { margin: 0 0 12px; font-size: 17px; font-weight: 800; }
+    .guide-modal ul { margin: 0 0 16px; padding-left: 18px; font-size: 13.5px; color: var(--ink2); line-height: 1.65; }
+    .guide-modal li { margin-bottom: 6px; }
+
+    .banner { margin: 10px 14px 0; padding: 9px 12px; border-radius: 12px; font-size: 12px; background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
     .banner.warn { background: #FFFBEB; color: #92400E; border-color: #FDE68A; }
 
-    .budget-bar { margin: 10px 16px 0; padding: 11px 13px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 13px; }
-    .budget-inputs { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .budget-inputs input, .budget-inputs select { border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; font-size: 13px; font-weight: 700; background: #F8FAFC; color: var(--ink); }
-    .budget-inputs input { width: 84px; text-align: right; }
+    .budget-bar { margin: 10px 14px 0; padding: 10px 12px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 12.5px; }
+    .budget-inputs { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .budget-inputs input, .budget-inputs select { border: 1px solid var(--line); border-radius: 8px; padding: 5px 7px; font-size: 13px; font-weight: 700; background: #F8FAFC; color: var(--ink); }
+    .budget-inputs input { width: 76px; text-align: right; }
 
-    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 16px 0; }
-    .sum-card { background: var(--card); border-radius: 14px; padding: 11px 8px; text-align: center; border: 1px solid var(--line); }
-    .sum-label { font-size: 12px; color: var(--mute); }
+    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 14px 0; }
+    .sum-card { background: var(--card); border-radius: 14px; padding: 10px 6px; text-align: center; border: 1px solid var(--line); }
+    .sum-label { font-size: 11.5px; color: var(--mute); font-weight: 600; }
     .sum-num { font-size: 18px; font-weight: 800; margin-top: 2px; }
     .sum-num.buy { color: var(--buy-fg); } .sum-num.watch { color: var(--watch-fg); } .sum-num.hot { color: var(--accent); }
 
@@ -65,66 +76,80 @@
     .ps-num { font-weight: 800; font-size: 15px; margin-top: 2px; }
     .ps-num.up { color: #FCA5A5; } .ps-num.down { color: #93C5FD; }
 
-    .filter-row { display: flex; gap: 6px; padding: 12px 16px 4px; overflow-x: auto; scrollbar-width: none; }
+    .filter-row { display: flex; gap: 6px; padding: 11px 14px 4px; overflow-x: auto; scrollbar-width: none; }
     .filter-row::-webkit-scrollbar { display: none; }
     .pill { flex: 0 0 auto; border: 1px solid var(--line); background: #FFFFFF; color: var(--ink2); border-radius: 999px; padding: 6px 13px; font-size: 13px; font-weight: 600; cursor: pointer; }
     .pill.active { background: var(--ink); color: #FFFFFF; border-color: var(--ink); }
-    .search-wrap { padding: 10px 16px 2px; }
+    .search-wrap { padding: 10px 14px 2px; }
     .search-input { width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--line); background: #FFFFFF; font-size: 14px; outline: none; }
 
-    .section { padding: 8px 16px 0; }
-    .sec-head { display: flex; align-items: baseline; justify-content: space-between; margin: 8px 0 10px; }
+    .section { padding: 8px 14px 0; }
+    .sec-head { display: flex; align-items: baseline; justify-content: space-between; margin: 8px 0 10px; gap: 8px; }
     .sec-head h2 { margin: 0; font-size: 16px; font-weight: 800; }
     .sec-head span { font-size: 12px; color: var(--mute); }
 
-    .card { background: var(--card); border-radius: 18px; border: 1px solid var(--line); padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03); }
+    .card { background: var(--card); border-radius: 18px; border: 1px solid var(--line); padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); }
     .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
     .stock-meta { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
     .mkt-tag { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #E2E8F0; color: #334155; }
     .mkt-tag.US { background: #DBEAFE; color: #1D4ED8; }
-    .mkt-tag.flow-good { background: #DCFCE7; color: #166534; }
-    .mkt-tag.flow-bad { background: #FEE2E2; color: #991B1B; }
-    .stock-name { font-size: 17px; font-weight: 800; color: var(--ink); }
+    .mkt-tag.owned { background: #FEF3C7; color: #92400E; }
+    .mkt-tag.live-dot { background: #DCFCE7; color: #166534; }
+    .stock-name { font-size: 18px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
     .stock-code { font-size: 12px; color: var(--mute); }
-    .badge { flex-shrink: 0; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
-    .badge.buy { background: var(--buy-bg); color: var(--buy-fg); }
-    .badge.watch { background: var(--watch-bg); color: var(--watch-fg); }
-    .badge.caution { background: var(--caution-bg); color: var(--caution-fg); }
 
-    .price-row { display: flex; align-items: baseline; justify-content: space-between; margin: 9px 0 11px; padding-bottom: 9px; border-bottom: 1px solid #F1F5F9; }
-    .cur-price { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; }
-    .chg { font-size: 14px; font-weight: 700; margin-left: 5px; }
+    .price-row { display: flex; align-items: baseline; justify-content: space-between; margin: 8px 0 10px; gap: 8px; }
+    .cur-price { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+    .chg { font-size: 14.5px; font-weight: 800; margin-left: 6px; }
     .chg.up { color: #DC2626; } .chg.down { color: #2563EB; }
-    .score-pill { font-size: 12.5px; font-weight: 700; color: var(--ink2); }
 
-    .plan-grid { display: grid; grid-template-columns: 1fr; gap: 7px; }
-    .plan-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-radius: 11px; font-size: 13.5px; }
-    .plan-row.buy-box { background: #EFF6FF; } .plan-row.sell-box { background: #FEF2F2; }
-    .plan-row.stop-box { background: #F8FAFC; border: 1px solid #E2E8F0; }
-    .plan-row.size-box { background: #ECFDF5; border: 1px solid #A7F3D0; }
-    .plan-lbl { font-weight: 700; font-size: 12.5px; }
-    .plan-row.buy-box .plan-lbl { color: #1D4ED8; } .plan-row.sell-box .plan-lbl { color: #B91C1C; }
-    .plan-row.stop-box .plan-lbl { color: #475569; } .plan-row.size-box .plan-lbl { color: #047857; }
-    .plan-val { font-weight: 800; font-size: 13.5px; color: var(--ink); text-align: right; }
+    /* 초보자 핵심 1줄 행동 배너 */
+    .action-banner { padding: 11px 13px; border-radius: 12px; font-size: 13.5px; font-weight: 800; line-height: 1.45; margin-bottom: 12px; border: 1px solid transparent; }
+    .action-banner.buy { background: var(--buy-bg); color: var(--buy-fg); border-color: var(--buy-bd); }
+    .action-banner.watch { background: var(--watch-bg); color: var(--watch-fg); border-color: var(--watch-bd); }
+    .action-banner.caution { background: var(--caution-bg); color: var(--caution-fg); border-color: var(--caution-bd); }
+    .action-banner.profit { background: #DCFCE7; color: #166534; border-color: #86EFAC; }
+    .action-sub { display: block; font-size: 12px; font-weight: 600; opacity: 0.9; margin-top: 2px; }
 
-    .guide-line { margin-top: 10px; padding: 9px 11px; border-radius: 10px; background: #F8FAFC; font-size: 12.5px; color: var(--ink2); }
-    .reason-sub { font-size: 11.5px; color: var(--mute); margin-top: 4px; }
+    /* 한눈에 보는 가격 위치 게이지 바 */
+    .gauge-wrap { margin: 4px 0 13px; padding: 10px 12px; background: #F8FAFC; border-radius: 12px; border: 1px solid #E2E8F0; }
+    .gauge-title { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--mute); font-weight: 700; margin-bottom: 8px; }
+    .gauge-track { position: relative; height: 10px; border-radius: 999px; background: linear-gradient(90deg, #FCA5A5 0%, #93C5FD 28%, #93C5FD 48%, #86EFAC 78%, #34D399 100%); }
+    .gauge-dot { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 18px; height: 18px; border-radius: 50%; background: #0F172A; border: 3px solid #FFFFFF; box-shadow: 0 2px 6px rgba(0,0,0,0.35); }
+    .gauge-labels { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--mute); font-weight: 700; margin-top: 6px; }
+
+    /* 초보용 3단계 매매 플랜 */
+    .step-list { display: flex; flex-direction: column; gap: 7px; }
+    .step-box { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 12px; }
+    .step-box.buy-step { background: #EFF6FF; }
+    .step-box.sell-step { background: #FEF2F2; }
+    .step-box.stop-step { background: #F8FAFC; border: 1px solid #E2E8F0; }
+    .step-left { display: flex; flex-direction: column; }
+    .step-lbl { font-size: 12.5px; font-weight: 800; }
+    .step-box.buy-step .step-lbl { color: #1D4ED8; }
+    .step-box.sell-step .step-lbl { color: #B91C1C; }
+    .step-box.stop-step .step-lbl { color: #475569; }
+    .step-hint { font-size: 11.5px; color: var(--mute); margin-top: 2px; }
+    .step-val { font-size: 13.5px; font-weight: 800; color: var(--ink); text-align: right; flex-shrink: 0; }
+    .step-val small { display: block; font-size: 11.5px; font-weight: 600; color: var(--ink2); margin-top: 2px; }
+
+    /* 전문가 상세 접기/펼치기 */
+    details.pro-details { margin-top: 10px; border-top: 1px solid #F1F5F9; padding-top: 8px; }
+    details.pro-details summary { font-size: 12.5px; font-weight: 700; color: var(--mute); cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; }
+    details.pro-details summary::-webkit-details-marker { display: none; }
+    .pro-body { margin-top: 8px; padding: 10px 11px; border-radius: 10px; background: #F8FAFC; font-size: 12px; color: var(--ink2); line-height: 1.6; }
+
     .card-foot { margin-top: 10px; display: flex; justify-content: flex-end; gap: 6px; flex-wrap: wrap; }
-
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
     .form-grid input { width: 100%; padding: 10px 11px; border-radius: 10px; border: 1px solid var(--line); font-size: 14px; background: #FFFFFF; }
-    .alert-box { margin-top: 9px; padding: 9px 11px; border-radius: 10px; font-size: 12.5px; font-weight: 700; }
-    .alert-box.stop { background: #FEE2E2; color: #991B1B; }
-    .alert-box.profit { background: #DCFCE7; color: #166534; }
-    .alert-box.hold { background: #EFF6FF; color: #1E40AF; }
 
     .news-item { display: block; text-decoration: none; color: var(--ink); padding: 11px 0; border-bottom: 1px solid #F1F5F9; font-size: 14px; font-weight: 600; }
     .news-item:last-child { border-bottom: none; padding-bottom: 0; }
     .news-cat { font-size: 13px; font-weight: 800; color: var(--accent); margin-bottom: 6px; }
     .empty { text-align: center; padding: 32px 16px; color: var(--mute); background: var(--card); border-radius: 16px; border: 1px solid var(--line); }
-    .disclaimer { margin: 14px 16px; font-size: 11.5px; color: var(--mute); text-align: center; }
+    .disclaimer { margin: 14px 14px; font-size: 11.5px; color: var(--mute); text-align: center; }
 
-    .bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+    .bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: rgba(255,255,255,0.97); backdrop-filter: blur(10px); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
     .bottom-nav-inner { max-width: 560px; margin: 0 auto; height: var(--nav-h); display: grid; grid-template-columns: repeat(5, 1fr); }
     .tab-btn { border: none; background: transparent; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--mute); font-size: 10.5px; font-weight: 700; }
     .tab-btn .ico { font-size: 19px; line-height: 1; }
@@ -148,16 +173,31 @@
     </div>
   </div>
 
+  <div id="guideModal" class="guide-modal-bg hidden">
+    <div class="guide-modal">
+      <h3>📘 주식 초보 30초 사용법</h3>
+      <ul>
+        <li><strong>🟢 초록 배너</strong>가 뜬 종목만 투자금 범위에서 <strong>2~3번 나눠서</strong> 사세요.</li>
+        <li><strong>② 팔 때 (1차 목표가)</strong>에 도달하면 보유 수량의 <strong>절반(50%)</strong>을 팔아 수익을 챙기세요.</li>
+        <li><strong>2차 목표가</strong>에 도달하면 남은 물량도 팔아서 수익을 마무리하세요.</li>
+        <li><strong>③ 멈출 때 (손절선)</strong> 아래로 내려가면 더 큰 손실을 막기 위해 매도를 검토하세요.</li>
+        <li>오른쪽 위 <strong>↻ 새로고침</strong>을 누르면 최신 시세를 바로 반영합니다.</li>
+      </ul>
+      <button id="closeGuideBtn" class="btn-primary">확인했어요</button>
+    </div>
+  </div>
+
   <div id="toast" class="toast hidden"></div>
 
   <div class="app-wrap">
     <header class="topbar">
       <div class="brand">
-        <span class="brand-title">나만의 주식 비서 v4.6</span>
+        <span class="brand-title">나만의 주식 비서 v4.7</span>
         <span id="updatedText" class="brand-time">불러오는 중...</span>
       </div>
       <div class="top-actions">
-        <button id="refreshBtn" class="icon-btn">↻ 새로고침</button>
+        <button id="refreshBtn" class="icon-btn primary-outline">↻ 새로고침</button>
+        <button id="helpBtn" class="icon-btn" title="초보 사용법">❓</button>
         <button id="lockBtn" class="icon-btn hidden">잠금</button>
       </div>
     </header>
@@ -169,7 +209,7 @@
       <span style="font-weight:800;">💰 내 투자금</span>
       <div class="budget-inputs">
         <input id="budgetMan" type="number" min="10" step="50" value="500" />
-        <span>만 원 · 손절한도</span>
+        <span>만 원 · 손절</span>
         <select id="riskPct">
           <option value="1">1%</option>
           <option value="1.5" selected>1.5%</option>
@@ -179,9 +219,9 @@
     </div>
 
     <div id="summaryGrid" class="summary-grid">
-      <div class="sum-card"><div class="sum-label">분할매수 관심</div><div id="sumBuy" class="sum-num buy">-</div></div>
-      <div class="sum-card"><div class="sum-label">관망 대기</div><div id="sumWatch" class="sum-num watch">-</div></div>
-      <div class="sum-card"><div class="sum-label">이슈·급등</div><div id="sumHot" class="sum-num hot">-</div></div>
+      <div class="sum-card"><div class="sum-label">🟢 사기 좋음</div><div id="sumBuy" class="sum-num buy">-</div></div>
+      <div class="sum-card"><div class="sum-label">🟡 기다리기</div><div id="sumWatch" class="sum-num watch">-</div></div>
+      <div class="sum-card"><div class="sum-label">🚀 이슈급등</div><div id="sumHot" class="sum-num hot">-</div></div>
     </div>
 
     <!-- Tab 1: 오늘 추천 -->
@@ -192,7 +232,7 @@
         <button class="pill" data-mkt="US">미국 주식</button>
       </div>
       <div class="section">
-        <div class="sec-head"><h2>오늘의 안정형 추천 TOP</h2><span>재무·수급·손익비 1.5+ 통과</span></div>
+        <div class="sec-head"><h2>오늘 추천 TOP</h2><span>살 때 · 팔 때 · 손절 한눈에</span></div>
         <div id="recList"></div>
       </div>
     </main>
@@ -204,12 +244,12 @@
       </div>
       <div class="filter-row" id="watchStatusFilter">
         <button class="pill active" data-st="ALL">전체</button>
-        <button class="pill" data-st="buy">분할매수</button>
-        <button class="pill" data-st="watch">관망</button>
-        <button class="pill" data-st="caution">주의</button>
+        <button class="pill" data-st="buy">🟢 사기 좋음</button>
+        <button class="pill" data-st="watch">🟡 기다리기</button>
+        <button class="pill" data-st="caution">🔴 주의</button>
       </div>
       <div class="section">
-        <div class="sec-head"><h2>관심 종목 매수·매도·손절</h2><span id="watchCount"></span></div>
+        <div class="sec-head"><h2>관심 종목 매매 가이드</h2><span id="watchCount"></span></div>
         <div id="watchList"></div>
       </div>
     </main>
@@ -217,19 +257,19 @@
     <!-- Tab 3: 내 보유 (포트폴리오 관리) -->
     <main id="tab-my" class="tab-panel hidden">
       <div class="section">
-        <div class="sec-head"><h2>내 보유 주식 관리</h2><span>매입가 대비 실시간 손익</span></div>
+        <div class="sec-head"><h2>내 보유 주식 관리</h2><span>내 평단가 기준 맞춤 매도 가이드</span></div>
         <div id="mySummaryCard"></div>
         <div id="myPortfolioList"></div>
 
-        <article class="card">
-          <div style="font-weight:800;font-size:15px;margin-bottom:10px;">+ 새 보유 종목 추가 / 수정</div>
+        <article class="card" id="myEditCard">
+          <div style="font-weight:800;font-size:15px;margin-bottom:10px;">+ 보유 종목 추가 / 수정</div>
           <div class="form-grid">
             <input id="myName" placeholder="종목명 (예: 카카오)" />
             <input id="mySymbol" placeholder="코드 (예: 035720.KS)" />
             <input id="myBuyPrice" type="number" step="any" placeholder="매입단가 (원 또는 $)" />
             <input id="myQty" type="number" step="any" placeholder="보유 수량 (주)" />
-            <input id="myTarget" type="number" step="any" placeholder="목표 매도가 (선택)" />
-            <input id="myStop" type="number" step="any" placeholder="손절 기준가 (선택)" />
+            <input id="myTarget" type="number" step="any" placeholder="내 목표 매도가 (선택)" />
+            <input id="myStop" type="number" step="any" placeholder="내 손절 기준가 (선택)" />
           </div>
           <button id="addMyBtn" class="btn-primary">내 보유에 저장</button>
           <div style="display:flex;gap:8px;margin-top:8px;">
@@ -243,9 +283,9 @@
     <!-- Tab 4: 급등·이슈주 -->
     <main id="tab-movers" class="tab-panel hidden">
       <div class="section">
-        <div class="sec-head"><h2>이슈 급등 초입 (+3~15%)</h2><span>시황 참고 · 소액 분할</span></div>
+        <div class="sec-head"><h2>이슈 급등 초입 (+3~15%)</h2><span>소액 분할 · 손절 필수</span></div>
         <div id="breakoutList"></div>
-        <div class="sec-head" style="margin-top:18px;"><h2>당일 상한가 · 초급등 (+22%+)</h2><span>추격매수 금지 · 테마 파악용</span></div>
+        <div class="sec-head" style="margin-top:18px;"><h2>당일 상한가 · 초급등 (+22%+)</h2><span>추격매수 금지 · 테마 참고용</span></div>
         <div id="limitUpList"></div>
       </div>
     </main>
@@ -283,13 +323,23 @@
     let recMarket = "ALL";
     let watchStatus = "ALL";
     let toastTimer = null;
+    let liveQuoteTimer = null;
+    let liveUpdatedAt = "";
+    let lastCheckedAt = "";
+    let liveQuoteSymbols = new Set();
+
+    function nowKstTime() {
+      const d = new Date(Date.now() + (new Date().getTimezoneOffset() + 540) * 60000);
+      const pad = n => String(n).padStart(2, "0");
+      return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
 
     function showToast(msg) {
       const el = document.getElementById("toast");
       el.textContent = msg;
       el.classList.remove("hidden");
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => el.classList.add("hidden"), 2600);
+      toastTimer = setTimeout(() => el.classList.add("hidden"), 3000);
     }
 
     function b64ToBytes(b64) {
@@ -314,6 +364,17 @@
       return String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
     }
 
+    function fmtPrice(val, market) {
+      const n = Number(val || 0);
+      if (market === "US") return `$${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      return `${Math.round(n).toLocaleString()}원`;
+    }
+
+    function parseNumsFromText(txt) {
+      const matches = String(txt || "").replace(/,/g, "").match(/\d+(?:\.\d+)?/g);
+      return matches ? matches.map(Number) : [];
+    }
+
     function getBudgetConfig() {
       const man = Math.max(10, Number(document.getElementById("budgetMan").value) || 500);
       const risk = Number(document.getElementById("riskPct").value) || 1.5;
@@ -331,18 +392,119 @@
       const riskPerShareKrw = st > 0 && st < p ? (p - st) * (it.market === "US" ? FX_KRW : 1) : pKrw * 0.035;
       const qty = Math.max(0, Math.min(Math.floor(maxLossKrw / Math.max(riskPerShareKrw, 1)), Math.floor(maxPosKrw / Math.max(pKrw, 1))));
       if (qty <= 0) return "1주 단가가 투자금 한도 초과";
-      return `약 ${qty.toLocaleString()}주 (약 ${Math.round((qty * pKrw) / 10000).toLocaleString()}만 원 · 최대손실 ${riskPct}%)`;
+      return `약 ${qty.toLocaleString()}주 (약 ${Math.round((qty * pKrw) / 10000).toLocaleString()}만 원)`;
+    }
+
+    function computeBeginnerAction(it) {
+      const p = Number(it.price_num || 0);
+      const st = Number(it.stop_num || 0) || parseNumsFromText(it.stop_loss)[0] || 0;
+      const t1 = Number(it.target1_num || 0) || parseNumsFromText(it.target_1)[0] || 0;
+      const t2 = parseNumsFromText(it.target_2)[0] || 0;
+      const bz = parseNumsFromText(it.buy_zone);
+      const bzLow = bz[0] || 0;
+      const bzHigh = bz[1] || bz[0] || 0;
+
+      if (p > 0 && st > 0 && p <= st) {
+        return {
+          cls: "caution",
+          title: "🚨 손절선 아래예요! 지금은 사지 마세요",
+          sub: "보유 중이라면 더 큰 손실을 막기 위해 비중 줄이기를 점검하세요."
+        };
+      }
+      if (p > 0 && t2 > 0 && p >= t2) {
+        return {
+          cls: "profit",
+          title: "🎉 2차 목표가 도달! 남은 물량 팔아 수익 챙기세요",
+          sub: "이미 많이 오른 자리라 새로 따라 사는 건 위험해요."
+        };
+      }
+      if (p > 0 && t1 > 0 && p >= t1) {
+        return {
+          cls: "profit",
+          title: "💰 1차 목표가 도달! 절반(50%) 팔고 수익 확정하세요",
+          sub: "나머지 절반은 2차 목표가까지 편하게 지켜보시면 됩니다."
+        };
+      }
+      if (it.status === "buy") {
+        if (bzHigh > 0 && p > bzHigh * 1.01) {
+          return {
+            cls: "watch",
+            title: "🟡 흐름은 좋지만 살짝 올랐어요 · 눌릴 때 나눠 사세요",
+            sub: `매수 구간(${it.buy_zone}) 부근으로 내려오면 2~3번 나눠 진입하세요.`
+          };
+        }
+        return {
+          cls: "buy",
+          title: "🟢 지금 사도 좋은 구간이에요 (2~3번 나눠 매수)",
+          sub: "한 번에 다 사지 말고, 1차 목표가 오면 절반 팔 계획을 세워두세요."
+        };
+      }
+      if (it.status === "watch") {
+        return {
+          cls: "watch",
+          title: "🟡 지금은 관망! 조금 더 기다렸다가 사세요",
+          sub: `매수 구간(${it.buy_zone})까지 내려오거나 거래량이 붙을 때 진입하세요.`
+        };
+      }
+      return {
+        cls: "caution",
+        title: "🔴 지금은 사지 마세요 (하락·과열 주의 구간)",
+        sub: "바닥을 확인하기 전에는 무리하게 들어가지 않는 게 안전해요."
+      };
+    }
+
+    function buildPriceGaugeHTML(it) {
+      const p = Number(it.price_num || 0);
+      const st = Number(it.stop_num || 0) || parseNumsFromText(it.stop_loss)[0] || 0;
+      const t2 = parseNumsFromText(it.target_2)[0] || Number(it.target1_num || 0) || 0;
+      if (p <= 0 || st <= 0 || t2 <= st) return "";
+      const minV = st * 0.985;
+      const maxV = t2 * 1.015;
+      const pct = Math.max(3, Math.min(97, ((p - minV) / (maxV - minV)) * 100));
+      return `
+        <div class="gauge-wrap">
+          <div class="gauge-title">
+            <span>한눈에 보는 현재 가격 위치</span>
+            <span>● 현재 ${esc(it.price_text)}</span>
+          </div>
+          <div class="gauge-track">
+            <div class="gauge-dot" style="left:${pct.toFixed(1)}%;"></div>
+          </div>
+          <div class="gauge-labels">
+            <span>손절선</span>
+            <span>매수구간</span>
+            <span>1차 매도</span>
+            <span>2차 매도</span>
+          </div>
+        </div>`;
+    }
+
+    function getOwnedMap() {
+      const map = {};
+      loadMyPortfolio().forEach(h => {
+        if (h.symbol) map[h.symbol.toLowerCase()] = h;
+        if (h.name) map[h.name.toLowerCase()] = h;
+      });
+      return map;
     }
 
     function stockCardHTML(it) {
       const up = Number(it.ret_1d) >= 0;
-      const chgStr = `${up ? "+" : ""}${Number(it.ret_1d).toFixed(1)}%`;
+      const chgStr = `${up ? "+" : ""}${Number(it.ret_1d).toFixed(2)}%`;
       const mktLabel = it.market === "KR" ? "국장" : "미장";
-      const trustBg = (it.trust_label || "").includes("탄탄") ? "#DCFCE7;color:#166534"
-        : (it.trust_label || "").includes("주의") ? "#FEE2E2;color:#991B1B" : "#F1F5F9;color:#475569";
-      const flowCls = (it.flow_label || "").includes("쌍끌이") || (it.flow_label || "").includes("순매수") ? "flow-good"
-        : (it.flow_label || "").includes("매도") ? "flow-bad" : "";
       const posTxt = calcPositionSize(it);
+      const act = computeBeginnerAction(it);
+      const gaugeHtml = buildPriceGaugeHTML(it);
+      const ownedMap = getOwnedMap();
+      const myHold = ownedMap[(it.symbol || "").toLowerCase()] || ownedMap[(it.name || "").toLowerCase()];
+      const isLive = liveQuoteSymbols.has((it.symbol || "").toUpperCase());
+
+      let ownedTag = "";
+      if (myHold && !myHold.delisted && Number(myHold.buyPrice) > 0 && Number(it.price_num) > 0) {
+        const myPct = ((Number(it.price_num) / Number(myHold.buyPrice)) - 1) * 100;
+        ownedTag = `<span class="mkt-tag owned">💼 보유중 (${myPct >= 0 ? "+" : ""}${myPct.toFixed(1)}%)</span>`;
+      }
+
       return `
         <article class="card">
           <div class="card-top">
@@ -353,29 +515,70 @@
                 <span class="stock-code">${esc(it.symbol)}</span>
               </div>
               <div class="stock-meta" style="margin-top:5px;">
-                ${it.trust_label ? `<span class="mkt-tag" style="background:${trustBg}">${esc(it.trust_label)}</span>` : ""}
-                ${it.flow_label ? `<span class="mkt-tag ${flowCls}">${esc(it.flow_label)}</span>` : ""}
+                ${isLive ? `<span class="mkt-tag live-dot">● 실시간</span>` : ""}
+                ${ownedTag}
               </div>
             </div>
-            <span class="badge ${esc(it.status)}">${esc(it.badge)}</span>
           </div>
+
           <div class="price-row">
             <div><span class="cur-price">${esc(it.price_text)}</span><span class="chg ${up ? "up" : "down"}">${chgStr}</span></div>
-            <span class="score-pill">신호 ${esc(it.score)}점${it.rr_ratio ? ` · 손익비 1:${esc(it.rr_ratio)}` : ""}</span>
           </div>
-          <div class="plan-grid">
-            <div class="plan-row buy-box"><span class="plan-lbl">매수 구간</span><span class="plan-val">${esc(it.buy_zone)}</span></div>
-            <div class="plan-row sell-box"><span class="plan-lbl">목표 매도가</span><span class="plan-val">1차 ${esc(it.target_1)}<br/>2차 ${esc(it.target_2)}</span></div>
-            <div class="plan-row stop-box"><span class="plan-lbl">손절 기준가</span><span class="plan-val">${esc(it.stop_loss)}</span></div>
-            ${posTxt ? `<div class="plan-row size-box"><span class="plan-lbl">권장 매수량</span><span class="plan-val">${esc(posTxt)}</span></div>` : ""}
+
+          <div class="action-banner ${act.cls}">
+            ${esc(act.title)}
+            <span class="action-sub">${esc(act.sub)}</span>
           </div>
-          <div class="guide-line">
-            <strong>초보 가이드:</strong> ${esc(it.beginner_guide)}
-            ${it.trust_note ? `<div class="reason-sub">재무·신뢰: ${esc(it.trust_note)}</div>` : ""}
-            ${it.reasons ? `<div class="reason-sub">기술 근거: ${esc(it.reasons)}</div>` : ""}
+
+          ${gaugeHtml}
+
+          <div class="step-list">
+            <div class="step-box buy-step">
+              <div class="step-left">
+                <span class="step-lbl">① 살 때 (매수 구간)</span>
+                <span class="step-hint">${posTxt ? `권장 ${esc(posTxt)} · 2~3회 분할` : "한 번에 사지 말고 나눠 매수"}</span>
+              </div>
+              <div class="step-val">${esc(it.buy_zone)}</div>
+            </div>
+
+            <div class="step-box sell-step">
+              <div class="step-left">
+                <span class="step-lbl">② 팔 때 (목표 매도가)</span>
+                <span class="step-hint">1차에 절반(50%) 팔고, 2차에 전량 매도</span>
+              </div>
+              <div class="step-val">
+                1차 ${esc(it.target_1)}
+                <small>2차 ${esc(it.target_2)}</small>
+              </div>
+            </div>
+
+            <div class="step-box stop-step">
+              <div class="step-left">
+                <span class="step-lbl">③ 멈출 때 (손절 기준가)</span>
+                <span class="step-hint">이 가격 깨지면 손실 방어 매도 검토</span>
+              </div>
+              <div class="step-val">${esc(it.stop_loss)}</div>
+            </div>
           </div>
+
+          <details class="pro-details">
+            <summary>
+              <span>📊 점수·수급·기술 근거 자세히 보기</span>
+              <span>▼</span>
+            </summary>
+            <div class="pro-body">
+              <div><strong>종합 점수:</strong> ${esc(it.score)}점 (${esc(it.badge)})${it.rr_ratio ? ` · 손익비 1:${esc(it.rr_ratio)}` : ""}</div>
+              ${it.trust_label ? `<div><strong>재무·신뢰:</strong> ${esc(it.trust_label)}${it.trust_note ? ` (${esc(it.trust_note)})` : ""}</div>` : ""}
+              ${it.flow_label ? `<div><strong>수급:</strong> ${esc(it.flow_label)}</div>` : ""}
+              ${it.reasons ? `<div><strong>기술 근거:</strong> ${esc(it.reasons)}</div>` : ""}
+              ${it.beginner_guide ? `<div><strong>요약 메모:</strong> ${esc(it.beginner_guide)}</div>` : ""}
+            </div>
+          </details>
+
           <div class="card-foot">
-            <button class="btn-ghost" onclick="prefillMyPortfolio('${esc(it.name)}','${esc(it.symbol)}',${Number(it.price_num||0)},${Number(it.target1_num||0)},${Number(it.stop_num||0)})">+ 내 보유에 추가</button>
+            ${myHold
+              ? `<button class="btn-ghost" onclick="document.querySelector('.tab-btn[data-tab=my]').click()">💼 내 보유에서 대응 보기</button>`
+              : `<button class="btn-ghost" onclick="prefillMyPortfolio('${esc(it.name)}','${esc(it.symbol)}',${Number(it.price_num||0)},${Number(it.target1_num||0)},${Number(it.stop_num||0)})">+ 내 보유에 추가</button>`}
           </div>
         </article>`;
     }
@@ -392,21 +595,33 @@
     }
     function saveMyPortfolio(arr) { localStorage.setItem(MY_PORT_KEY, JSON.stringify(arr)); }
 
-    window.prefillMyPortfolio = function(name, sym, price, t1, stop) {
-      document.getElementById("myName").value = name;
-      document.getElementById("mySymbol").value = sym;
-      if (price > 0) document.getElementById("myBuyPrice").value = price;
-      if (t1 > 0) document.getElementById("myTarget").value = t1;
-      if (stop > 0) document.getElementById("myStop").value = stop;
+    window.prefillMyPortfolio = function(name, sym, price, t1, stop, qty) {
+      document.getElementById("myName").value = name || "";
+      document.getElementById("mySymbol").value = sym || "";
+      document.getElementById("myBuyPrice").value = price > 0 ? price : "";
+      document.getElementById("myQty").value = qty > 0 ? qty : "";
+      document.getElementById("myTarget").value = t1 > 0 ? t1 : "";
+      document.getElementById("myStop").value = stop > 0 ? stop : "";
       document.querySelector('.tab-btn[data-tab="my"]').click();
-      document.getElementById("myQty").focus();
+      setTimeout(() => {
+        document.getElementById("myEditCard").scrollIntoView({ behavior: "smooth", block: "center" });
+        if (!qty) document.getElementById("myQty").focus();
+      }, 100);
+    };
+
+    window.editMyPortfolio = function(idx) {
+      const arr = loadMyPortfolio();
+      const h = arr[idx];
+      if (!h) return;
+      prefillMyPortfolio(h.name, h.symbol, Number(h.buyPrice || 0), Number(h.target || 0), Number(h.stop || 0), Number(h.qty || 0));
+      showToast(`${h.name} 수정 모드 — 값 변경 후 저장을 누르세요.`);
     };
 
     window.removeMyPortfolio = function(idx) {
       const arr = loadMyPortfolio();
       arr.splice(idx, 1);
       saveMyPortfolio(arr);
-      renderMyPortfolio();
+      renderAll();
       showToast("보유 종목에서 삭제했습니다.");
     };
 
@@ -418,11 +633,11 @@
       ((appData && appData.watchlist) || []).forEach(w => { watchMap[w.symbol.toLowerCase()] = w; watchMap[w.name.toLowerCase()] = w; });
       const live = watchMap[(h.symbol||"").toLowerCase()] || watchMap[(h.name||"").toLowerCase()];
       const cur = live ? Number(live.price_num) : Number(h.buyPrice);
-      const addQty = Number(prompt(`${h.name} 현재가(${cur.toLocaleString()}원)에 추가 매수할 주수를 입력하세요:`, "1"));
+      const addQty = Number(prompt(`${h.name} 현재가(${Math.round(cur).toLocaleString()}원)에 추가 매수할 주수를 입력하세요:`, "1"));
       if (!addQty || addQty <= 0) return;
       const newQty = Number(h.qty) + addQty;
       const newAvg = Math.round(((Number(h.buyPrice) * Number(h.qty)) + (cur * addQty)) / newQty);
-      alert(`[물타기 시뮬레이션]\n• 기존 평단: ${Number(h.buyPrice).toLocaleString()}원 (${h.qty}주)\n• 추가 매수 후 예상 평단: ${newAvg.toLocaleString()}원 (${newQty}주)\n• 추가 필요 금액: ${Math.round(cur * addQty).toLocaleString()}원`);
+      alert(`[물타기 시뮬레이션]\n• 기존 평단: ${Math.round(Number(h.buyPrice)).toLocaleString()}원 (${h.qty}주)\n• 추가 매수 후 예상 평단: ${newAvg.toLocaleString()}원 (${newQty}주)\n• 추가 필요 금액: ${Math.round(cur * addQty).toLocaleString()}원`);
     };
 
     function renderMyPortfolio() {
@@ -431,7 +646,7 @@
       const box = document.getElementById("myPortfolioList");
       if (!arr.length) {
         sumBox.innerHTML = "";
-        box.innerHTML = `<div class="empty">등록된 보유 종목이 없습니다. 아래에서 직접 입력하거나 <strong>📋 일괄 붙여넣기</strong> 또는 GitHub Secret(<code>MY_HOLDINGS_JSON</code>)으로 한 번에 연동하세요.</div>`;
+        box.innerHTML = `<div class="empty">등록된 보유 종목이 없습니다. 아래에서 직접 입력하거나 <strong>📋 일괄 붙여넣기</strong> 또는 <strong>☁️ 암호화 백업 동기화</strong>를 눌러주세요.</div>`;
         return;
       }
       const watchMap = {};
@@ -456,29 +671,51 @@
         totalBuyKrw += buyTotal * mul;
         totalEvalKrw += evalTotal * mul;
 
-        let pct = 0, pctStr = "-", pnlStr = "", recoverStr = "", alertHtml = "";
+        let pct = 0, pctStr = "-", pnlStr = "", recoverStr = "", actionCls = "watch", actionTitle = "시세 불러오는 중", actionSub = "";
         if (isDelisted) {
           pctStr = "-100.0%";
           pnlStr = `매입 ${fmt(buyTotal)} · 거래정지/상폐`;
-          alertHtml = `<div class="alert-box stop">⚠️ 현재가 0원(상장폐지/정리매매 완료) 종목입니다. 참고 기록으로만 표시됩니다.</div>`;
+          actionCls = "caution";
+          actionTitle = "⚫ 거래정지/상장폐지 종목";
+          actionSub = "현재가 0원 기록용으로 보관 중입니다.";
         } else if (cur > 0 && buy > 0) {
           pct = ((cur / buy) - 1) * 100;
           pctStr = `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%`;
           const pnl = evalTotal - buyTotal;
           pnlStr = `${pnl >= 0 ? "+" : ""}${fmt(pnl)}`;
-          if (cur < buy) {
-            const need = ((buy / cur) - 1) * 100;
-            recoverStr = `본전까지 +${need.toFixed(1)}% 상승 필요`;
-          }
+          const need = cur < buy ? (((buy / cur) - 1) * 100).toFixed(1) : "0";
+          if (cur < buy) recoverStr = `본전까지 +${need}% 상승 필요`;
+
           if (h.stop && cur <= Number(h.stop)) {
-            alertHtml = `<div class="alert-box stop">🚨 손절 기준가(${fmt(h.stop)}) 도달 — 원칙 점검 필요</div>`;
+            actionCls = "caution";
+            actionTitle = `🚨 내가 정한 손절가(${fmt(h.stop)}) 도달!`;
+            actionSub = "더 큰 손실을 막기 위해 매도 또는 비중 축소를 검토하세요.";
           } else if (h.target && cur >= Number(h.target)) {
-            alertHtml = `<div class="alert-box profit">🎉 목표 매도가(${fmt(h.target)}) 도달 — 분할 익절 타이밍</div>`;
-          } else if (live) {
-            alertHtml = `<div class="alert-box hold">📌 현재 진단: ${esc(live.badge)} (${live.score}점)${live.flow_label ? ` · ${esc(live.flow_label)}` : ""}</div>`;
+            actionCls = "profit";
+            actionTitle = `🎉 내가 정한 목표가(${fmt(h.target)}) 도달!`;
+            actionSub = "지금 보유 수량의 절반(50%) 이상 팔아서 수익을 챙기세요.";
+          } else if (pct >= 12) {
+            actionCls = "profit";
+            actionTitle = "💰 수익 구간(+12% 이상)! 절반 팔아 수익 확정 추천";
+            actionSub = "나머지 절반은 본전가 아래로 내려오지 않는 한 더 지켜보세요.";
+          } else if (pct >= 0) {
+            actionCls = "buy";
+            actionTitle = "🟢 수익 중! 목표가까지 편하게 보유하세요";
+            actionSub = live ? `단기 1차 목표가 ${live.target_1} 부근에서 절반 익절을 계획해 보세요.` : "목표 매도가를 설정해 두면 알림을 받을 수 있어요.";
+          } else if (pct > -15) {
+            actionCls = "watch";
+            actionTitle = `🟡 소폭 조정 중 (본전까지 +${need}%)`;
+            actionSub = live ? `손절선(${live.stop_loss})만 안 깨지면 보유 유지, 반등 시 1차 목표(${live.target_1}) 확인.` : "급하게 팔기보다 추세를 지켜보세요.";
+          } else {
+            actionCls = "caution";
+            actionTitle = `🟠 장기 물림 구간 (본전까지 +${need}%)`;
+            actionSub = live
+              ? `무리한 추격 물타기 금지! 단기 반등 목표(${live.target_1}) 부근에서 비중 조절하거나 아래 '물타기 계산'으로 계획을 세워보세요.`
+              : "무리한 추가 매수보다 반등 구간에서 비중 조절을 검토하세요.";
           }
         }
 
+        const isLive = liveQuoteSymbols.has((h.symbol || "").toUpperCase());
         return `
           <article class="card">
             <div class="card-top">
@@ -486,23 +723,42 @@
                 <div class="stock-meta">
                   <span class="stock-name">${esc(h.name)}</span>
                   <span class="stock-code">${esc(h.symbol)} · ${qty}주</span>
+                  ${isLive ? `<span class="mkt-tag live-dot">● 실시간</span>` : ""}
                 </div>
-                ${live && live.trust_label ? `<div class="stock-meta" style="margin-top:4px;"><span class="mkt-tag">${esc(live.trust_label)}</span></div>` : ""}
               </div>
-              <span class="chg ${pct >= 0 ? "up" : "down"}" style="font-size:17px;">${pctStr}</span>
+              <span class="chg ${pct >= 0 ? "up" : "down"}" style="font-size:18px;">${pctStr}</span>
             </div>
+
             <div class="price-row">
               <div><span class="cur-price">${isDelisted ? "0원" : (cur > 0 ? fmt(cur) : "시세 대기")}</span></div>
-              <span class="score-pill">${pnlStr}</span>
+              <span style="font-size:13px;font-weight:700;color:var(--ink2);">${pnlStr}</span>
             </div>
-            <div class="plan-grid">
-              <div class="plan-row buy-box"><span class="plan-lbl">내 매입단가 (총 매입)</span><span class="plan-val">${fmt(buy)} (${fmt(buyTotal)})</span></div>
-              ${!isDelisted && cur > 0 ? `<div class="plan-row stop-box"><span class="plan-lbl">현재 평가금액</span><span class="plan-val">${fmt(evalTotal)}${recoverStr ? `<br/><span style="font-size:11.5px;color:#64748B;">${recoverStr}</span>` : ""}</span></div>` : ""}
-              ${live && !isDelisted ? `<div class="plan-row sell-box"><span class="plan-lbl">단기 반등 1차 목표가</span><span class="plan-val">${esc(live.target_1)}</span></div>` : ""}
+
+            <div class="action-banner ${actionCls}">
+              ${esc(actionTitle)}
+              ${actionSub ? `<span class="action-sub">${esc(actionSub)}</span>` : ""}
             </div>
-            ${alertHtml}
+
+            <div class="step-list">
+              <div class="step-box buy-step">
+                <div class="step-left"><span class="step-lbl">내 매입단가</span><span class="step-hint">총 매입 ${fmt(buyTotal)}</span></div>
+                <div class="step-val">${fmt(buy)}</div>
+              </div>
+              ${!isDelisted && cur > 0 ? `
+              <div class="step-box stop-step">
+                <div class="step-left"><span class="step-lbl">현재 평가금액</span><span class="step-hint">${recoverStr || "수익 중"}</span></div>
+                <div class="step-val">${fmt(evalTotal)}</div>
+              </div>` : ""}
+              ${live && !isDelisted ? `
+              <div class="step-box sell-step">
+                <div class="step-left"><span class="step-lbl">단기 반등 1차 목표가</span><span class="step-hint">도달 시 절반 매도 또는 비중 축소 참고</span></div>
+                <div class="step-val">${esc(live.target_1)}</div>
+              </div>` : ""}
+            </div>
+
             <div class="card-foot">
-              ${!isDelisted ? `<button class="btn-ghost" onclick="calcWatering(${idx})">물타기 계산</button>` : ""}
+              <button class="btn-ghost" onclick="editMyPortfolio(${idx})">✏️ 수정</button>
+              ${!isDelisted ? `<button class="btn-ghost" onclick="calcWatering(${idx})">🧮 물타기 계산</button>` : ""}
               <button class="btn-ghost" onclick="removeMyPortfolio(${idx})">삭제</button>
             </div>
           </article>`;
@@ -525,9 +781,24 @@
       box.innerHTML = cards;
     }
 
+    function updateHeaderTime() {
+      const el = document.getElementById("updatedText");
+      const baseTime = (appData && appData.updated_kst) ? appData.updated_kst.replace(/^\d{4}-/, "") : "-";
+      if (liveUpdatedAt) {
+        el.className = "brand-time live";
+        el.textContent = `● 실시간 ${liveUpdatedAt} (분석 ${baseTime})`;
+      } else if (lastCheckedAt) {
+        el.className = "brand-time";
+        el.textContent = `확인 ${lastCheckedAt} · 스캔 ${baseTime}`;
+      } else {
+        el.className = "brand-time";
+        el.textContent = `분석: ${baseTime}`;
+      }
+    }
+
     function renderAll() {
       if (!appData) return;
-      document.getElementById("updatedText").textContent = `갱신: ${appData.updated_kst || "-"}`;
+      updateHeaderTime();
       const s = appData.summary || {};
       document.getElementById("sumBuy").textContent = `${s.buy_count ?? 0}개`;
       document.getElementById("sumWatch").textContent = `${s.watch_count ?? 0}개`;
@@ -582,23 +853,26 @@
         <article class="card">
           <div class="card-top">
             <div class="stock-meta"><span class="mkt-tag">이슈급등</span><span class="stock-name">${esc(m.name)}</span><span class="stock-code">${esc(m.ticker)}</span></div>
-            <span class="badge ${m.risk_flag ? "caution" : "buy"}">${esc(m.issue_verdict || "이슈 관찰")} · ${esc(m.issue_score ?? 60)}점</span>
           </div>
-          <div class="price-row"><span class="cur-price">${esc(m.price_text)}</span><span class="score-pill">+${Number(m.chg_pct).toFixed(1)}% · 거래대금 ${esc(m.trade_val_eok)}억</span></div>
-          <div class="plan-grid">
-            <div class="plan-row buy-box"><span class="plan-lbl">매수 구간</span><span class="plan-val">${esc(m.buy_zone)}</span></div>
-            <div class="plan-row sell-box"><span class="plan-lbl">목표 매도가</span><span class="plan-val">1차 ${esc(m.target_1)} / 2차 ${esc(m.target_2)}</span></div>
-            <div class="plan-row stop-box"><span class="plan-lbl">손절 기준가</span><span class="plan-val">${esc(m.stop_loss)}</span></div>
+          <div class="price-row"><span class="cur-price">${esc(m.price_text)}</span><span class="chg up">+${Number(m.chg_pct).toFixed(1)}%</span></div>
+          <div class="action-banner ${m.risk_flag ? "caution" : "watch"}">
+            ${m.risk_flag ? "🔴 급등 위험 주의 · 추격 매수 금지" : "🟡 이슈 급등 초입 · 소액 분할 & 손절 필수"}
+            <span class="action-sub">거래대금 ${esc(m.trade_val_eok)}억 · ${esc(m.issue_verdict || "이슈 관찰")}</span>
           </div>
-          ${m.news_title ? `<div class="guide-line"><strong>관련 뉴스:</strong> ${m.news_link ? `<a href="${esc(m.news_link)}" target="_blank" rel="noopener">${esc(m.news_title)}</a>` : esc(m.news_title)}</div>` : ""}
+          <div class="step-list">
+            <div class="step-box buy-step"><div class="step-left"><span class="step-lbl">① 살 때 (매수 구간)</span></div><div class="step-val">${esc(m.buy_zone)}</div></div>
+            <div class="step-box sell-step"><div class="step-left"><span class="step-lbl">② 팔 때 (목표 매도가)</span></div><div class="step-val">1차 ${esc(m.target_1)}<small>2차 ${esc(m.target_2)}</small></div></div>
+            <div class="step-box stop-step"><div class="step-left"><span class="step-lbl">③ 멈출 때 (손절 기준가)</span></div><div class="step-val">${esc(m.stop_loss)}</div></div>
+          </div>
+          ${m.news_title ? `<div class="pro-body" style="margin-top:8px;"><strong>관련 뉴스:</strong> ${m.news_link ? `<a href="${esc(m.news_link)}" target="_blank" rel="noopener">${esc(m.news_title)}</a>` : esc(m.news_title)}</div>` : ""}
         </article>`).join("") : `<div class="empty">포착된 이슈 급등 초입 종목이 없습니다.</div>`;
 
       const lu = appData.limit_up || [];
       document.getElementById("limitUpList").innerHTML = lu.length ? lu.map(m => `
         <article class="card">
-          <div class="card-top"><div class="stock-meta"><span class="mkt-tag">초급등</span><span class="stock-name">${esc(m.name)}</span><span class="stock-code">${esc(m.ticker)}</span></div><span class="badge caution">+${Number(m.chg_pct).toFixed(1)}%</span></div>
-          <div class="price-row"><span class="cur-price">${esc(m.price_text)}</span><span class="score-pill">거래대금 ${esc(m.trade_val_eok)}억</span></div>
-          <div class="guide-line"><strong>급등 원인:</strong> ${m.news_link ? `<a href="${esc(m.news_link)}" target="_blank" rel="noopener">${esc(m.news_title || "기사 보기")}</a>` : esc(m.news_title || "관련 공시/뉴스 확인 필요")}</div>
+          <div class="card-top"><div class="stock-meta"><span class="mkt-tag">초급등</span><span class="stock-name">${esc(m.name)}</span><span class="stock-code">${esc(m.ticker)}</span></div><span class="chg up">+${Number(m.chg_pct).toFixed(1)}%</span></div>
+          <div class="price-row"><span class="cur-price">${esc(m.price_text)}</span><span style="font-size:12.5px;color:var(--mute);">거래대금 ${esc(m.trade_val_eok)}억</span></div>
+          <div class="pro-body"><strong>급등 원인:</strong> ${m.news_link ? `<a href="${esc(m.news_link)}" target="_blank" rel="noopener">${esc(m.news_title || "기사 보기")}</a>` : esc(m.news_title || "관련 공시/뉴스 확인 필요")}</div>
         </article>`).join("") : `<div class="empty">당일 +22% 이상 초급등 종목이 없습니다.</div>`;
     }
     function renderNews() {
@@ -606,9 +880,70 @@
       document.getElementById("newsList").innerHTML = cats.length ? cats.map(c => `
         <article class="card">
           <div class="news-cat">${esc(c.category)}</div>
-          ${(c.items || []).length ? c.items.map(it => it.link ? `<a class="news-item" href="${esc(it.link)}" target="_blank" rel="noopener">${esc(it.title)}</a>` : `<div class="news-item">${esc(it.title)}</div>`).join("") : `<div class="reason-sub">수집된 신규 기사 없음</div>`}
+          ${(c.items || []).length ? c.items.map(it => it.link ? `<a class="news-item" href="${esc(it.link)}" target="_blank" rel="noopener">${esc(it.title)}</a>` : `<div class="news-item">${esc(it.title)}</div>`).join("") : `<div style="font-size:12px;color:var(--mute);">수집된 신규 기사 없음</div>`}
         </article>`).join("") : `<div class="empty">수집된 투자 이슈 뉴스가 없습니다.</div>`;
     }
+
+    function requestNativeLiveQuotes(manual) {
+      if (!appData || !window.AndroidStockBridge || typeof window.AndroidStockBridge.fetchLiveQuotes !== "function") {
+        return false;
+      }
+      const syms = new Set();
+      (appData.watchlist || []).forEach(w => { if (w.symbol) syms.add(w.symbol); });
+      (appData.recommendations || []).forEach(r => { if (r.symbol) syms.add(r.symbol); });
+      loadMyPortfolio().forEach(h => { if (h.symbol && !h.delisted) syms.add(h.symbol); });
+      if (syms.size === 0) return false;
+
+      const btn = document.getElementById("refreshBtn");
+      if (manual) { btn.disabled = true; btn.textContent = "⏳ 시세조회"; }
+      clearTimeout(liveQuoteTimer);
+      liveQuoteTimer = setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = "↻ 새로고침";
+        if (window.AndroidStockBridge.notifyRefreshDone) window.AndroidStockBridge.notifyRefreshDone();
+      }, 9000);
+
+      try {
+        window.AndroidStockBridge.fetchLiveQuotes(Array.from(syms).join(","));
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    window.onLiveQuotesUpdated = function(quotes) {
+      clearTimeout(liveQuoteTimer);
+      const btn = document.getElementById("refreshBtn");
+      btn.disabled = false;
+      btn.textContent = "↻ 새로고침";
+      if (!appData || !quotes || typeof quotes !== "object") return;
+
+      let updatedCount = 0;
+      const applyQuote = (item) => {
+        if (!item || !item.symbol) return;
+        const q = quotes[item.symbol] || quotes[item.symbol.toUpperCase()];
+        if (q && Number(q.price) > 0) {
+          item.price_num = Number(q.price);
+          item.price_text = fmtPrice(item.price_num, item.market);
+          if (q.ret_1d !== undefined && q.ret_1d !== null) item.ret_1d = Number(q.ret_1d);
+          liveQuoteSymbols.add(item.symbol.toUpperCase());
+          updatedCount++;
+        }
+      };
+
+      (appData.watchlist || []).forEach(applyQuote);
+      (appData.recommendations || []).forEach(applyQuote);
+
+      if (updatedCount > 0) {
+        liveUpdatedAt = nowKstTime();
+        renderAll();
+        showToast(`✅ 실시간 시세 반영 완료! (${liveUpdatedAt})`);
+      } else {
+        lastCheckedAt = nowKstTime();
+        updateHeaderTime();
+        showToast(`최신 데이터 확인 완료 (${appData.updated_kst || ""})`);
+      }
+    };
 
     async function tryUnlock(pin, save, manual) {
       const err = document.getElementById("lockErr");
@@ -618,8 +953,12 @@
         if (save) localStorage.setItem(PIN_KEY, pin);
         document.getElementById("lockScreen").classList.add("hidden");
         document.getElementById("lockBtn").classList.remove("hidden");
+        lastCheckedAt = nowKstTime();
         renderAll();
-        if (manual) showToast(`최신 시세 반영 완료 (${appData.updated_kst || ""})`);
+        const startedLive = requestNativeLiveQuotes(manual);
+        if (manual && !startedLive) {
+          showToast(`✅ 최신 데이터 확인 (${appData.updated_kst || ""} · v4.7 앱에서 실시간 시세 지원)`);
+        }
       } catch (e) {
         err.textContent = "비밀번호가 올바르지 않습니다.";
         localStorage.removeItem(PIN_KEY);
@@ -642,13 +981,15 @@
 
     async function loadFeed(manual = false) {
       const btn = document.getElementById("refreshBtn");
-      if (manual) { btn.disabled = true; btn.textContent = "갱신 중..."; }
+      if (manual) { btn.disabled = true; btn.textContent = "⏳ 갱신중"; }
+      let livePending = false;
       try {
         rawEnvelope = await fetchLatestEnvelope();
         if (rawEnvelope.encrypted) {
           const saved = localStorage.getItem(PIN_KEY);
           if (saved) {
             await tryUnlock(saved, false, manual);
+            if (appData && window.AndroidStockBridge) livePending = true;
             if (appData) return;
           }
           document.getElementById("lockScreen").classList.remove("hidden");
@@ -656,17 +997,25 @@
         } else {
           appData = rawEnvelope.payload || rawEnvelope;
           document.getElementById("lockScreen").classList.add("hidden");
+          lastCheckedAt = nowKstTime();
           renderAll();
-          if (manual) showToast(`최신 시세 반영 완료 (${appData.updated_kst || ""})`);
+          livePending = requestNativeLiveQuotes(manual);
+          if (manual && !livePending) {
+            showToast(`✅ 최신 데이터 확인 (${appData.updated_kst || ""} · v4.7 앱에서 실시간 시세 지원)`);
+          }
         }
       } catch (e) {
         document.getElementById("updatedText").textContent = "불러오기 실패 (네트워크 확인)";
         if (manual) showToast("네트워크 상태를 확인해 주세요.");
       } finally {
-        btn.disabled = false;
-        btn.textContent = "↻ 새로고침";
+        if (!livePending) {
+          btn.disabled = false;
+          btn.textContent = "↻ 새로고침";
+        }
       }
     }
+
+    window.triggerAppRefresh = function() { loadFeed(true); };
 
     try {
       const sb = JSON.parse(localStorage.getItem(BUDGET_KEY) || "{}");
@@ -694,7 +1043,7 @@
       if (existIdx >= 0) arr[existIdx] = item; else arr.unshift(item);
       saveMyPortfolio(arr);
       ["myName", "mySymbol", "myBuyPrice", "myQty", "myTarget", "myStop"].forEach(id => document.getElementById(id).value = "");
-      renderMyPortfolio();
+      renderAll();
       showToast(`${name} 저장 완료!`);
     });
 
@@ -705,7 +1054,7 @@
         const parsed = JSON.parse(txt);
         if (!Array.isArray(parsed)) throw new Error("not array");
         saveMyPortfolio(parsed);
-        renderMyPortfolio();
+        renderAll();
         showToast(`${parsed.length}개 보유 종목 불러오기 완료!`);
       } catch {
         showToast("JSON 형식이 올바르지 않습니다.");
@@ -715,12 +1064,16 @@
     document.getElementById("syncSecretBtn").addEventListener("click", () => {
       if (appData && Array.isArray(appData.my_holdings) && appData.my_holdings.length > 0) {
         saveMyPortfolio(appData.my_holdings);
-        renderMyPortfolio();
+        renderAll();
         showToast(`암호화 백업 ${appData.my_holdings.length}종목 동기화 완료!`);
       } else {
         showToast("GitHub Secrets에 MY_HOLDINGS_JSON이 아직 없습니다.");
       }
     });
+
+    document.getElementById("helpBtn").addEventListener("click", () => document.getElementById("guideModal").classList.remove("hidden"));
+    document.getElementById("closeGuideBtn").addEventListener("click", () => document.getElementById("guideModal").classList.add("hidden"));
+    document.getElementById("guideModal").addEventListener("click", e => { if (e.target.id === "guideModal") e.target.classList.add("hidden"); });
 
     document.getElementById("unlockBtn").addEventListener("click", () => {
       const pin = document.getElementById("pinInput").value.trim();
