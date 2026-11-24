@@ -204,7 +204,7 @@ def test_v40_android_apk_project():
     for rf in req_files:
         assert (ROOT / rf).exists(), f"Missing {rf}"
     wf = (ROOT / ".github/workflows/build-android-apk.yml").read_text(encoding="utf-8")
-    assert "assembleDebug" in wf and "MyStockAssistant-v5.0.apk" in wf
+    assert "assembleDebug" in wf and "MyStockAssistant-v5.1.apk" in wf
     print("[PASS 12/12] v4.0 안드로이드 단독 APK 프로젝트 및 GitHub Actions 자동 빌드 구성 검증 통과")
 
 
@@ -234,7 +234,7 @@ def test_v45_position_sizing_and_portfolio_ui():
     assert "calcPositionSize" in idx and "budgetMan" in idx and "riskPct" in idx
     assert "tab-my" in idx and "내 보유" in idx and "손절 기준가" in idx and "목표 매도가" in idx
     wf = (ROOT / ".github/workflows/build-android-apk.yml").read_text(encoding="utf-8")
-    assert "MyStockAssistant-v5.0.apk" in wf
+    assert "MyStockAssistant-v5.1.apk" in wf
     print("[PASS 14/14] v4.5 투자금 기반 자동 매수량 계산기·내 보유 익절/손절 트래커·APK v4.5 구성 검증 통과")
 
 
@@ -275,7 +275,7 @@ def test_v47_realtime_bridge_and_beginner_ui():
     for tok in ("computeBeginnerAction", "buildPriceGaugeHTML", "onLiveQuotesUpdated", "AndroidStockBridge", "guideModal", "editMyPortfolio", "① 살 때", "② 팔 때", "③ 멈출 때"):
         assert tok in idx, f"Missing v4.7 UI token: {tok}"
     bg = (ROOT / "android/app/build.gradle").read_text(encoding="utf-8")
-    assert "versionCode 50" in bg and "versionName '5.0'" in bg
+    assert "versionCode 51" in bg and "versionName '5.1'" in bg
     print("[PASS 16/16] v4.7 안드로이드 실시간 시세 브릿지·초보자 신호등/게이지/3단계 매매 UI 검증 통과")
 
 
@@ -287,7 +287,7 @@ def test_v48_push_notifications_and_worker():
     man = (ROOT / "android/app/src/main/AndroidManifest.xml").read_text(encoding="utf-8")
     assert "POST_NOTIFICATIONS" in man
     bg = (ROOT / "android/app/build.gradle").read_text(encoding="utf-8")
-    assert "work-runtime:2.8.1" in bg and "versionCode 50" in bg and "versionName '5.0'" in bg
+    assert "work-runtime:2.8.1" in bg and "versionCode 51" in bg and "versionName '5.1'" in bg
     worker = (ROOT / "android/app/src/main/java/com/mystock/assistant/StockAlertWorker.java").read_text(encoding="utf-8")
     assert "NotificationChannel" in worker and "QuoteFetcher.fetchSingleQuote" in worker
     qf = (ROOT / "android/app/src/main/java/com/mystock/assistant/QuoteFetcher.java").read_text(encoding="utf-8")
@@ -317,3 +317,14 @@ def test_v50_live_market_briefing():
 
 test_v50_live_market_briefing()
 print("=== ALL 18 STOCK QUANT V5.0 SELF-TESTS PASSED ===")
+
+
+def test_v51_simple_compare_board():
+    idx = (ROOT / "docs/index.html").read_text(encoding="utf-8")
+    for tok in ("compareBoard", "renderCompareBoard", "toggleCompareItem", "🛡️ 안정형", "🔥 급등·고위험", "한눈에 비교", "repeat(3, 1fr)"):
+        assert tok in idx, f"Missing v5.1 token: {tok}"
+    print("[PASS 19/19] v5.1 3탭 초간단 UI·안정형 vs 고위험(상한가30%) 한눈에 비교 보드·아코디언 상세 검증 통과")
+
+
+test_v51_simple_compare_board()
+print("=== ALL 19 STOCK QUANT V5.1 SELF-TESTS PASSED ===")
