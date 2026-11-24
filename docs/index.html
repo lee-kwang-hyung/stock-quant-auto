@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="내 주식 비서" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./icon.svg" type="image/svg+xml" />
-  <title>나만의 주식 비서 v5.1</title>
+  <title>나만의 주식 비서 v5.2</title>
   <style>
     :root {
       --bg: #F4F6F9; --card: #FFFFFF; --ink: #0F172A; --ink2: #334155; --mute: #64748B; --line: #E2E8F0;
@@ -188,6 +188,9 @@
     .tab-btn { border: none; background: transparent; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--mute); font-size: 11px; font-weight: 700; }
     .tab-btn .ico { font-size: 19px; line-height: 1; }
     .tab-btn.active { color: var(--accent); }
+    .mkt-switch { margin: 10px 12px 0; padding: 4px; background: #E2E8F0; border-radius: 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+    .mkt-btn { border: none; background: transparent; color: #475569; border-radius: 9px; padding: 8px 6px; font-size: 13px; font-weight: 800; cursor: pointer; transition: all 0.15s; }
+    .mkt-btn.active { background: #FFFFFF; color: #0F172A; box-shadow: 0 2px 6px rgba(15,23,42,0.10); }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -241,7 +244,7 @@
   <div class="app-wrap">
     <header class="topbar">
       <div class="brand">
-        <span class="brand-title">나만의 주식 비서 v5.1</span>
+        <span class="brand-title">나만의 주식 비서 v5.2</span>
         <span id="updatedText" class="brand-time">불러오는 중...</span>
       </div>
       <div class="top-actions">
@@ -254,8 +257,13 @@
 
     <div id="noticeBanner" class="banner hidden"></div>
 
-    <!-- TAB 1: 🏠 한눈에 (시황 브리핑 + 안정형/고위험·상한가/관심 통합 비교 보드) -->
+    <!-- TAB 1: 🏠 한눈에 (한국/미국 전환 + 시황 브리핑 + 안정형/고위험 통합 비교 보드) -->
     <main id="tab-home" class="tab-panel">
+      <div class="mkt-switch" id="marketSwitcher">
+        <button class="mkt-btn active" data-mkt="KR">🇰🇷 한국 주식</button>
+        <button class="mkt-btn" data-mkt="US">🇺🇸 미국 주식</button>
+        <button class="mkt-btn" data-mkt="ALL">🌐 전체</button>
+      </div>
       <div id="liveBriefingBox"></div>
 
       <div class="budget-bar">
@@ -356,6 +364,8 @@
     let rawEnvelope = null;
     let appData = null;
     let liveMarketData = null;
+    const MKT_KEY = "my_stock_active_mkt_v52";
+    let activeMarket = localStorage.getItem(MKT_KEY) || "KR";
     let compareMode = "ALL";
     let liveRankTab = "up";
     let expandedKeys = new Set();
@@ -661,14 +671,23 @@
       const head = document.getElementById("boardHeading");
       const cnt = document.getElementById("boardCount");
       const subBar = document.getElementById("riskRankSubFilter");
+      const riskBtn = document.querySelector('#mainCompareFilter [data-mode="HIGH_RISK"]');
       if (!box || !appData) return;
 
-      const q = (document.getElementById("globalSearch").value || "").trim().toLowerCase();
-      subBar.classList.toggle("hidden", compareMode !== "HIGH_RISK");
+      const isUsOnly = activeMarket === "US";
+      if (riskBtn) riskBtn.classList.toggle("hidden", isUsOnly);
+      if (isUsOnly && compareMode === "HIGH_RISK") {
+        compareMode = "ALL";
+        document.querySelectorAll("#mainCompareFilter .pill").forEach(x => x.classList.toggle("active", x.dataset.mode === "ALL"));
+      }
 
-      const recs = (appData.recommendations || []).filter(x => !q || x.name.toLowerCase().includes(q) || x.symbol.toLowerCase().includes(q));
-      const watch = (appData.watchlist || []).filter(x => !q || x.name.toLowerCase().includes(q) || x.symbol.toLowerCase().includes(q));
-      const risks = getHighRiskList().filter(x => !q || String(x.name || "").toLowerCase().includes(q) || String(x.code || x.ticker || "").toLowerCase().includes(q));
+      const q = (document.getElementById("globalSearch").value || "").trim().toLowerCase();
+      subBar.classList.toggle("hidden", compareMode !== "HIGH_RISK" || isUsOnly);
+
+      const mktMatch = x => activeMarket === "ALL" || x.market === activeMarket;
+      const recs = (appData.recommendations || []).filter(x => mktMatch(x) && (!q || x.name.toLowerCase().includes(q) || x.symbol.toLowerCase().includes(q)));
+      const watch = (appData.watchlist || []).filter(x => mktMatch(x) && (!q || x.name.toLowerCase().includes(q) || x.symbol.toLowerCase().includes(q)));
+      const risks = isUsOnly ? [] : getHighRiskList().filter(x => !q || String(x.name || "").toLowerCase().includes(q) || String(x.code || x.ticker || "").toLowerCase().includes(q));
 
       if (compareMode === "ALL") {
         head.textContent = "오늘 추천 · 안정형 vs 고위험 한눈에 비교";
@@ -706,6 +725,30 @@
     function renderLiveMarketBriefing() {
       const box = document.getElementById("liveBriefingBox");
       if (!box) return;
+      if (activeMarket === "US") {
+        const mr = (appData && appData.market_regime) || {};
+        const usReg = (mr.US && mr.US.regime) || "혼조세";
+        const usEmoji = (mr.US && mr.US.emoji) || "🇺🇸";
+        const usWatch = ((appData && appData.watchlist) || []).filter(x => x.market === "US");
+        const topUs = [...usWatch].sort((a, b) => Number(b.ret_1d || 0) - Number(a.ret_1d || 0)).slice(0, 3);
+        const topUsTxt = topUs.map(x => `${x.name}(${Number(x.ret_1d)>=0?"+":""}${Number(x.ret_1d).toFixed(1)}%)`).join(", ");
+        box.innerHTML = `
+          <div class="briefing-card">
+            <div class="briefing-top">
+              <span class="briefing-title">🇺🇸 미국 주식 요약</span>
+              <span class="briefing-time">${usEmoji} 미장 ${esc(usReg)}</span>
+            </div>
+            <div class="briefing-prose">
+              <p>미국 주식 ${usWatch.length}종목을 달러($) 기준으로 모아봅니다.${topUsTxt ? ` <strong>상위 흐름:</strong> ${esc(topUsTxt)}` : ""}</p>
+              <p>미국장은 상·하한가 제한이 없으니 <strong>③ 손절 기준가</strong>를 꼭 지키며 분할 접근하세요.</p>
+            </div>
+            <div class="briefing-actions">
+              <button class="btn-order" onclick="openBrokerageApp()">📲 한투 해외주식 열기</button>
+              <button class="btn-brief-sub" onclick="loadFeed(true)">↻ 시세 갱신</button>
+            </div>
+          </div>`;
+        return;
+      }
       const d = liveMarketData;
       if (d && d.ok) {
         const kp = d.kospi || { price: "-", pct: 0, status: "" };
@@ -1185,6 +1228,17 @@
       });
     });
     document.getElementById("globalSearch").addEventListener("input", renderCompareBoard);
+    document.querySelectorAll("#marketSwitcher .mkt-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.mkt === activeMarket);
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#marketSwitcher .mkt-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeMarket = btn.dataset.mkt;
+        localStorage.setItem(MKT_KEY, activeMarket);
+        renderLiveMarketBriefing();
+        renderCompareBoard();
+      });
+    });
 
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(() => {});
     loadFeed(false);

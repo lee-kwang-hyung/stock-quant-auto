@@ -328,3 +328,14 @@ def test_v51_simple_compare_board():
 
 test_v51_simple_compare_board()
 print("=== ALL 19 STOCK QUANT V5.1 SELF-TESTS PASSED ===")
+
+
+def test_v52_kr_us_market_switcher():
+    idx = (ROOT / "docs/index.html").read_text(encoding="utf-8")
+    for tok in ("marketSwitcher", "🇰🇷 한국 주식", "🇺🇸 미국 주식", "activeMarket", "my_stock_active_mkt_v52"):
+        assert tok in idx, f"Missing v5.2 token: {tok}"
+    print("[PASS 20/20] v5.2 한국 주식·미국 주식 전용 전환 스위치 및 시장별 맞춤 브리핑 검증 통과")
+
+
+test_v52_kr_us_market_switcher()
+print("=== ALL 20 STOCK QUANT V5.2 SELF-TESTS PASSED ===")
