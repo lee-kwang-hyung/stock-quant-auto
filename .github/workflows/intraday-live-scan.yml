@@ -28,6 +28,7 @@ jobs:
         env:
           APP_PIN: ${{ secrets.APP_PIN }}
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
+          MY_HOLDINGS_JSON: ${{ secrets.MY_HOLDINGS_JSON }}
         run: |
           python scripts/stock_analyzer.py --intraday
       - name: Commit updated PWA live feed

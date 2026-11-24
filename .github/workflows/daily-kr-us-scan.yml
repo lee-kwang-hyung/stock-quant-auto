@@ -29,6 +29,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           APP_PIN: ${{ secrets.APP_PIN }}
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
+          MY_HOLDINGS_JSON: ${{ secrets.MY_HOLDINGS_JSON }}
         run: |
           python scripts/self_test.py
           python scripts/stock_analyzer.py
