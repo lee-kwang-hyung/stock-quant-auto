@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="내 주식 비서" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./icon.svg" type="image/svg+xml" />
-  <title>나만의 주식 비서 v4.7</title>
+  <title>나만의 주식 비서 v4.8</title>
   <style>
     :root {
       --bg: #F3F5F8; --card: #FFFFFF; --ink: #0F172A; --ink2: #334155; --mute: #64748B; --line: #E2E8F0;
@@ -154,6 +154,14 @@
     .tab-btn { border: none; background: transparent; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--mute); font-size: 10.5px; font-weight: 700; }
     .tab-btn .ico { font-size: 19px; line-height: 1; }
     .tab-btn.active { color: var(--accent); }
+    .alert-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid #F1F5F9; font-size: 13.5px; font-weight: 600; color: var(--ink); }
+    .alert-row:last-child { border-bottom: none; }
+    .alert-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: #2563EB; }
+    .alert-status-pill { margin: 10px 0 12px; padding: 9px 11px; border-radius: 10px; background: #EFF6FF; color: #1E40AF; font-size: 12px; font-weight: 700; }
+    .alert-log { max-height: 150px; overflow-y: auto; margin-top: 10px; padding-top: 8px; border-top: 1px solid #E2E8F0; font-size: 12px; color: var(--ink2); }
+    .alert-log-item { padding: 5px 0; border-bottom: 1px dashed #E2E8F0; }
+    .bell-dot { position: relative; }
+    .bell-dot.has-new::after { content: ""; position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: #EF4444; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -187,16 +195,36 @@
     </div>
   </div>
 
+  <div id="alertModal" class="guide-modal-bg hidden">
+    <div class="guide-modal">
+      <h3>🔔 실시간 매매 타이밍 알림</h3>
+      <div id="alertStatusPill" class="alert-status-pill">알림 상태 확인 중...</div>
+      <div>
+        <label class="alert-row"><span>🔔 전체 알림 켜기</span><input id="alEnabled" type="checkbox" checked /></label>
+        <label class="alert-row"><span>💰 목표 매도가 도달 (절반 익절)</span><input id="alTarget" type="checkbox" checked /></label>
+        <label class="alert-row"><span>🚨 손절 기준가 이탈 (손실 방어)</span><input id="alStop" type="checkbox" checked /></label>
+        <label class="alert-row"><span>🟢 추천 종목 매수 구간 진입</span><input id="alBuy" type="checkbox" checked /></label>
+        <label class="alert-row"><span>📈 내 보유 종목 ±5% 급등·급락</span><input id="alMove" type="checkbox" checked /></label>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <button id="testAlertBtn" class="btn-ghost" style="flex:1;padding:11px;">🔔 테스트 알림</button>
+        <button id="closeAlertBtn" class="btn-primary" style="flex:1;padding:11px;">저장 · 닫기</button>
+      </div>
+      <div id="alertLogBox" class="alert-log"></div>
+    </div>
+  </div>
+
   <div id="toast" class="toast hidden"></div>
 
   <div class="app-wrap">
     <header class="topbar">
       <div class="brand">
-        <span class="brand-title">나만의 주식 비서 v4.7</span>
+        <span class="brand-title">나만의 주식 비서 v4.8</span>
         <span id="updatedText" class="brand-time">불러오는 중...</span>
       </div>
       <div class="top-actions">
         <button id="refreshBtn" class="icon-btn primary-outline">↻ 새로고침</button>
+        <button id="alertBtn" class="icon-btn bell-dot" title="알림 설정">🔔</button>
         <button id="helpBtn" class="icon-btn" title="초보 사용법">❓</button>
         <button id="lockBtn" class="icon-btn hidden">잠금</button>
       </div>
@@ -796,6 +824,148 @@
       }
     }
 
+    const ALERT_CFG_KEY = "my_stock_alert_cfg_v48";
+    const ALERT_LOG_KEY = "my_stock_alert_log_v48";
+    const ALERT_SENT_KEY = "my_stock_alert_sent_v48";
+
+    function loadAlertCfg() {
+      try {
+        const c = JSON.parse(localStorage.getItem(ALERT_CFG_KEY) || "null");
+        if (c && typeof c === "object") return Object.assign({ enabled: true, onTarget: true, onStop: true, onBuy: true, onMove: true }, c);
+      } catch {}
+      return { enabled: true, onTarget: true, onStop: true, onBuy: true, onMove: true };
+    }
+    function saveAlertCfg(c) { localStorage.setItem(ALERT_CFG_KEY, JSON.stringify(c)); }
+    function loadAlertLog() { try { return JSON.parse(localStorage.getItem(ALERT_LOG_KEY) || "[]"); } catch { return []; } }
+    function pushAlertLog(title, body) {
+      const log = loadAlertLog();
+      log.unshift({ time: nowKstTime(), title, body });
+      localStorage.setItem(ALERT_LOG_KEY, JSON.stringify(log.slice(0, 12)));
+      document.getElementById("alertBtn").classList.add("has-new");
+    }
+
+    function fireDeviceNotification(title, body, nid) {
+      pushAlertLog(title, body);
+      if (window.AndroidStockBridge && typeof window.AndroidStockBridge.sendNotification === "function") {
+        try { window.AndroidStockBridge.sendNotification(title, body, nid || Math.floor(Math.random() * 90000) + 100); return true; } catch {}
+      }
+      if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+          try { new Notification(title, { body }); return true; } catch {}
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then(p => { if (p === "granted") { try { new Notification(title, { body }); } catch {} } });
+        }
+      }
+      showToast(`${title}`);
+      return false;
+    }
+
+    function buildAlertRulesPayload() {
+      const cfg = loadAlertCfg();
+      const watchMap = {};
+      ((appData && appData.watchlist) || []).forEach(w => {
+        if (w.symbol) watchMap[w.symbol.toLowerCase()] = w;
+        if (w.name) watchMap[w.name.toLowerCase()] = w;
+      });
+      const itemsMap = {};
+      loadMyPortfolio().forEach(h => {
+        if (!h.symbol || h.delisted) return;
+        const live = watchMap[h.symbol.toLowerCase()] || watchMap[(h.name || "").toLowerCase()];
+        const t1 = Number(h.target || 0) || (live ? (Number(live.target1_num || 0) || parseNumsFromText(live.target_1)[0] || 0) : 0);
+        const st = Number(h.stop || 0) || (live ? (Number(live.stop_num || 0) || parseNumsFromText(live.stop_loss)[0] || 0) : 0);
+        itemsMap[h.symbol.toUpperCase()] = { symbol: h.symbol, name: h.name, owned: true, target1: t1, stop: st, buyLow: 0, buyHigh: 0 };
+      });
+      ((appData && appData.recommendations) || []).slice(0, 8).forEach(r => {
+        if (!r.symbol) return;
+        const key = r.symbol.toUpperCase();
+        if (itemsMap[key]) return;
+        const bz = parseNumsFromText(r.buy_zone);
+        itemsMap[key] = {
+          symbol: r.symbol,
+          name: r.name,
+          owned: false,
+          target1: Number(r.target1_num || 0) || parseNumsFromText(r.target_1)[0] || 0,
+          stop: Number(r.stop_num || 0) || parseNumsFromText(r.stop_loss)[0] || 0,
+          buyLow: bz[0] || 0,
+          buyHigh: bz[1] || bz[0] || 0
+        };
+      });
+      return { ...cfg, items: Object.values(itemsMap) };
+    }
+
+    function syncAlertsToNative() {
+      if (!appData) return;
+      const payload = buildAlertRulesPayload();
+      if (window.AndroidStockBridge && typeof window.AndroidStockBridge.syncAlertRules === "function") {
+        try { window.AndroidStockBridge.syncAlertRules(JSON.stringify(payload)); } catch {}
+      }
+      return payload;
+    }
+
+    function evaluateLiveAlerts() {
+      if (!appData) return;
+      const payload = buildAlertRulesPayload();
+      if (!payload.enabled) return;
+      const today = new Date(Date.now() + (new Date().getTimezoneOffset() + 540) * 60000).toISOString().slice(0, 10);
+      let sent = {};
+      try { sent = JSON.parse(localStorage.getItem(ALERT_SENT_KEY) || "{}"); } catch {}
+      const watchMap = {};
+      (appData.watchlist || []).forEach(w => { if (w.symbol) watchMap[w.symbol.toUpperCase()] = w; });
+
+      payload.items.forEach((rule, idx) => {
+        const w = watchMap[rule.symbol.toUpperCase()];
+        if (!w || !Number(w.price_num)) return;
+        const p = Number(w.price_num);
+        const r1d = Number(w.ret_1d || 0);
+        let type = "", title = "", body = "";
+        if (payload.onTarget && rule.target1 > 0 && p >= rule.target1) {
+          type = "target";
+          title = `💰 ${rule.name} 목표 매도가 도달!`;
+          body = `현재가 ${w.price_text} — 절반(50%) 수익 실현 타이밍을 확인하세요.`;
+        } else if (payload.onStop && rule.stop > 0 && p <= rule.stop) {
+          type = "stop";
+          title = `🚨 ${rule.name} 손절 기준가 이탈!`;
+          body = `현재가 ${w.price_text} — 손실 방어를 위해 비중 점검이 필요합니다.`;
+        } else if (payload.onMove && rule.owned && Math.abs(r1d) >= 5) {
+          type = "move";
+          title = `${r1d > 0 ? "📈" : "📉"} ${rule.name} ${r1d >= 0 ? "+" : ""}${r1d.toFixed(1)}% 변동`;
+          body = `내 보유 종목 현재가 ${w.price_text} — 앱에서 대응 가이드를 확인하세요.`;
+        } else if (payload.onBuy && !rule.owned && rule.buyLow > 0 && rule.buyHigh > 0 && p >= rule.buyLow && p <= rule.buyHigh) {
+          type = "buy";
+          title = `🟢 ${rule.name} 분할매수 구간 진입!`;
+          body = `현재가 ${w.price_text} — 매수 구간에 들어왔습니다.`;
+        }
+        if (type) {
+          const dk = `${today}_${rule.symbol}_${type}`;
+          if (!sent[dk]) {
+            sent[dk] = true;
+            fireDeviceNotification(title, body, 500 + idx);
+          }
+        }
+      });
+      localStorage.setItem(ALERT_SENT_KEY, JSON.stringify(sent));
+    }
+
+    function openAlertModal() {
+      const cfg = loadAlertCfg();
+      document.getElementById("alEnabled").checked = cfg.enabled;
+      document.getElementById("alTarget").checked = cfg.onTarget;
+      document.getElementById("alStop").checked = cfg.onStop;
+      document.getElementById("alBuy").checked = cfg.onBuy;
+      document.getElementById("alMove").checked = cfg.onMove;
+      const payload = syncAlertsToNative() || { items: [] };
+      const hasNative = Boolean(window.AndroidStockBridge && window.AndroidStockBridge.syncAlertRules);
+      document.getElementById("alertStatusPill").textContent = hasNative
+        ? `✅ 안드로이드 백그라운드 15분 자동 감시 작동 중 (감시 ${payload.items.length}종목)`
+        : `ℹ️ v4.8 안드로이드 앱 설치 시 앱을 꺼둬도 15분마다 자동 푸시 알림이 옵니다. (감시 ${payload.items.length}종목)`;
+      const logs = loadAlertLog();
+      document.getElementById("alertLogBox").innerHTML = logs.length
+        ? `<div style="font-weight:800;margin-bottom:4px;">최근 알림 기록</div>` + logs.map(l => `<div class="alert-log-item"><strong>[${esc(l.time)}] ${esc(l.title)}</strong><div>${esc(l.body)}</div></div>`).join("")
+        : `<div style="color:var(--mute);">아직 도착한 알림이 없습니다. 아래 '테스트 알림'으로 확인해 보세요.</div>`;
+      document.getElementById("alertBtn").classList.remove("has-new");
+      document.getElementById("alertModal").classList.remove("hidden");
+    }
+
     function renderAll() {
       if (!appData) return;
       updateHeaderTime();
@@ -831,6 +1001,7 @@
       renderMyPortfolio();
       renderMovers();
       renderNews();
+      syncAlertsToNative();
     }
 
     function renderRec() {
@@ -937,6 +1108,7 @@
       if (updatedCount > 0) {
         liveUpdatedAt = nowKstTime();
         renderAll();
+        evaluateLiveAlerts();
         showToast(`✅ 실시간 시세 반영 완료! (${liveUpdatedAt})`);
       } else {
         lastCheckedAt = nowKstTime();
@@ -1074,6 +1246,28 @@
     document.getElementById("helpBtn").addEventListener("click", () => document.getElementById("guideModal").classList.remove("hidden"));
     document.getElementById("closeGuideBtn").addEventListener("click", () => document.getElementById("guideModal").classList.add("hidden"));
     document.getElementById("guideModal").addEventListener("click", e => { if (e.target.id === "guideModal") e.target.classList.add("hidden"); });
+    document.getElementById("alertBtn").addEventListener("click", openAlertModal);
+    document.getElementById("closeAlertBtn").addEventListener("click", () => {
+      saveAlertCfg({
+        enabled: document.getElementById("alEnabled").checked,
+        onTarget: document.getElementById("alTarget").checked,
+        onStop: document.getElementById("alStop").checked,
+        onBuy: document.getElementById("alBuy").checked,
+        onMove: document.getElementById("alMove").checked
+      });
+      syncAlertsToNative();
+      document.getElementById("alertModal").classList.add("hidden");
+      showToast("🔔 알림 설정이 저장되었습니다.");
+    });
+    document.getElementById("alertModal").addEventListener("click", e => { if (e.target.id === "alertModal") document.getElementById("alertModal").classList.add("hidden"); });
+    document.getElementById("testAlertBtn").addEventListener("click", () => {
+      if (window.AndroidStockBridge && window.AndroidStockBridge.requestNotificationPermission) {
+        try { window.AndroidStockBridge.requestNotificationPermission(); } catch {}
+      }
+      fireDeviceNotification("🔔 나만의 주식 비서 알림 테스트", "목표 매도가·손절선 도달 시 이렇게 휴대폰 알림이 도착합니다!", 9999);
+      showToast("테스트 알림을 보냈습니다! 상단 알림창을 확인해 주세요.");
+    });
+
 
     document.getElementById("unlockBtn").addEventListener("click", () => {
       const pin = document.getElementById("pinInput").value.trim();

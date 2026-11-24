@@ -1,9 +1,13 @@
 package com.mystock.assistant;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
@@ -14,16 +18,17 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,8 +37,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int REQ_POST_NOTIF = 1001;
+    private static final String WORK_NAME = "mystock_periodic_price_alerts";
     private WebView webView;
     private SwipeRefreshLayout swipeRefresh;
     private final ExecutorService quoteExecutor = Executors.newFixedThreadPool(6);
@@ -42,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        StockAlertWorker.ensureChannel(this);
+        ensureNotificationPermission();
+        scheduleBackgroundAlerts();
 
         swipeRefresh = new SwipeRefreshLayout(this);
         swipeRefresh.setLayoutParams(new ViewGroup.LayoutParams(
@@ -110,112 +122,40 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void ensureNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQ_POST_NOTIF
+                );
+            }
+        }
+    }
+
+    private void scheduleBackgroundAlerts() {
+        try {
+            Constraints constraints = new Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build();
+            PeriodicWorkRequest req = new PeriodicWorkRequest.Builder(
+                    StockAlertWorker.class, 15, TimeUnit.MINUTES
+            ).setConstraints(constraints).build();
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                    WORK_NAME,
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    req
+            );
+        } catch (Exception ignored) {
+        }
+    }
+
     @Override
     protected void onDestroy() {
         quoteExecutor.shutdownNow();
         super.onDestroy();
-    }
-
-    private static String httpGet(String urlStr) throws Exception {
-        HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
-        conn.setRequestMethod("GET");
-        conn.setConnectTimeout(4500);
-        conn.setReadTimeout(4500);
-        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36");
-        conn.setRequestProperty("Accept", "application/json, text/plain, */*");
-        int code = conn.getResponseCode();
-        if (code < 200 || code >= 300) {
-            conn.disconnect();
-            throw new Exception("HTTP " + code);
-        }
-        StringBuilder sb = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-        } finally {
-            conn.disconnect();
-        }
-        return sb.toString();
-    }
-
-    private static double parseDoubleSafe(String s) {
-        if (s == null) return 0.0;
-        String clean = s.replace(",", "").replace("%", "").replace("+", "").trim();
-        if (clean.isEmpty()) return 0.0;
-        try {
-            return Double.parseDouble(clean);
-        } catch (Exception e) {
-            return 0.0;
-        }
-    }
-
-    private static JSONObject fetchSingleQuote(String symbol) {
-        String sym = symbol == null ? "" : symbol.trim();
-        if (sym.isEmpty()) return null;
-        boolean isKr = sym.endsWith(".KS") || sym.endsWith(".KQ") || sym.matches("^\\d{6}$");
-        if (isKr) {
-            String code = sym.replaceAll("[^0-9]", "");
-            if (code.length() != 6) return null;
-            // 1) Naver Mobile Stock Basic API
-            try {
-                String body = httpGet("https://m.stock.naver.com/api/stock/" + code + "/basic");
-                JSONObject obj = new JSONObject(body);
-                double price = parseDoubleSafe(obj.optString("closePrice", ""));
-                double pct = parseDoubleSafe(obj.optString("fluctuationsRatio", "0"));
-                if (price > 0) {
-                    JSONObject out = new JSONObject();
-                    out.put("price", price);
-                    out.put("ret_1d", pct);
-                    return out;
-                }
-            } catch (Exception ignored) {
-            }
-            // 2) Fallback: Naver Realtime Polling API
-            try {
-                String body = httpGet("https://polling.finance.naver.com/api/realtime/domestic/stock/" + code);
-                JSONObject obj = new JSONObject(body);
-                JSONArray datas = obj.optJSONArray("datas");
-                if (datas != null && datas.length() > 0) {
-                    JSONObject d0 = datas.getJSONObject(0);
-                    double price = parseDoubleSafe(d0.optString("closePriceRaw", d0.optString("closePrice", "")));
-                    double pct = parseDoubleSafe(d0.optString("fluctuationsRatio", "0"));
-                    if (price > 0) {
-                        JSONObject out = new JSONObject();
-                        out.put("price", price);
-                        out.put("ret_1d", pct);
-                        return out;
-                    }
-                }
-            } catch (Exception ignored) {
-            }
-            return null;
-        } else {
-            // US stock via Yahoo Finance chart API
-            try {
-                String body = httpGet("https://query1.finance.yahoo.com/v8/finance/chart/" + Uri.encode(sym) + "?interval=1d&range=2d");
-                JSONObject obj = new JSONObject(body);
-                JSONObject chart = obj.optJSONObject("chart");
-                JSONArray res = chart != null ? chart.optJSONArray("result") : null;
-                if (res != null && res.length() > 0) {
-                    JSONObject meta = res.getJSONObject(0).optJSONObject("meta");
-                    if (meta != null) {
-                        double price = meta.optDouble("regularMarketPrice", 0.0);
-                        double prev = meta.optDouble("chartPreviousClose", meta.optDouble("previousClose", 0.0));
-                        double pct = (prev > 0 && price > 0) ? ((price / prev) - 1.0) * 100.0 : 0.0;
-                        if (price > 0) {
-                            JSONObject out = new JSONObject();
-                            out.put("price", price);
-                            out.put("ret_1d", Math.round(pct * 100.0) / 100.0);
-                            return out;
-                        }
-                    }
-                }
-            } catch (Exception ignored) {
-            }
-            return null;
-        }
     }
 
     private class StockQuoteBridge {
@@ -227,6 +167,26 @@ public class MainActivity extends AppCompatActivity {
         @JavascriptInterface
         public void notifyRefreshDone() {
             runOnUiThread(() -> swipeRefresh.setRefreshing(false));
+        }
+
+        @JavascriptInterface
+        public void requestNotificationPermission() {
+            runOnUiThread(MainActivity.this::ensureNotificationPermission);
+        }
+
+        @JavascriptInterface
+        public void sendNotification(final String title, final String body, final int notifyId) {
+            runOnUiThread(() -> StockAlertWorker.postNotification(MainActivity.this, title, body, notifyId));
+        }
+
+        @JavascriptInterface
+        public void syncAlertRules(final String rulesJson) {
+            try {
+                SharedPreferences prefs = getSharedPreferences(StockAlertWorker.PREF_NAME, MODE_PRIVATE);
+                prefs.edit().putString(StockAlertWorker.KEY_RULES, rulesJson != null ? rulesJson : "").apply();
+                scheduleBackgroundAlerts();
+            } catch (Exception ignored) {
+            }
         }
 
         @JavascriptInterface
@@ -244,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
                     List<Future<String[]>> futures = new ArrayList<>();
                     for (final String sym : unique) {
                         Callable<String[]> task = () -> {
-                            JSONObject q = fetchSingleQuote(sym);
+                            JSONObject q = QuoteFetcher.fetchSingleQuote(sym);
                             return q != null ? new String[]{sym, q.toString()} : null;
                         };
                         futures.add(quoteExecutor.submit(task));
