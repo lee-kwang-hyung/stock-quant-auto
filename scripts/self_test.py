@@ -68,7 +68,7 @@ with tempfile.TemporaryDirectory() as td:
     print("[PASS 3/6] v2.0 5대 투자 촉매 뉴스 · 국장 급등초입 · 상한가 원인 · 실전 가격표 생성 검증 통과")
 
     md_bt, bt_rows = bt.run_backtest(ROOT / "config/watchlist.json", out_d, data_d, fetcher=lambda sym: make_synthetic_ohlcv(sym, 520))
-    assert md_bt.exists() and len(bt_rows) == 23
+    assert md_bt.exists() and len(bt_rows) == 30
     print(f"[PASS 4/6] 2단계 3년 백테스트 검증 통과 ({len(bt_rows)}종목)")
 
     hist_csv = data_d / "signals_history.csv"
@@ -204,7 +204,7 @@ def test_v40_android_apk_project():
     for rf in req_files:
         assert (ROOT / rf).exists(), f"Missing {rf}"
     wf = (ROOT / ".github/workflows/build-android-apk.yml").read_text(encoding="utf-8")
-    assert "assembleDebug" in wf and "MyStockAssistant-v4.5.apk" in wf
+    assert "assembleDebug" in wf and "MyStockAssistant-v4.6.apk" in wf
     print("[PASS 12/12] v4.0 안드로이드 단독 APK 프로젝트 및 GitHub Actions 자동 빌드 구성 검증 통과")
 
 
@@ -234,10 +234,34 @@ def test_v45_position_sizing_and_portfolio_ui():
     assert "calcPositionSize" in idx and "budgetMan" in idx and "riskPct" in idx
     assert "tab-my" in idx and "내 보유" in idx and "손절 기준가" in idx and "목표 매도가" in idx
     wf = (ROOT / ".github/workflows/build-android-apk.yml").read_text(encoding="utf-8")
-    assert "MyStockAssistant-v4.5.apk" in wf
+    assert "MyStockAssistant-v4.6.apk" in wf
     print("[PASS 14/14] v4.5 투자금 기반 자동 매수량 계산기·내 보유 익절/손절 트래커·APK v4.5 구성 검증 통과")
 
 
 test_v45_investor_flow()
 test_v45_position_sizing_and_portfolio_ui()
 print("=== ALL 14 STOCK QUANT V4.5 PRO PROFIT KIT SELF-TESTS PASSED ===")
+
+
+def test_v46_portfolio_and_refresh():
+    import os
+    from build_pwa_feed import build_and_save_pwa_feed, decrypt_envelope
+    os.environ["MY_HOLDINGS_JSON"] = _json_v3.dumps([{"name": "카카오", "symbol": "035720.KS", "buyPrice": 119742, "qty": 33}])
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            p = pathlib.Path(td) / "live_feed.json"
+            build_and_save_pwa_feed([], {}, [], out_path=p, pin="TestPin46!")
+            env = _json_v3.loads(p.read_text(encoding="utf-8"))
+            dec = decrypt_envelope(env, "TestPin46!")
+            assert len(dec["my_holdings"]) == 1 and dec["my_holdings"][0]["qty"] == 33
+    finally:
+        os.environ.pop("MY_HOLDINGS_JSON", None)
+    idx = (ROOT / "docs/index.html").read_text(encoding="utf-8")
+    assert "RAW_FEED_URL" in idx and "showToast" in idx and "calcWatering" in idx and "총 평가손익" in idx
+    bg = (ROOT / "android/app/build.gradle").read_text(encoding="utf-8")
+    assert "kotlin-bom:1.8.22" in bg and "minifyEnabled false" in bg
+    print("[PASS 15/15] v4.6 암호화 보유종목(MY_HOLDINGS_JSON)·새로고침 캐시우회·물타기/손익계산·APK v4.6 검증 통과")
+
+
+test_v46_portfolio_and_refresh()
+print("=== ALL 15 STOCK QUANT V4.6 SELF-TESTS PASSED ===")

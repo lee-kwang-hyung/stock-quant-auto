@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
 
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
                 String host = uri.getHost() != null ? uri.getHost() : "";
-                if (host.endsWith("github.io")) {
+                if (host.endsWith("github.io") || host.endsWith("githubusercontent.com")) {
                     return false;
                 }
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -66,10 +66,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         swipeRefresh.addView(webView);
-        swipeRefresh.setOnRefreshListener(() -> webView.reload());
+        swipeRefresh.setOnRefreshListener(() -> {
+            webView.clearCache(true);
+            webView.loadUrl(BuildConfig.APP_URL + "?v=" + System.currentTimeMillis());
+        });
         setContentView(swipeRefresh);
 
-        webView.loadUrl(BuildConfig.APP_URL);
+        webView.loadUrl(BuildConfig.APP_URL + "?v=" + System.currentTimeMillis());
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override

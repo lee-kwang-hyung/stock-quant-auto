@@ -65,6 +65,41 @@
       "symbol": "069500.KS",
       "name": "KODEX 200",
       "sector": "지수ETF"
+    },
+    {
+      "symbol": "068270.KS",
+      "name": "셀트리온",
+      "sector": "바이오"
+    },
+    {
+      "symbol": "011200.KS",
+      "name": "HMM",
+      "sector": "해운"
+    },
+    {
+      "symbol": "323410.KS",
+      "name": "카카오뱅크",
+      "sector": "금융"
+    },
+    {
+      "symbol": "027040.KQ",
+      "name": "서울전자통신",
+      "sector": "전자부품"
+    },
+    {
+      "symbol": "006280.KS",
+      "name": "녹십자",
+      "sector": "바이오"
+    },
+    {
+      "symbol": "302440.KS",
+      "name": "SK바이오사이언스",
+      "sector": "바이오"
+    },
+    {
+      "symbol": "361610.KS",
+      "name": "SK아이이테크놀로지",
+      "sector": "2차전지"
     }
   ],
   "us_tickers": [

@@ -126,7 +126,8 @@ def build_pwa_payload(all_rows: list, kr_movers: dict, catalysts: list, updated_
     caution_cnt = sum(1 for x in watchlist if x["status"] == "caution")
 
     return {
-        "schema_version": "4.5",
+        "schema_version": "4.6",
+        "my_holdings": [],
         "market_regime": market_regime or {},
         "accuracy": accuracy or {},
         "updated_kst": updated_kst,
@@ -198,6 +199,14 @@ def build_and_save_pwa_feed(
     accuracy: dict | None = None,
 ) -> pathlib.Path:
     payload = build_pwa_payload(all_rows, kr_movers, catalysts, updated_kst=updated_kst, market_regime=market_regime, accuracy=accuracy)
+    mh_raw = os.environ.get("MY_HOLDINGS_JSON", "").strip()
+    if mh_raw:
+        try:
+            mh = json.loads(mh_raw)
+            if isinstance(mh, list):
+                payload["my_holdings"] = mh
+        except Exception:
+            pass
     active_pin = (pin if pin is not None else os.environ.get("APP_PIN", "")).strip()
     if active_pin:
         envelope = encrypt_payload(payload, active_pin)

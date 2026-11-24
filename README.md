@@ -1,20 +1,19 @@
-# 한국·미국 주식 정량 스캔 · 3년 백테스트 · 시그널 누적 자동화 (`stock_quant_auto_v1_0`)
+# 나만의 주식 비서 v4.0 (안드로이드 단독 APK + 정밀 분석 엔진)
 
-## 포함된 기능 (1단계 + 2단계 + 3단계 데이터 축적)
-1. **1단계 — 평일 매일 오전 07:30 KST 한·미 23종목 정량 스캔 (`scripts/stock_analyzer.py`)**
-   - 코스피/코스닥 11종목 + 미국 나스닥/S&P500 12종목 (`config/watchlist.json`에서 자유롭게 추가/수정)
-   - 추세 정배열(MA5/20/60), RSI(14), MACD, 거래량 배수, 볼린저밴드 기반 **0~100점 정량 점수 + 뉴스 요약**
-   - 결과 저장: `reports/latest_daily_report.md` 및 GitHub Actions Summary (선택: 텔레그램 자동 발송)
-2. **2단계 — 매주 토요일 3년 과거 데이터 백테스트 (`scripts/backtester.py`)**
-   - 수수료·슬리피지(0.25%), 손절(-5%), 익절(+12%)을 반영한 전략 수익률 vs 단순 보유(Buy & Hold), 연복리(CAGR), 최대낙폭(MDD), 승률 자동 계산
-   - 결과 저장: `reports/backtest_summary.md` & `data/backtest_results.csv`
-3. **3단계 자동매매 사전 검증용 — 실전 시그널 누적 DB & 자동 채점 (`scripts/track_performance.py`)**
-   - 매일 기록된 `data/signals_history.csv`의 과거 시그널이 실제로 **D+1, D+5, D+20 거래일 후 몇 % 수익이 났는지** 자동 채점
-   - 2~3개월 이상 실전 적중률 데이터를 쌓은 뒤, 검증된 전략만 증권사 Open API(한국투자증권 KIS 등)에 연결하세요.
+## v4.0 정밀 분석 업그레이드
+- **시장 국면 필터**: KOSPI·S&P500 지수 추세(강세/혼조/약세)를 판별해 약세장에서는 보수적으로 점수 조정
+- **지지·저항선 기반 정밀 매매가**: 20·60일 지지선·저항선과 ATR을 결합해 매수 구간·손절가·1/2차 목표가 산출 및 **손익비 1.5 미만 자동 제외**
+- **재무·공시 신뢰도 필터**: KRX/네이버 재무(PER·PBR·흑자 여부) + 미국 기업 재무 + (선택) 금감원 DART 공시 연동으로 적자·유상증자 위험주 경고
+- **사후 적중률 투명 공개**: 과거 신호의 실제 5거래일 승률을 앱 상단에 자동 집계
 
-## 3분 시작 방법
-1. GitHub에 새 비공개(Private) 저장소(예: `stock-quant-auto`)를 만들고 이 ZIP의 모든 파일을 업로드합니다.
-2. **Actions** 탭에서 **`daily-kr-us-stock-scan`**과 **`weekly-3y-backtest`**를 각각 1회 **`Run workflow`**로 테스트합니다.
-3. *(선택)* 텔레그램 알림을 받으려면 저장소 **Settings → Secrets → Actions**에 `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`만 추가하면 매일 아침 07:30에 휴대폰으로 자동 도착합니다.
+---
 
-> 면책 안내: 본 시스템은 데이터 기반 투자 참고·연구용 자동화 도구이며, 모든 투자 판단과 책임은 사용자 본인에게 있습니다.
+## 안드로이드 단독 어플(`.apk`) 설치 방법 (3분 완료)
+1. 이 ZIP 압축을 풀어 `lee-kwang-hyung/stock-quant-auto` 저장소에 덮어쓰기 후 커밋·푸시합니다.
+2. **나만 보게 비밀번호 설정**: 저장소 **Settings → Secrets → Actions → New repository secret**에서 `APP_PIN`에 본인 전용 비밀번호 저장 *(선택: `DART_API_KEY` 추가 가능)*
+3. **데이터 호스팅 켜기**: **Settings → Pages → Branch: `main` / `/docs` 선택 후 Save**
+4. **안드로이드 APK 자동 빌드 & 설치**:
+   - **Actions → `build-android-apk` → Run workflow** 실행 (약 3~4분 소요)
+   - 완료 후 하단 **Artifacts → `MyStockAssistant-v4.0-APK`** 클릭해 다운로드
+   - `MyStockAssistant-v4.0.apk` 파일을 안드로이드 폰에 옮겨 설치하면 **일반 어플과 똑같이 단독 실행**됩니다!
+5. **최신 시세 반영**: **Actions → `intraday-live-pwa-scan` → Run workflow** 1회 실행 후, 이후부터 평일 장중(09:00~15:45) 15분마다 자동 갱신됩니다.
