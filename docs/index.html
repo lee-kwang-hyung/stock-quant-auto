@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="내 주식 비서" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./icon.svg" type="image/svg+xml" />
-  <title>나만의 주식 비서 v5.3</title>
+  <title>나만의 주식 비서 v6.0</title>
   <style>
     :root {
       --bg: #F4F6F9; --card: #FFFFFF; --ink: #0F172A; --ink2: #334155; --mute: #64748B; --line: #E2E8F0;
@@ -191,6 +191,9 @@
     .mkt-switch { margin: 10px 12px 0; padding: 4px; background: #E2E8F0; border-radius: 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
     .mkt-btn { border: none; background: transparent; color: #475569; border-radius: 9px; padding: 8px 6px; font-size: 13px; font-weight: 800; cursor: pointer; transition: all 0.15s; }
     .mkt-btn.active { background: #FFFFFF; color: #0F172A; box-shadow: 0 2px 6px rgba(15,23,42,0.10); }
+    .risk-guard-banner { margin: 0 0 10px; padding: 10px 12px; border-radius: 11px; background: #FEF2F2; border: 1px solid #FCA5A5; color: #991B1B; font-size: 12px; font-weight: 700; line-height: 1.5; }
+    .acc-pill { margin: 8px 12px 0; padding: 7px 11px; border-radius: 10px; background: #F0FDF4; border: 1px solid #BBF7D0; color: #166534; font-size: 12px; font-weight: 700; }
+    .stop-rule-note { margin-top: 8px; padding: 8px 10px; border-radius: 9px; background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; font-size: 11.5px; font-weight: 700; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -244,7 +247,7 @@
   <div class="app-wrap">
     <header class="topbar">
       <div class="brand">
-        <span class="brand-title">나만의 주식 비서 v5.3</span>
+        <span class="brand-title">나만의 주식 비서 v6.0</span>
         <span id="updatedText" class="brand-time">불러오는 중...</span>
       </div>
       <div class="top-actions">
@@ -265,6 +268,7 @@
         <button class="mkt-btn" data-mkt="ALL">🌐 전체</button>
       </div>
       <div id="liveBriefingBox"></div>
+      <div id="accVerifyBar" class="acc-pill hidden"></div>
 
       <div class="budget-bar">
         <span style="font-weight:800;">💰 내 투자금</span>
@@ -310,6 +314,7 @@
     <main id="tab-my" class="tab-panel hidden">
       <div class="section" style="padding-top:10px;">
         <div class="sec-head"><h2>내 보유 주식 관리</h2><span>내 평단가 기준 맞춤 매도 가이드</span></div>
+        <div id="paperBotCard"></div>
         <div id="mySummaryCard"></div>
         <div id="myPortfolioList"></div>
 
@@ -604,6 +609,7 @@
                 <div class="step-val">${esc(it.stop_loss)}</div>
               </div>
             </div>
+            <div class="stop-rule-note">🛡️ 원칙 체크: 매수 직후 한투 앱에서 손절 기준가(-7% 내외) 자동매도 주문을 꼭 걸어두세요.</div>
             <div class="card-foot">
               <button class="btn-ghost" onclick="openBrokerageApp()">📲 한투 앱</button>
               ${myHold
@@ -712,8 +718,9 @@
       } else if (compareMode === "HIGH_RISK") {
         head.textContent = "🔥 고위험·고수익 (상한가 30%·소형 급등)";
         cnt.textContent = `${risks.length}종목`;
+        const riskWarn = `<div class="risk-guard-banner">⚠️ 고위험 도박성 구간: 기존 손실 만회 목적 추격매수는 절대 금지! 꼭 본다면 투자금 5% 이내 소액만 관찰하세요.</div>`;
         box.innerHTML = risks.length
-          ? risks.map((x, i) => renderHighRiskRow(x, i)).join("")
+          ? riskWarn + risks.map((x, i) => renderHighRiskRow(x, i)).join("")
           : `<div class="empty">v5.1 안드로이드 앱에서 실시간 상한가 30%·소형 급등주 전체 랭킹이 자동으로 표시됩니다.</div>`;
       } else {
         head.textContent = "📋 관심 종목 전체 비교";
@@ -851,6 +858,37 @@
       const newAvg = Math.round(((Number(h.buyPrice) * Number(h.qty)) + (cur * addQty)) / newQty);
       alert(`[물타기 시뮬레이션]\n• 기존 평단: ${Math.round(Number(h.buyPrice)).toLocaleString()}원 (${h.qty}주)\n• 추가 매수 후 예상 평단: ${newAvg.toLocaleString()}원 (${newQty}주)\n• 추가 필요 금액: ${Math.round(cur * addQty).toLocaleString()}원`);
     };
+
+    function renderPaperBotCard() {
+      const box = document.getElementById("paperBotCard");
+      if (!box) return;
+      const pt = appData && appData.paper_trading;
+      if (!pt || !pt.total_equity) {
+        box.innerHTML = `
+          <article class="card" style="background:#F8FAFC;border-style:dashed;">
+            <div style="font-weight:800;font-size:14px;color:var(--ink);">🤖 모의 자동매매 봇 (KIS 모의투자 대기 중)</div>
+            <div style="font-size:12px;color:var(--mute);margin-top:4px;">GitHub Actions에서 <strong>kis-paper-autotrade</strong>를 1회 실행하면 1,000만 원 가상 계좌(또는 한투 모의투자 API) 자동 매매 성적표가 여기에 표시됩니다.</div>
+          </article>`;
+        return;
+      }
+      const pct = Number(pt.total_return_pct || 0);
+      const posHtml = (pt.open_positions || []).length
+        ? pt.open_positions.map(p => `<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px;border-bottom:1px dashed #E2E8F0;"><span><strong>${esc(p.name)}</strong> (${p.qty}주)</span><span class="cmp-pct ${Number(p.ret_pct)>=0?"up":"down"}">${Number(p.ret_pct)>=0?"+":""}${Number(p.ret_pct).toFixed(1)}%</span></div>`).join("")
+        : `<div style="font-size:12px;color:var(--mute);">현재 보유 중인 모의 종목 없음 (현금 100%)</div>`;
+      const trHtml = (pt.recent_trades || []).slice(0, 4).map(t =>
+        `<div style="font-size:11.5px;color:var(--ink2);padding:3px 0;">[${esc(t.side)}] ${esc(t.name)} ${t.qty}주 @ ${Number(t.price).toLocaleString()}원 · ${esc(t.reason)}</div>`
+      ).join("");
+      box.innerHTML = `
+        <article class="card" style="border:1.5px solid #93C5FD;background:#F8FAFF;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;">
+            <strong style="font-size:14.5px;color:#1E3A8A;">🤖 모의 자동매매 성적표</strong>
+            <span class="cmp-pct ${pct>=0?"up":"down"}" style="font-size:15px;">${pct>=0?"+":""}${pct.toFixed(2)}%</span>
+          </div>
+          <div style="font-size:11.5px;color:var(--mute);margin:3px 0 8px;">${esc(pt.mode || "모의투자")} · 총자산 <strong>${Number(pt.total_equity).toLocaleString()}원</strong>${pt.win_rate !== null && pt.win_rate !== undefined ? ` · 승률 ${pt.win_rate}% (${pt.closed_trades}건)` : ""}</div>
+          <div style="margin-bottom:6px;">${posHtml}</div>
+          ${trHtml ? `<details style="margin-top:6px;"><summary style="font-size:12px;font-weight:700;color:#1D4ED8;cursor:pointer;">최근 자동 체결 내역 보기 ▼</summary><div style="margin-top:5px;">${trHtml}</div></details>` : ""}
+        </article>`;
+    }
 
     function renderMyPortfolio() {
       const arr = loadMyPortfolio();
@@ -1035,8 +1073,15 @@
       if (appData.is_sample) { banner.className = "banner"; banner.textContent = "샘플 화면입니다. GitHub Actions에서 스캔을 1회 실행해 주세요."; }
       else if (rawEnvelope && !rawEnvelope.encrypted) { banner.className = "banner"; banner.textContent = "암호화 미설정 상태입니다. GitHub Secrets에 APP_PIN을 추가해 주세요."; }
       else { banner.className = "banner hidden"; }
+      const accEl = document.getElementById("accVerifyBar");
+      const acc = (appData && appData.accuracy) || {};
+      if (accEl) {
+        if (acc.label) { accEl.classList.remove("hidden"); accEl.textContent = `📈 앱 추천 신호 실전 검증: ${acc.label} (30일 검증 전 소액 유지)`; }
+        else { accEl.classList.remove("hidden"); accEl.textContent = "📈 앱 추천 신호 30일 실전 승률 집계 중 · 신규 매수 시 -7% 손절 준수"; }
+      }
       renderLiveMarketBriefing();
       renderCompareBoard();
+      renderPaperBotCard();
       renderMyPortfolio();
       renderNews();
       syncAlertsToNative();

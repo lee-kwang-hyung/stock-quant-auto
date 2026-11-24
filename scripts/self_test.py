@@ -379,3 +379,46 @@ def test_v53_dynamic_bluechip_rotation():
 
 test_v53_dynamic_bluechip_rotation()
 print("=== ALL 21 STOCK QUANT V5.3 SELF-TESTS PASSED ===")
+
+
+def test_v54_discipline_guardrails():
+    idx = (ROOT / "docs/index.html").read_text(encoding="utf-8")
+    for tok in ("accVerifyBar", "risk-guard-banner", "stop-rule-note", "고위험 도박성 구간", "자동매도 주문"):
+        assert tok in idx, f"Missing v5.4 token: {tok}"
+    print("[PASS 22/22] v5.4 30일 실전 승률 검증 배너·고위험 추격매수 경고·자동 손절 체크 리마인더 검증 통과")
+
+test_v54_discipline_guardrails()
+print("=== ALL 22 STOCK QUANT V5.4 SELF-TESTS PASSED ===")
+
+
+def test_v60_kis_paper_autotrader():
+    import kis_paper_trader as kpt
+    assert "openapivts.koreainvestment.com:29443" in kpt.PAPER_BASE_URL
+    assert kpt.TR_BUY_PAPER == "VTTC0012U" and kpt.TR_SELL_PAPER == "VTTC0011U" and kpt.TR_BALANCE_PAPER == "VTTC8434R"
+    assert (ROOT / ".github/workflows/kis-paper-autotrade.yml").exists()
+
+    # Verify stop-loss (-7%) full sell, +10% half TP, +18% full TP, and buy slot allocation
+    positions = {
+        "005930": {"code": "005930", "name": "삼성전자", "qty": 10, "avg_price": 70000, "cur_price": 64000, "half_sold": False},
+        "005380": {"code": "005380", "name": "현대차", "qty": 4, "avg_price": 200000, "cur_price": 222000, "half_sold": False},
+        "012450": {"code": "012450", "name": "한화에어로스페이스", "qty": 2, "avg_price": 500000, "cur_price": 600000, "half_sold": False},
+    }
+    price_map = {"005930": 64000, "005380": 222000, "012450": 600000, "278470": 50000}
+    candidates = [{"market": "KR", "symbol": "278470.KS", "name": "에이피알", "status": "buy", "score": 78, "trust_label": "재무 탄탄", "price_num": 50000}]
+    orders = kpt.plan_paper_orders(3_000_000, positions, candidates, price_map, kr_regime="강세장")
+    sells = {o["code"]: o for o in orders if o["side"] == "SELL"}
+    buys = {o["code"]: o for o in orders if o["side"] == "BUY"}
+    assert sells["005930"]["qty"] == 10 and "손절" in sells["005930"]["reason"]
+    assert sells["005380"]["qty"] == 2 and "절반 익절" in sells["005380"]["reason"]
+    assert sells["012450"]["qty"] == 2 and "전량 익절" in sells["012450"]["reason"]
+    assert "278470" in buys and buys["278470"]["qty"] > 0
+
+    ledger = {"initial_cash": 10_000_000, "cash": 3_000_000, "positions": positions, "trades": [], "wins": 0, "losses": 0}
+    new_ledger, summary = kpt.apply_orders_to_local_ledger(ledger, orders, price_map, "2026-11-24 14:50 KST")
+    assert summary["closed_trades"] == 3 and summary["win_rate"] == 66.7
+    idx = (ROOT / "docs/index.html").read_text(encoding="utf-8")
+    assert "paperBotCard" in idx and "renderPaperBotCard" in idx and "모의 자동매매 성적표" in idx
+    print("[PASS 23/23] v6.0 한국투자증권 모의투자(VTTC0012U/0011U) 자동매매·손절(-7%)/분할익절(+10/+18%)·성적표 UI 검증 통과")
+
+test_v60_kis_paper_autotrader()
+print("=== ALL 23 STOCK QUANT V6.0 SELF-TESTS PASSED ===")

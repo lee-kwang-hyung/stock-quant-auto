@@ -202,6 +202,13 @@ def build_and_save_pwa_feed(
     accuracy: dict | None = None,
 ) -> pathlib.Path:
     payload = build_pwa_payload(all_rows, kr_movers, catalysts, updated_kst=updated_kst, market_regime=market_regime, accuracy=accuracy)
+    # v6.0 모의 자동매매 성적표 자동 포함
+    paper_path = pathlib.Path(__file__).resolve().parent.parent / "data/paper_trading_summary.json"
+    if paper_path.exists():
+        try:
+            payload["paper_trading"] = json.loads(paper_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
     mh_raw = os.environ.get("MY_HOLDINGS_JSON", "").strip()
     if mh_raw:
         try:
