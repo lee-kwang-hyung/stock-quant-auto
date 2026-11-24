@@ -5,9 +5,9 @@
 ## 1. 오늘의 5대 투자 이슈 · 급등 촉매 뉴스 (공시 · 수주 · 실적 · 바이오 · 미장)
 
 ### 대형 수주 · 공급계약 공시
+- [[특징주] 에스오에스랩, '연 매출 143%' 북미 빅테크와 87억 라이다 공급계약에 19% 껑충 - 와이드경제](https://news.google.com/rss/articles/CBMibEFVX3lxTFB5aVoyY1Uwb2NKXzdUSzU5a2lXbHZZWl9KOEdBeExLRWpQWWg1Vl95VTFWWXQ2b1U1YS1PRVdYMDZsZzl4YmIwcWtkNEdDSE1DeEZfeDluQTQtWVJkdjU0TXZkSWhlM2tnWE9Xbg?oc=5)
 - [한화시스템 수주공시 - 단일판매ㆍ공급계약체결 - 한국경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE0wMXpkX2tFeHdIR01YUGJhY0JoWDZYSGpLZFprOFNlclZVMUJFTTNhSEp4MVprTE9iUnpVejVKRDFNR1d0Wjh3Y0F1cEUxNTVxS1BYRTljUHZqQQ?oc=5)
-- [[공시학개론] 대박 수주와 단발 계약 사이… 단일판매·공급계약 공시 들여다보기 - 아주경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE1CVG9zQUk4V3N3bTBOaUwxd21YZlZsekw1Z3k5Zjl1MUd6YzJvYzBoa3ptTVFpNDFPd0xKVGZqMVJjYVVOaC1KekNjZVdpSGpSakZPWWQxb28zd9IBWEFVX3lxTE1QLUlGZjBodWJ3cEkwUlNwWU1BQndPWlJ0UnE0NU02TTV2T1h1VG1uYzBCZWJZd2oyajNyZFR4M0o3ZkZyMUk2Wk5GUnFYOUxZZ0JtUzBaRWw?oc=5)
-- [아스플로 수주공시 - 단일판매ㆍ공급계약체결 297.9억원 (매출액대비 43.86 %) - 한국경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE5XTkEwa2RZWlZHX2R2bHp0TG83dWpsTjdzV2dvTW13Uk1GeXdXdUlBZ3pHOVFOQjhzeEppcFNmR3Y3TXBtc2JFVEpQU21LYjdXM2JjODNIMHZQQQ?oc=5)
+- [[종목 포커스] 산일전기, 美 블룸에너지 데이터센터향 수주 등으로 주가 상승세? - 데일리인베스트](https://news.google.com/rss/articles/CBMia0FVX3lxTE1IZ0VDd3Z6SDBYNHZpR1ZUaUdLc3RVRUV4aXNDS0hhUUZCUFcwTE9ETFphQnVCNVFURUlHWEFWYWVXa19UN2owWlQtaG52QkNvU2lxbjlRS1Fld2FiOUhnNUdGX215OFhYeWJB0gFvQVVfeXFMT2pIblFfTVgzZFoyQmczMi1YQ0tKR19JTTJqendyQlBReVd0VktxMmpIVkd6UU9mMnNYaFBwTktwamNyS1pVVGZZRmkzbXNPTVVxMjJvNHRGanl0aV9HSm9JQ1R1X3hIMUQ5YUM3MWtZ?oc=5)
 
 ### 실적 서프라이즈 · 어닝
 - [팔로알토, AI 보안특수에 ‘어닝 서프라이즈’…시간외서주가 7%대 급등[마켓무버] - 서울경제](https://news.google.com/rss/articles/CBMiUkFVX3lxTE04SnBkNTFidE8xeU9UNnhaMWFna2RsU1NGcFBCdVhkbmxsQ2hoclp3WjZUd1h1QXNudmRzYWtWTVVmWWVKZmRZdVljVkVWSFJGNUHSAVNBVV95cUxQenh3c1hSSk1wdVRaaTZnWXVEYXAxM1RodjZLbi1Fek80QTVjM2syUEJHaVhUTDdSeUN2Y0pVbklQWk9XX0ItUGhyd2U4cjJZYk8xdw?oc=5)
@@ -15,14 +15,14 @@
 - [옥타, 에이전트 AI 보안 수요 급증에 '어닝 서프라이즈'…시간외 19%↑ - 연합인포맥스](https://news.google.com/rss/articles/CBMicEFVX3lxTE5heEtPSm5lUjBkVVpJcGJReXhacy11NFl2QTUxY0hmVDJtcC1NaXYwYkhTSmRLWExNRkk0QVRnVlJYQzhJMWk5ekFCR19DaUoybkxMQzFhRWtRWW9VbG5VQmR5Mjh5UFNhNDV4VnQtWGnSAXRBVV95cUxPNElLZXc3Zm1YZUl6TWhiMHZYOFdaa3U5MUJkY0ZDa0YzLVRWUklDOHN5Q3VxYm9lUGRBS0gzUmNkaXdjMkQzdG1GSW5ra2FUUHlxMXNVM09NbnF1X1owdmRMMU9jSGRnQUZOekQxNlJjUkZXQw?oc=5)
 
 ### 신약 · 임상 · FDA 바이오
+- [[코스피 현미경 분석] SK바이오팜, 12월 오파칼림 임상 결과 발표로 주가 탄력? - 데일리인베스트](https://news.google.com/rss/articles/CBMia0FVX3lxTE9ONU1rS1A1WnY0UEJfWFRna1dfcTdZZDlHWWwySm1mTnRpMjFSdVRXcF85NHN4TmZrdXFSNkNjUkdRMGpfSFdPS1IyeU9DYkVfaE02cUdfa0plRmVzQmZlaTBUZ3JYb3d4c3BJ0gFvQVVfeXFMTmtuSmJDeHhLdVdDUk5PVHFya2loNklMVzNrSXlCNWFGajJjdFdDNkJxSlRIVm5CZjJfSVFRUnhRSjRFQkZDSklYand2Y1JYWHl0TlBiRVdnUEtkN3VmLXVmczlvRGNsRUJQdm95NzJz?oc=5)
 - [K-바이오, 잇단 악재에 주가 급락…투자심리 냉각·불신 확산 - 데일리팜](https://news.google.com/rss/articles/CBMiVkFVX3lxTFBzRU5jNzJ5Ul9pU0ZuRjFpT0ZCeDlxRExsSkE4T2J0S3h5bXpUWXdadHRnQWVmZDI0VnlwMkRqaVpHaTdCckNFc2VtZmRfUVNTa0NwVkRn?oc=5)
 - [에이비엘바이오 'ABL001' 연내 美 허가 신청 제동?…FDA, 추가 임상 권고 - 팜이데일리](https://news.google.com/rss/articles/CBMibkFVX3lxTE44SEw2bWdtdllBemlOMGhnVFptVTRQNFRwR3RvRnJBT0lCSlBxVlVaMGNSbEt5YnBjcWtvVHM1XzBaUDJZOUpyWkdlZG8wbVRVamwtaE9FZWMzZjhZWEloSkl2aFBRVlpMMVRBWFFR?oc=5)
-- [[HIT알공] 페니트리움바이오, 고형암 임상 2a상 FDA 승인 - 히트뉴스](https://news.google.com/rss/articles/CBMia0FVX3lxTE9XZHRNUWpoNTBLQWNWdm44WUEwTlRRNkR2eVNHQ2ZJZXlUaGNYZ3VNYXRNSjNkQWNkUmh5aGc0Y1pZS3JYbEJpd0xtUUVOenlBTE1vV1JQMVlackxoY3luRklTb1VjOXFncWVN?oc=5)
 
 ### 정부 정책 · 주도 테마 수혜
 - [[ETF 시황] 코스닥 700선 회복에 관련 ETF 급등…반도체 상품도 강세 - 뉴스핌](https://news.google.com/rss/articles/CBMiXEFVX3lxTE1NcVJ2OHRfWGRoVmo0WFNkT1o5bFpzQWZmODRzVmJCaTJpWU42ZnlfMHVzRkl1NjgtcEpuUnBJRkdlOE96UEFKajV6a2lTem1VZUp6OW5uTGtsWUxq?oc=5)
 - [11월12(목) 장전 예상 테마 - 네이버 프리미엄콘텐츠](https://news.google.com/rss/articles/CBMiggFBVV95cUxQSWxjTVJjQUU0bE45RjJ3MlBNWnJuaHJvdktCTjdrNzF4Wl9Rb01OT3pIU2RlVTQ1WE9ZRlJIcmdvQmpaOUFZa0VmMVAzZllpSnk0cjNwbGptY0ZZTkE0U1VHdURvenlLbEJuRVRVc21JdGlmWlBqM0tvdkVMNEVGMnJ3?oc=5)
-- [코스피 내린 틈에…코스닥 후끈, 8%↑ 역대 두번째 상승률(종합) - 연합뉴스](https://news.google.com/rss/articles/CBMiW0FVX3lxTE5pdEVvZnR4bTZfWTBFRFpxWTZQLWRuejBfQ1pxaVZDWHd3aS1BVzBpYWJEbEw5U2pnYnlsOUFzNVVMWnNRNklFdy1nbk1ReFJQXzJKQ1UtYTR1LWfSAWBBVV95cUxQV1ZobHhmRFBSSzNORjVPTDVIVllTdjhwSzhfNEEwZGNMOVo4VUk3VWttY1E3MG5YQ2M5bk5ybXpIdGRDTThLdkFPSHpkVHhGRUZlT3J1ZExOcTNoQUJRNVY?oc=5)
+- ['로봇 테마' 에스비비테크, 젠슨황 효과 매수세 유입에 급등 - 파이낸셜포스트](https://news.google.com/rss/articles/CBMidEFVX3lxTFBNOU9zMzhjeWlubU9HWE9UaV9EaGk3cExzRzZzRmNDekhWbDhXLU5QSzNLSzgzU2tLeHFRNGhjZTRySHVYeWxINW5hLWdrWF9fMlpIWmQ5cW42SHRMNzdFajFpWEhWTks2Z1RNekc3eXl6UGM2?oc=5)
 
 ### 미국 증시 핵심 급등 촉매
 - [What Drove Glaukos Stock's 48% Rally Since the End of September? - TradingView](https://news.google.com/rss/articles/CBMiugFBVV95cUxPY1B0UC05Yl9uWXVkNHJvV3d6bUpsWlUxUzFsQzI3WUZVU3ByMW0zSk42cUJya2VObm1wQ3RjMjBXNDZWRndERWNDYllmbXFoUktha21YdkRQQ3pkQUtJNFdZeDlDNkt3dVhtWUowUkNRVDBtVjQ5blRMbExrWWRZTzRJdXFSY3VwNTBzVFhCNmt0VnBGR2NsUm5PR1RyYldlU3VwNWZLc1RXVTRJZDVNVS1pTDh6ZnlvM3c?oc=5)
