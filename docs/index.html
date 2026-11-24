@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="내 주식 비서" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./icon.svg" type="image/svg+xml" />
-  <title>나만의 주식 비서 v5.2</title>
+  <title>나만의 주식 비서 v5.3</title>
   <style>
     :root {
       --bg: #F4F6F9; --card: #FFFFFF; --ink: #0F172A; --ink2: #334155; --mute: #64748B; --line: #E2E8F0;
@@ -244,7 +244,7 @@
   <div class="app-wrap">
     <header class="topbar">
       <div class="brand">
-        <span class="brand-title">나만의 주식 비서 v5.2</span>
+        <span class="brand-title">나만의 주식 비서 v5.3</span>
         <span id="updatedText" class="brand-time">불러오는 중...</span>
       </div>
       <div class="top-actions">
@@ -576,7 +576,7 @@
               <div class="cmp-title-line">
                 <span class="cmp-tag safe">${isRec ? "🛡️ 안정추천" : "🛡️ 관심"}</span>
                 <span class="cmp-name">${esc(it.name)}</span>
-                ${myHold ? `<span class="cmp-tag owned">보유</span>` : ""}
+                ${it.is_new_bluechip ? `<span class="cmp-tag safe">🆕 신규우량</span>` : ""}${myHold ? `<span class="cmp-tag owned">보유</span>` : ""}
               </div>
               <div class="cmp-sub">매수 ${esc(it.buy_zone)} · 1차목표 ${esc(it.target_1)}</div>
             </div>

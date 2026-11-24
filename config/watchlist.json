@@ -39,7 +39,8 @@
     {
       "symbol": "035720.KS",
       "name": "카카오",
-      "sector": "IT/플랫폼"
+      "sector": "IT/플랫폼",
+      "protected": true
     },
     {
       "symbol": "373220.KS",
@@ -64,42 +65,50 @@
     {
       "symbol": "069500.KS",
       "name": "KODEX 200",
-      "sector": "지수ETF"
+      "sector": "지수ETF",
+      "protected": true
     },
     {
       "symbol": "068270.KS",
       "name": "셀트리온",
-      "sector": "바이오"
+      "sector": "바이오",
+      "protected": true
     },
     {
       "symbol": "011200.KS",
       "name": "HMM",
-      "sector": "해운"
+      "sector": "해운",
+      "protected": true
     },
     {
       "symbol": "323410.KS",
       "name": "카카오뱅크",
-      "sector": "금융"
+      "sector": "금융",
+      "protected": true
     },
     {
       "symbol": "027040.KQ",
       "name": "서울전자통신",
-      "sector": "전자부품"
+      "sector": "전자부품",
+      "protected": true
     },
     {
       "symbol": "006280.KS",
       "name": "녹십자",
-      "sector": "바이오"
+      "sector": "바이오",
+      "protected": true
     },
     {
       "symbol": "302440.KS",
       "name": "SK바이오사이언스",
-      "sector": "바이오"
+      "sector": "바이오",
+      "protected": true
     },
     {
       "symbol": "361610.KS",
       "name": "SK아이이테크놀로지",
-      "sector": "2차전지"
+      "sector": "2차전지",
+      "protected": true
     }
   ],
   "us_tickers": [
@@ -156,12 +165,75 @@
     {
       "symbol": "SPY",
       "name": "S&P 500 ETF",
-      "sector": "지수ETF"
+      "sector": "지수ETF",
+      "protected": true
     },
     {
       "symbol": "QQQ",
       "name": "Nasdaq 100 ETF",
-      "sector": "지수ETF"
+      "sector": "지수ETF",
+      "protected": true
+    },
+    {
+      "symbol": "TSM",
+      "name": "TSMC",
+      "sector": "AI/파운드리"
+    },
+    {
+      "symbol": "LLY",
+      "name": "Eli Lilly",
+      "sector": "헬스케어"
+    },
+    {
+      "symbol": "COST",
+      "name": "Costco",
+      "sector": "필수소비재"
+    },
+    {
+      "symbol": "NFLX",
+      "name": "Netflix",
+      "sector": "미디어"
+    },
+    {
+      "symbol": "BRK-B",
+      "name": "Berkshire Hathaway",
+      "sector": "가치우량"
+    },
+    {
+      "symbol": "JPM",
+      "name": "JPMorgan Chase",
+      "sector": "금융"
+    },
+    {
+      "symbol": "V",
+      "name": "Visa",
+      "sector": "결제/금융"
+    },
+    {
+      "symbol": "ORCL",
+      "name": "Oracle",
+      "sector": "클라우드/AI"
+    },
+    {
+      "symbol": "CRM",
+      "name": "Salesforce",
+      "sector": "소프트웨어"
+    },
+    {
+      "symbol": "QCOM",
+      "name": "Qualcomm",
+      "sector": "반도체"
+    },
+    {
+      "symbol": "MU",
+      "name": "Micron",
+      "sector": "메모리반도체"
+    },
+    {
+      "symbol": "SCHD",
+      "name": "SCHD 배당 ETF",
+      "sector": "배당ETF",
+      "protected": true
     }
   ]
 }

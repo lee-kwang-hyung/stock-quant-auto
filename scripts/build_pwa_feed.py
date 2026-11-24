@@ -70,6 +70,7 @@ def _build_beginner_item(r: dict) -> dict:
         "flow_label": r.get("flow_label", ""),
         "stop_num": r.get("stop_num"),
         "target1_num": r.get("target1_num"),
+        "is_new_bluechip": bool(r.get("is_new_bluechip", False)),
     }
 
 
@@ -81,7 +82,9 @@ def build_pwa_payload(all_rows: list, kr_movers: dict, catalysts: list, updated_
     # 초보자 추천 TOP: 점수 순 정렬 (매수 관심 우선, 단 주의 등급은 추천에서 제외)
     eligible = [x for x in watchlist if x["status"] in ("buy", "watch") and "주의" not in x.get("trust_label", "") and (x.get("rr_ratio") is None or float(x.get("rr_ratio", 0)) >= 1.5)]
     eligible.sort(key=lambda x: (0 if x["status"] == "buy" else 1, -x["score"]))
-    recommendations = eligible[:8]
+    kr_recs = [x for x in eligible if x["market"] == "KR"][:10]
+    us_recs = [x for x in eligible if x["market"] == "US"][:8]
+    recommendations = kr_recs + us_recs
 
     breakout = []
     for m in (kr_movers or {}).get("breakout", [])[:15]:

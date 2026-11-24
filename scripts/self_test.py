@@ -68,7 +68,7 @@ with tempfile.TemporaryDirectory() as td:
     print("[PASS 3/6] v2.0 5대 투자 촉매 뉴스 · 국장 급등초입 · 상한가 원인 · 실전 가격표 생성 검증 통과")
 
     md_bt, bt_rows = bt.run_backtest(ROOT / "config/watchlist.json", out_d, data_d, fetcher=lambda sym: make_synthetic_ohlcv(sym, 520))
-    assert md_bt.exists() and len(bt_rows) == 30
+    assert md_bt.exists() and len(bt_rows) >= 30
     print(f"[PASS 4/6] 2단계 3년 백테스트 검증 통과 ({len(bt_rows)}종목)")
 
     hist_csv = data_d / "signals_history.csv"
@@ -339,3 +339,43 @@ def test_v52_kr_us_market_switcher():
 
 test_v52_kr_us_market_switcher()
 print("=== ALL 20 STOCK QUANT V5.2 SELF-TESTS PASSED ===")
+
+
+def test_v53_dynamic_bluechip_rotation():
+    from dynamic_universe import build_active_universe, is_eligible_bluechip_name
+    from build_pwa_feed import build_pwa_payload
+    assert is_eligible_bluechip_name("HD현대중공업") is True
+    assert is_eligible_bluechip_name("삼성전자우") is False
+    assert is_eligible_bluechip_name("KODEX 200") is False
+    assert is_eligible_bluechip_name("테스트스팩1호") is False
+    assert is_eligible_bluechip_name("위험종목", '{"administration":true,"tag":"관리종목"}') is False
+
+    cfg = _json_v3.loads((ROOT / "config/watchlist.json").read_text(encoding="utf-8"))
+    fake_dyn = [
+        {"symbol": f"9000{i:02d}.KS", "name": f"신규우량{i}", "sector": "코스피 시총상위"}
+        for i in range(12)
+    ]
+    kr, us = build_active_universe(cfg, my_holdings=[{"name": "카카오", "symbol": "035720.KS", "buyPrice": 119742, "qty": 33}], dynamic_fetcher=lambda: fake_dyn)
+    kr_syms = {x["symbol"] for x in kr}
+    assert "035720.KS" in kr_syms, "Protected holding must never be dropped"
+    assert "900000.KS" in kr_syms, "Dynamic new blue chip must be added"
+    new_flags = [x for x in kr if x["symbol"] == "900000.KS" and x.get("is_new_bluechip")]
+    assert len(new_flags) == 1
+    assert len(us) >= 20
+
+    # Verify KR up to 10 + US up to 8 recommendations split
+    sample_many = (
+        [{"market": "KR", "symbol": f"000{i:03d}.KS", "name": f"국장{i}", "close": 50000, "ret_1d": 1.0, "ret_20d": 5.0, "score": 75, "grade": "매수 관심", "rr_ratio": 2.0, "is_new_bluechip": i == 0} for i in range(12)]
+        + [{"market": "US", "symbol": f"US{i}", "name": f"미장{i}", "close": 100, "ret_1d": 1.0, "ret_20d": 5.0, "score": 75, "grade": "매수 관심", "rr_ratio": 2.0} for i in range(10)]
+    )
+    pl = build_pwa_payload(sample_many, {}, [])
+    kr_r = [x for x in pl["recommendations"] if x["market"] == "KR"]
+    us_r = [x for x in pl["recommendations"] if x["market"] == "US"]
+    assert len(kr_r) == 10 and len(us_r) == 8
+    idx = (ROOT / "docs/index.html").read_text(encoding="utf-8")
+    assert "🆕 신규우량" in idx and "is_new_bluechip" in idx
+    print("[PASS 21/21] v5.3 2단 자동 우량주 편입·퇴출(보유주 보호·신규우량 편입·스팩/우선주/관리종목 제외·한미10+8추천) 검증 통과")
+
+
+test_v53_dynamic_bluechip_rotation()
+print("=== ALL 21 STOCK QUANT V5.3 SELF-TESTS PASSED ===")

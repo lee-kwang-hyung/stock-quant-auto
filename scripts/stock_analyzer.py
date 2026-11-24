@@ -19,6 +19,7 @@ from build_pwa_feed import build_and_save_pwa_feed
 from trusted_fundamentals import fetch_kr_fundamentals, fetch_us_fundamentals, fetch_dart_recent_disclosures, fetch_kr_investor_flow
 from issue_catalyst_engine import score_issue_mover
 from precision_engine import detect_market_regime, compute_sr_precision_plan, compute_historical_accuracy
+from dynamic_universe import build_active_universe
 
 
 def fetch_ohlcv_yfinance(symbol: str, period: str = "6mo") -> pd.DataFrame:
@@ -93,10 +94,15 @@ def run_analysis(config_path: pathlib.Path, out_dir: pathlib.Path, data_dir: pat
     # 2) 국장 전 종목 급등 초입(+3~15%) & 상한가(+22~30%) 스캔
     kr_movers = _full_scan()
 
-    # 3) 한·미 관심 종목 정량 스코어 & 실전 가격 시나리오
+    # 3) 한·미 동적 우량주 풀(고정 보호층 + 시총/주도주 자동 편입·퇴출) 정량 스코어
+    if fetcher is None:
+        active_kr, active_us = build_active_universe(cfg)
+    else:
+        active_kr, active_us = cfg.get("kr_tickers", []), cfg.get("us_tickers", [])
+
     all_rows = []
-    for market, key in (("KR", "kr_tickers"), ("US", "us_tickers")):
-        for item in cfg.get(key, []):
+    for market, items in (("KR", active_kr), ("US", active_us)):
+        for item in items:
             sym = item["symbol"]
             df = _fetch(sym, period="6mo")
             if df is None or df.empty or len(df) < 25:
@@ -111,6 +117,7 @@ def run_analysis(config_path: pathlib.Path, out_dir: pathlib.Path, data_dir: pat
                 "symbol": sym,
                 "name": item["name"],
                 "sector": item.get("sector", ""),
+                "is_new_bluechip": bool(item.get("is_new_bluechip", False)),
                 "news": news_list,
                 **res,
             })
