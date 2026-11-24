@@ -7,7 +7,7 @@
 ### 대형 수주 · 공급계약 공시
 - [[특징주] 에스오에스랩, '연 매출 143%' 북미 빅테크와 87억 라이다 공급계약에 19% 껑충 - 와이드경제](https://news.google.com/rss/articles/CBMibEFVX3lxTFB5aVoyY1Uwb2NKXzdUSzU5a2lXbHZZWl9KOEdBeExLRWpQWWg1Vl95VTFWWXQ2b1U1YS1PRVdYMDZsZzl4YmIwcWtkNEdDSE1DeEZfeDluQTQtWVJkdjU0TXZkSWhlM2tnWE9Xbg?oc=5)
 - [한화시스템 수주공시 - 단일판매ㆍ공급계약체결 - 한국경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE0wMXpkX2tFeHdIR01YUGJhY0JoWDZYSGpLZFprOFNlclZVMUJFTTNhSEp4MVprTE9iUnpVejVKRDFNR1d0Wjh3Y0F1cEUxNTVxS1BYRTljUHZqQQ?oc=5)
-- [[종목 포커스] 산일전기, 美 블룸에너지 데이터센터향 수주 등으로 주가 상승세? - 데일리인베스트](https://news.google.com/rss/articles/CBMibEFVX3lxTFBRMUVNeDlvd0ZGbUlDWElEWTFFRTk0bTF5MGQ3WjJ1ZF96RU1qUWdyVndkNDlHVDJ0NS13TzJ3WXlUTHJRSU1FMTRON0wxWVZKeFduY2lOakhOMUVKOEp0N0xKSDhIZllxY2lFSg?oc=5)
+- [[종목 포커스] 산일전기, 美 블룸에너지 데이터센터향 수주 등으로 주가 상승세? - 데일리인베스트](https://news.google.com/rss/articles/CBMia0FVX3lxTE1IZ0VDd3Z6SDBYNHZpR1ZUaUdLc3RVRUV4aXNDS0hhUUZCUFcwTE9ETFphQnVCNVFURUlHWEFWYWVXa19UN2owWlQtaG52QkNvU2lxbjlRS1Fld2FiOUhnNUdGX215OFhYeWJB0gFvQVVfeXFMT2pIblFfTVgzZFoyQmczMi1YQ0tKR19JTTJqendyQlBReVd0VktxMmpIVkd6UU9mMnNYaFBwTktwamNyS1pVVGZZRmkzbXNPTVVxMjJvNHRGanl0aV9HSm9JQ1R1X3hIMUQ5YUM3MWtZ?oc=5)
 
 ### 실적 서프라이즈 · 어닝
 - [팔로알토, AI 보안특수에 ‘어닝 서프라이즈’…시간외서주가 7%대 급등[마켓무버] - 서울경제](https://news.google.com/rss/articles/CBMiUkFVX3lxTE04SnBkNTFidE8xeU9UNnhaMWFna2RsU1NGcFBCdVhkbmxsQ2hoclp3WjZUd1h1QXNudmRzYWtWTVVmWWVKZmRZdVljVkVWSFJGNUHSAVNBVV95cUxQenh3c1hSSk1wdVRaaTZnWXVEYXAxM1RodjZLbi1Fek80QTVjM2syUEJHaVhUTDdSeUN2Y0pVbklQWk9XX0ItUGhyd2U4cjJZYk8xdw?oc=5)
@@ -15,8 +15,8 @@
 - [옥타, 에이전트 AI 보안 수요 급증에 '어닝 서프라이즈'…시간외 19%↑ - 연합인포맥스](https://news.google.com/rss/articles/CBMicEFVX3lxTE5heEtPSm5lUjBkVVpJcGJReXhacy11NFl2QTUxY0hmVDJtcC1NaXYwYkhTSmRLWExNRkk0QVRnVlJYQzhJMWk5ekFCR19DaUoybkxMQzFhRWtRWW9VbG5VQmR5Mjh5UFNhNDV4VnQtWGnSAXRBVV95cUxPNElLZXc3Zm1YZUl6TWhiMHZYOFdaa3U5MUJkY0ZDa0YzLVRWUklDOHN5Q3VxYm9lUGRBS0gzUmNkaXdjMkQzdG1GSW5ra2FUUHlxMXNVM09NbnF1X1owdmRMMU9jSGRnQUZOekQxNlJjUkZXQw?oc=5)
 
 ### 신약 · 임상 · FDA 바이오
-- [HLB의 독특한 성장방식, 어떻게 단기간내 신약기업으로 변신했나 - 메디파나뉴스](https://news.google.com/rss/articles/CBMia0FVX3lxTFBjb0NHZVZiMy1wVjVZdkNocFJKMkhyQ2hUU3RPbmdBYlZod29OOEtURG4wUDRiZnlKeHctbGk5MXF6ckUwMmlEV0pzT1IxdktYZHZ4UWdydGRtLVJWRWdBcTJQSnVyelBmWWtj?oc=5)
 - [K-바이오, 잇단 악재에 주가 급락…투자심리 냉각·불신 확산 - 데일리팜](https://news.google.com/rss/articles/CBMiVkFVX3lxTFBzRU5jNzJ5Ul9pU0ZuRjFpT0ZCeDlxRExsSkE4T2J0S3h5bXpUWXdadHRnQWVmZDI0VnlwMkRqaVpHaTdCckNFc2VtZmRfUVNTa0NwVkRn?oc=5)
+- [에이비엘바이오 'ABL001' 연내 美 허가 신청 제동?…FDA, 추가 임상 권고 - 팜이데일리](https://news.google.com/rss/articles/CBMibkFVX3lxTE44SEw2bWdtdllBemlOMGhnVFptVTRQNFRwR3RvRnJBT0lCSlBxVlVaMGNSbEt5YnBjcWtvVHM1XzBaUDJZOUpyWkdlZG8wbVRVamwtaE9FZWMzZjhZWEloSkl2aFBRVlpMMVRBWFFR?oc=5)
 - [[HIT알공] 페니트리움바이오, 고형암 임상 2a상 FDA 승인 - 히트뉴스](https://news.google.com/rss/articles/CBMia0FVX3lxTE9XZHRNUWpoNTBLQWNWdm44WUEwTlRRNkR2eVNHQ2ZJZXlUaGNYZ3VNYXRNSjNkQWNkUmh5aGc0Y1pZS3JYbEJpd0xtUUVOenlBTE1vV1JQMVlackxoY3luRklTb1VjOXFncWVN?oc=5)
 
 ### 정부 정책 · 주도 테마 수혜
@@ -25,9 +25,9 @@
 - [코스피 내린 틈에…코스닥 후끈, 8%↑ 역대 두번째 상승률(종합) - 연합뉴스](https://news.google.com/rss/articles/CBMiW0FVX3lxTE5pdEVvZnR4bTZfWTBFRFpxWTZQLWRuejBfQ1pxaVZDWHd3aS1BVzBpYWJEbEw5U2pnYnlsOUFzNVVMWnNRNklFdy1nbk1ReFJQXzJKQ1UtYTR1LWfSAWBBVV95cUxQV1ZobHhmRFBSSzNORjVPTDVIVllTdjhwSzhfNEEwZGNMOVo4VUk3VWttY1E3MG5YQ2M5bk5ybXpIdGRDTThLdkFPSHpkVHhGRUZlT3J1ZExOcTNoQUJRNVY?oc=5)
 
 ### 미국 증시 핵심 급등 촉매
-- [Lattice Semiconductor (NASDAQ:LSCC) Stock Surges 13% After Revenue Jumps 118% on AI Demand - Stocks Down Under](https://news.google.com/rss/articles/CBMigAFBVV95cUxPemlqTTNVTGJ5SjFtQkRyZTJtOGk3NkRIYzE0WjViQ2VaUGgyZEhBYTBpc1U2VmduODZ3U3lzTUp6aVZ5VDJ5RVNJMlZoVU5LZjNRQ1Q2UGlzSkpUU1ZyTzl2cVFSWGRRT1BoYVNfdExMeFFIcl9Eam1PQU9aR2t6Tw?oc=5)
-- [Twist Biosciences: AI-Driven Rally Or Short Squeeze? I'm Neutral (For Now) (NASDAQ:TWST) - Seeking Alpha](https://news.google.com/rss/articles/CBMirwFBVV95cUxNSXltdUE4Uml4RUhWUHJURjZvS0FQc2wzeGd5VFNaTVRZdHhvWkdHQ0R0eDdTWXdscU83R0d4bVdQQ0NxUS1GblZ1SW1TU3dlSHJNMDFrX3lTQ2c3eGFrXzJZaTRaaHI5UjdJUnltbFBydjlPVkwycTJPVWFIMEgwbURESlM3RmVjaUIyUzcyM0x0NkdVRzdoenU3b25XQzBVOV9fYjAyYVhHeTN4S1dz?oc=5)
-- [Bloom Energy Earnings Surge 680%, But AI Power Player Skids - Investor's Business Daily](https://news.google.com/rss/articles/CBMilAFBVV95cUxNQ0ExdExsZ1c3dHU2c3pKVElZNVR3VXhZMEZ0U3h4TkZlbGNSU2owdEFGOVA4eExvRVNXbWtVRW5jLUxYeE9Ja2kzWXN3WDNTcDNLbTNCMkN3RXdKYnRuN0p1cFhjeEt6LUtVemxLUVNZWGw5eEROM3lrajF3ZXh0SldyVFFFUmkxR0l3VEVMNXFBT0Rn?oc=5)
+- [Three New Stock Themes Are in Focus as the AI Trade Gyrates - Goldman Sachs](https://news.google.com/rss/articles/CBMiqgFBVV95cUxOc3VTUWRYaHNZWjJWanNsMS1uaUo3cDZCbGFNaU5NaU1Mek15V0NTcHBYVFZmYU96Y3Q1UVVJZFhCV290LTU0SDA2Z2xiSE1WYUFpRDFnb041OHBnZGUyR1ZLazl5SDBTQXhKbjBtQVoyT01EekZVck9LUzZpNklKbElpQ3FOSkkxLTRhcVhBdE5vZTJIekdmRXZwZ0F3djFZYkpVZGxNNUVWdw?oc=5)
+- [Today’s top U.S. stock movers: Fermi, NIQ and others surge on AI and biotech catalysts - Investing.com](https://news.google.com/rss/articles/CBMi2wFBVV95cUxNNGduVjFqQkNBQmlFTm52bHpUUHRKOUNrXy1XSXJQcERXS2NSMG5XSmtESjY5a2FIb3dKRk5SVUVZYzd1UUdaMXVVa2ZuR1czcjNnVDNYN3Qya05WU2RVanE3N1d4a2JLa01FODRqRm5RaHlycHh0bHY0SVctOEgybkNwV0d4aXpWWkNTZmtBcWt3MVBvbS1ZOVlrZ0p4d08wMTNtRE03cHJhNklXb1h3T2pBWGRRR1JFLW1ReWtfaHhqX29pdDdzUVlCb1FIVEMzTzEta04yVG9sbFE?oc=5)
+- [Tempus AI Surges on Earnings Beat, But Can the Rally Last? - MarketBeat](https://news.google.com/rss/articles/CBMimAFBVV95cUxQNDlmajFKQWNHbVJIWktFbWI4TldDT3V0TFd1UWo5U2lXYkpiS29LaHVVQkprSnc1YXcyVFAyOWFQY3BUSDJMN2FOZ3ljRGZfdXRNR0FtVENZZThBWjFGMnhmZFVSd2Y1VmxSR3dlandjUlV5aWJwcFY0ZExiVHhlaFhKWVJwZF8tajdVSjNBMzYwakxBSVQ4MA?oc=5)
 
 ## 2. 한국 전 종목 급등 초입 포착 (+3~15% · 거래대금 50억+ · 실전 가격 시나리오)
 
@@ -41,23 +41,23 @@
 
 | 순위 | 종목 | 점수(등급) | 종가(일간) | 진입 참고 구간 | 손절 기준가 | 1차 목표가 | 2차 목표가 | 핵심 근거 |
 | :---: | :--- | :---: | ---: | :--- | :--- | :--- | :--- | :--- |
-| 1 | **에이피알** (`278470.KS`) | **78점** (매수 관심) | 264,000원 (+3.1%) | 260,040원 ~ 265,320원 | 242,880원 (-8.0%) | 302,016원 (+14.4%) | 327,360원 (+24.0%) | 20일선 상회 / MACD 상승 가속 |
-| 2 | **셀트리온** (`068270.KS`) | **74점** (매수 관심) | 209,500원 (+3.5%) | 206,358원 ~ 210,547원 | 197,010원 (-6.0%) | 231,982원 (+10.7%) | 246,970원 (+17.9%) | 중기 상승 정배열 |
-| 3 | **카카오뱅크** (`323410.KS`) | **72점** (매수 관심) | 21,250원 (+1.9%) | 20,931원 ~ 21,356원 | 20,149원 (-5.2%) | 23,233원 (+9.3%) | 24,554원 (+15.5%) | 20일선 상회 |
-| 4 | **SK바이오사이언스** (`302440.KS`) | **68점** (관찰) | 37,050원 (+0.4%) | 36,494원 ~ 37,235원 | 35,753원 (-3.5%) | 39,384원 (+6.3%) | 40,940원 (+10.5%) | 중기 상승 정배열 |
-| 5 | **서울전자통신** (`027040.KQ`) | **66점** (관찰) | 1,735원 (+2.3%) | 1,709원 ~ 1,744원 | 1,605원 (-7.5%) | 1,969원 (+13.5%) | 2,126원 (+22.5%) | 20일선 상회 |
-| 6 | **HMM** (`011200.KS`) | **63점** (관찰) | 21,900원 (+3.1%) | 21,572원 ~ 22,009원 | 20,356원 (-7.0%) | 24,679원 (+12.7%) | 26,532원 (+21.1%) | 중립 흐름 |
-| 7 | **SK하이닉스** (`000660.KS`) | **55점** (관찰) | 1,178,000원 (+7.0%) | 1,160,330원 ~ 1,183,890원 | 1,083,760원 (-8.0%) | 1,347,632원 (+14.4%) | 1,460,720원 (+24.0%) | 하락 역배열 주의 / MACD 상승 가속 |
-| 8 | **현대차** (`005380.KS`) | **55점** (관찰) | 273,500원 (+10.1%) | 269,398원 ~ 274,867원 | 251,620원 (-8.0%) | 312,884원 (+14.4%) | 339,140원 (+24.0%) | 하락 역배열 주의 / MACD 상승 가속 |
+| 1 | **현대차** (`005380.KS`) | **78점** (매수 관심) | 274,750원 (+10.6%) | 270,629원 ~ 276,124원 | 252,770원 (-8.0%) | 314,314원 (+14.4%) | 340,690원 (+24.0%) | 20일선 상회 / MACD 상승 가속 |
+| 2 | **에이피알** (`278470.KS`) | **78점** (매수 관심) | 263,000원 (+2.7%) | 259,055원 ~ 264,315원 | 241,960원 (-8.0%) | 300,872원 (+14.4%) | 326,120원 (+24.0%) | 20일선 상회 / MACD 상승 가속 |
+| 3 | **셀트리온** (`068270.KS`) | **74점** (매수 관심) | 209,500원 (+3.5%) | 206,358원 ~ 210,547원 | 197,010원 (-6.0%) | 231,982원 (+10.7%) | 246,970원 (+17.9%) | 중기 상승 정배열 |
+| 4 | **카카오뱅크** (`323410.KS`) | **72점** (매수 관심) | 21,300원 (+2.2%) | 20,980원 ~ 21,406원 | 20,199원 (-5.2%) | 23,283원 (+9.3%) | 24,604원 (+15.5%) | 20일선 상회 |
+| 5 | **SK바이오사이언스** (`302440.KS`) | **68점** (관찰) | 37,050원 (+0.4%) | 36,494원 ~ 37,235원 | 35,753원 (-3.5%) | 39,384원 (+6.3%) | 40,940원 (+10.5%) | 중기 상승 정배열 |
+| 6 | **서울전자통신** (`027040.KQ`) | **66점** (관찰) | 1,735원 (+2.3%) | 1,709원 ~ 1,744원 | 1,605원 (-7.5%) | 1,969원 (+13.5%) | 2,126원 (+22.5%) | 20일선 상회 |
+| 7 | **HMM** (`011200.KS`) | **63점** (관찰) | 21,950원 (+3.3%) | 21,621원 ~ 22,060원 | 20,406원 (-7.0%) | 24,729원 (+12.7%) | 26,582원 (+21.1%) | 중립 흐름 |
+| 8 | **SK하이닉스** (`000660.KS`) | **55점** (관찰) | 1,181,000원 (+7.3%) | 1,163,285원 ~ 1,186,905원 | 1,086,520원 (-8.0%) | 1,351,064원 (+14.4%) | 1,464,440원 (+24.0%) | 하락 역배열 주의 / MACD 상승 가속 |
 | 9 | **한화에어로스페이스** (`012450.KS`) | **55점** (관찰) | 631,000원 (+8.6%) | 621,535원 ~ 634,155원 | 580,520원 (-8.0%) | 721,864원 (+14.4%) | 782,440원 (+24.0%) | 하락 역배열 주의 / MACD 상승 가속 |
-| 10 | **KODEX 200** (`069500.KS`) | **55점** (관찰) | 79,445원 (+7.7%) | 78,253원 ~ 79,842원 | 73,089원 (-8.0%) | 90,885원 (+14.4%) | 98,512원 (+24.0%) | 하락 역배열 주의 / MACD 상승 가속 |
-| 11 | **SK아이이테크놀로지** (`361610.KS`) | **54점** (관찰) | 10,650원 (+0.4%) | 10,490원 ~ 10,703원 | 10,277원 (-3.5%) | 11,321원 (+6.3%) | 11,768원 (+10.5%) | 하락 역배열 주의 / RSI 과매도(26.9) |
-| 12 | **삼성바이오로직스** (`207940.KS`) | **50점** (관찰) | 1,304,000원 (+0.8%) | 1,284,440원 ~ 1,310,520원 | 1,247,400원 (-4.3%) | 1,405,880원 (+7.8%) | 1,473,800원 (+13.0%) | 중립 흐름 |
-| 13 | **녹십자** (`006280.KS`) | **50점** (관찰) | 122,100원 (+0.7%) | 120,268원 ~ 122,710원 | 117,826원 (-3.5%) | 129,792원 (+6.3%) | 134,920원 (+10.5%) | 중립 흐름 |
+| 10 | **KODEX 200** (`069500.KS`) | **55점** (관찰) | 79,480원 (+7.7%) | 78,288원 ~ 79,877원 | 73,122원 (-8.0%) | 90,925원 (+14.4%) | 98,555원 (+24.0%) | 하락 역배열 주의 / MACD 상승 가속 |
+| 11 | **SK아이이테크놀로지** (`361610.KS`) | **54점** (관찰) | 10,630원 (+0.2%) | 10,471원 ~ 10,683원 | 10,258원 (-3.5%) | 11,300원 (+6.3%) | 11,746원 (+10.5%) | 하락 역배열 주의 / RSI 과매도(26.6) |
+| 12 | **삼성바이오로직스** (`207940.KS`) | **50점** (관찰) | 1,302,000원 (+0.7%) | 1,282,470원 ~ 1,308,510원 | 1,247,400원 (-4.2%) | 1,400,280원 (+7.5%) | 1,465,800원 (+12.6%) | 중립 흐름 |
+| 13 | **녹십자** (`006280.KS`) | **50점** (관찰) | 121,900원 (+0.6%) | 120,072원 ~ 122,509원 | 117,634원 (-3.5%) | 129,580원 (+6.3%) | 134,700원 (+10.5%) | 중립 흐름 |
 | 14 | **삼성전자** (`005930.KS`) | **48점** (관찰) | 192,500원 (+6.6%) | 189,612원 ~ 193,462원 | 177,100원 (-8.0%) | 220,220원 (+14.4%) | 238,700원 (+24.0%) | 하락 역배열 주의 |
-| 15 | **LG에너지솔루션** (`373220.KS`) | **48점** (관찰) | 311,500원 (+6.3%) | 306,828원 ~ 313,057원 | 287,500원 (-7.7%) | 354,700원 (+13.9%) | 383,500원 (+23.1%) | 하락 역배열 주의 |
+| 15 | **LG에너지솔루션** (`373220.KS`) | **48점** (관찰) | 310,500원 (+6.0%) | 305,842원 ~ 312,052원 | 286,500원 (-7.7%) | 353,700원 (+13.9%) | 382,500원 (+23.2%) | 하락 역배열 주의 |
 | 16 | **삼양식품** (`003230.KS`) | **43점** (주의) | 1,207,000원 (+1.2%) | 1,188,895원 ~ 1,213,035원 | 1,151,370원 (-4.6%) | 1,307,134원 (+8.3%) | 1,373,890원 (+13.8%) | 하락 역배열 주의 |
-| 17 | **NAVER** (`035420.KS`) | **35점** (주의) | 156,600원 (+3.9%) | 154,251원 ~ 157,383원 | 144,072원 (-8.0%) | 179,150원 (+14.4%) | 194,184원 (+24.0%) | 하락 역배열 주의 |
+| 17 | **NAVER** (`035420.KS`) | **35점** (주의) | 156,400원 (+3.7%) | 154,054원 ~ 157,182원 | 143,888원 (-8.0%) | 178,922원 (+14.4%) | 193,936원 (+24.0%) | 하락 역배열 주의 |
 | 18 | **카카오** (`035720.KS`) | **35점** (주의) | 30,450원 (+4.6%) | 29,993원 ~ 30,602원 | 28,259원 (-7.2%) | 34,394원 (+13.0%) | 37,023원 (+21.6%) | 하락 역배열 주의 |
 
 ## 5. 미국 핵심 관심 종목 실전 가격 시나리오
