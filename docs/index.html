@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="내 주식 비서" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./icon.svg" type="image/svg+xml" />
-  <title>나만의 주식 비서 v4.8</title>
+  <title>나만의 주식 비서 v5.0</title>
   <style>
     :root {
       --bg: #F3F5F8; --card: #FFFFFF; --ink: #0F172A; --ink2: #334155; --mute: #64748B; --line: #E2E8F0;
@@ -162,6 +162,26 @@
     .alert-log-item { padding: 5px 0; border-bottom: 1px dashed #E2E8F0; }
     .bell-dot { position: relative; }
     .bell-dot.has-new::after { content: ""; position: absolute; top: 4px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: #EF4444; }
+    .briefing-card { background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%); color: #FFFFFF; border-radius: 18px; padding: 16px; margin-bottom: 12px; box-shadow: 0 6px 20px rgba(15,23,42,0.16); }
+    .briefing-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .briefing-title { font-size: 16px; font-weight: 800; }
+    .briefing-time { font-size: 11.5px; color: #BFDBFE; font-weight: 700; }
+    .idx-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .idx-box { background: rgba(255,255,255,0.12); border-radius: 12px; padding: 9px 11px; }
+    .idx-name { font-size: 11.5px; color: #CBD5E1; font-weight: 700; }
+    .idx-val { font-size: 15px; font-weight: 800; margin-top: 2px; }
+    .idx-val.up { color: #FCA5A5; } .idx-val.down { color: #93C5FD; }
+    .briefing-prose { background: rgba(255,255,255,0.09); border-radius: 12px; padding: 11px 12px; font-size: 13px; line-height: 1.65; color: #F8FAFC; }
+    .briefing-prose p { margin: 0 0 8px; }
+    .briefing-prose p:last-child { margin-bottom: 0; }
+    .briefing-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .btn-order { flex: 1; border: none; border-radius: 10px; padding: 10px 12px; font-size: 13px; font-weight: 800; cursor: pointer; background: #38BDF8; color: #0F172A; }
+    .btn-brief-sub { border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.12); color: #FFFFFF; border-radius: 10px; padding: 10px 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+    .rank-verdict { margin-top: 8px; padding: 9px 11px; border-radius: 10px; font-size: 12.5px; line-height: 1.5; font-weight: 600; }
+    .rank-verdict.danger { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+    .rank-verdict.good { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+    .rank-verdict.warn { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
+    .rank-verdict.neutral { background: #F8FAFC; color: #334155; border: 1px solid #E2E8F0; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -219,7 +239,7 @@
   <div class="app-wrap">
     <header class="topbar">
       <div class="brand">
-        <span class="brand-title">나만의 주식 비서 v4.8</span>
+        <span class="brand-title">나만의 주식 비서 v5.0</span>
         <span id="updatedText" class="brand-time">불러오는 중...</span>
       </div>
       <div class="top-actions">
@@ -308,10 +328,20 @@
       </div>
     </main>
 
-    <!-- Tab 4: 급등·이슈주 -->
+    <!-- Tab 4: 실시간 시황 · 랭킹 브리핑 -->
     <main id="tab-movers" class="tab-panel hidden">
       <div class="section">
-        <div class="sec-head"><h2>이슈 급등 초입 (+3~15%)</h2><span>소액 분할 · 손절 필수</span></div>
+        <div id="liveBriefingBox"></div>
+        <div class="sec-head" style="margin-top:14px;"><h2>국내 실시간 랭킹 · 초보 판단</h2><span id="rankUpdatedTag">실시간 분석</span></div>
+        <div class="filter-row" id="liveRankFilter" style="padding:2px 0 10px;">
+          <button class="pill active" data-rk="up">🔥 상승 TOP</button>
+          <button class="pill" data-rk="value">💰 거래대금 TOP</button>
+          <button class="pill" data-rk="volume">📊 거래량 TOP</button>
+          <button class="pill" data-rk="down">💧 하락 TOP</button>
+        </div>
+        <div id="liveRankList"></div>
+
+        <div class="sec-head" style="margin-top:18px;"><h2>이슈 급등 초입 (+3~15%)</h2><span>소액 분할 · 손절 필수</span></div>
         <div id="breakoutList"></div>
         <div class="sec-head" style="margin-top:18px;"><h2>당일 상한가 · 초급등 (+22%+)</h2><span>추격매수 금지 · 테마 참고용</span></div>
         <div id="limitUpList"></div>
@@ -334,7 +364,7 @@
       <button class="tab-btn active" data-tab="rec"><span class="ico">⭐</span>추천</button>
       <button class="tab-btn" data-tab="watch"><span class="ico">📊</span>관심</button>
       <button class="tab-btn" data-tab="my"><span class="ico">💼</span>내 보유</button>
-      <button class="tab-btn" data-tab="movers"><span class="ico">🚀</span>이슈급등</button>
+      <button class="tab-btn" data-tab="movers"><span class="ico">📡</span>시황</button>
       <button class="tab-btn" data-tab="news"><span class="ico">📰</span>뉴스</button>
     </div>
   </nav>
@@ -1018,7 +1048,205 @@
       document.getElementById("watchCount").textContent = `${list.length}종목`;
       document.getElementById("watchList").innerHTML = list.length ? list.map(stockCardHTML).join("") : `<div class="empty">일치하는 관심 종목이 없습니다.</div>`;
     }
+    let liveMarketData = null;
+    let liveRankTab = "up";
+
+    window.openBrokerageApp = function() {
+      if (window.AndroidStockBridge && typeof window.AndroidStockBridge.openBrokerageApp === "function") {
+        try { window.AndroidStockBridge.openBrokerageApp(); return; } catch {}
+      }
+      window.open("https://m.stock.naver.com/", "_blank", "noopener");
+    };
+
+    function requestLiveMarketBriefing() {
+      if (window.AndroidStockBridge && typeof window.AndroidStockBridge.fetchLiveMarketBriefing === "function") {
+        try { window.AndroidStockBridge.fetchLiveMarketBriefing(); return true; } catch {}
+      }
+      return false;
+    }
+
+    window.onLiveMarketBriefingUpdated = function(data) {
+      if (data && data.ok) {
+        liveMarketData = data;
+        liveMarketData._fetchedAt = nowKstTime();
+        renderLiveMarketBriefing();
+      }
+    };
+
+    function explainLiveRankStock(st) {
+      const pct = Number(st.pct || 0);
+      const val = Number(st.val_eok || 0);
+      const riskTag = st.risk_tag || "";
+      if (st.high_risk || riskTag.includes("거래정지") || riskTag.includes("관리") || riskTag.includes("경고")) {
+        return {
+          cls: "danger",
+          badge: `🚨 ${riskTag || "거래정지·경고 위험"}`,
+          text: "거래정지·투자경고·관리종목 위험 신호가 감지되었습니다. 초보자는 신규 매수를 피하고, 보유 중이라면 즉시 공시를 확인하세요."
+        };
+      }
+      if (pct >= 25) {
+        return {
+          cls: "danger",
+          badge: "🔴 상한가 과열 · 추격 금지",
+          text: `이미 +${pct.toFixed(1)}%까지 폭등해 단기과열·급락 위험이 큽니다. 보유 중이면 절반 이상 수익 실현을 고민하고, 신규 추격 매수는 피하세요.`
+        };
+      }
+      if (pct >= 14) {
+        return {
+          cls: "warn",
+          badge: "🟡 단기 과열 · 눌림 대기",
+          text: `강하게 올랐지만(+${pct.toFixed(1)}%) 지금 따라 사면 고점 물림 위험이 있습니다. 차익 매물이 나와 눌릴 때만 소액으로 지켜보세요.`
+        };
+      }
+      if (pct >= 4) {
+        return {
+          cls: "good",
+          badge: val >= 100 ? "🟢 자금 유입 초입 · 분할 관찰" : "🟡 상승 초입 · 거래량 확인",
+          text: val >= 100
+            ? `거래대금 ${val.toLocaleString()}억이 붙은 상승 초입(+${pct.toFixed(1)}%)입니다. 한 번에 사지 말고 소액 분할 접근 후 -5% 손절선을 꼭 지키세요.`
+            : `오름세(+${pct.toFixed(1)}%)지만 거래대금이 크지 않아 변동성이 큽니다. 소액 관찰만 권장합니다.`
+        };
+      }
+      if (pct <= -12) {
+        return {
+          cls: "danger",
+          badge: "🚨 급락 투매 · 거래정지/악재 점검",
+          text: `하루 ${pct.toFixed(1)}% 급락 중입니다. 악재 공시나 거래정지·유상증자 위험이 있을 수 있으니 바닥 확인 전 절대 물타기하지 마세요.`
+        };
+      }
+      if (pct <= -5) {
+        return {
+          cls: "warn",
+          badge: "🔵 하락 주의 · 관망",
+          text: `매도세가 강한 구간(${pct.toFixed(1)}%)입니다. 싸 보인다고 바로 사지 말고 하락이 멈추는지 2~3일 지켜보세요.`
+        };
+      }
+      return {
+        cls: "neutral",
+        badge: "⚪ 일반 흐름",
+        text: val >= 300
+          ? `대형 자금(${val.toLocaleString()}억)이 거래되는 주도주 흐름입니다. 추천·관심 탭에서 정확한 매수/매도 가격을 확인해 보세요.`
+          : "큰 과열이나 투매 없이 평이한 흐름입니다."
+      };
+    }
+
+    function renderLiveMarketBriefing() {
+      const box = document.getElementById("liveBriefingBox");
+      const listBox = document.getElementById("liveRankList");
+      const tagEl = document.getElementById("rankUpdatedTag");
+      if (!box || !listBox) return;
+
+      const d = liveMarketData;
+      if (d && d.ok) {
+        const kp = d.kospi || { name: "코스피", price: "-", pct: 0, status: "" };
+        const kq = d.kosdaq || { name: "코스닥", price: "-", pct: 0, status: "" };
+        const kpPct = Number(kp.pct || 0);
+        const kqPct = Number(kq.pct || 0);
+        const avgPct = (kpPct + kqPct) / 2;
+
+        const upArr = d.up || [];
+        const downArr = d.down || [];
+        const valArr = d.value || [];
+
+        const limitCnt = upArr.filter(x => Number(x.pct) >= 28).length;
+        const riskCnt = [...upArr, ...downArr].filter(x => x.high_risk || (x.risk_tag && x.risk_tag.includes("위험"))).length;
+        const plungeCnt = downArr.filter(x => Number(x.pct) <= -12).length;
+
+        const moodLine = avgPct >= 0.6
+          ? "오늘은 코스피·코스닥 모두 빨간불로 매수 심리가 살아있는 장이에요. 무리한 추격만 피하면 상승 초입 종목을 2~3번 나눠 접근하기 좋은 흐름입니다."
+          : avgPct <= -0.8
+          ? "오늘은 시장 전체가 흔들리는 하락장입니다. 새로 사기보다 현금을 지키고, 내 보유 종목의 손절선만 차분히 점검하세요."
+          : "오늘은 지수가 크게 움직이지 않고 종목별로 갈리는 혼조 장세입니다. 거래대금이 강하게 붙는 주도주만 골라 소액 분할로 접근하세요.";
+
+        const topLeaders = valArr.slice(0, 3).map(x => `${x.name}(${Number(x.pct) >= 0 ? "+" : ""}${Number(x.pct).toFixed(1)}%)`).join(", ");
+        const flowLine = topLeaders
+          ? `지금 시장 자금은 <strong>${esc(topLeaders)}</strong> 쪽으로 가장 많이 몰리고 있습니다.`
+          : "거래대금 상위 종목 데이터를 불러오는 중입니다.";
+
+        const riskLine = (limitCnt > 0 || riskCnt > 0 || plungeCnt > 0)
+          ? `현재 상한가 과열 <strong>${limitCnt}개</strong>, 급락 투매(-12% 이하) <strong>${plungeCnt}개</strong>${riskCnt > 0 ? `, 거래정지·경고 위험 <strong>${riskCnt}개</strong>` : ""}가 포착됐습니다. +25% 이상 급등주나 급락주는 단기과열·거래정지 위험이 크니 추격 매수를 피하세요.`
+          : "현재 특이한 거래정지·투매 과열 경고는 적지만, 항상 손절 기준가를 지키며 분할 매수하세요.";
+
+        box.innerHTML = `
+          <div class="briefing-card">
+            <div class="briefing-top">
+              <span class="briefing-title">📢 지금 시장 한눈에 읽기</span>
+              <span class="briefing-time">● ${esc(d._fetchedAt || nowKstTime())} 실시간</span>
+            </div>
+            <div class="idx-row">
+              <div class="idx-box">
+                <div class="idx-name">코스피 ${kp.status === "OPEN" ? "(장중)" : ""}</div>
+                <div class="idx-val ${kpPct >= 0 ? "up" : "down"}">${esc(kp.price)} (${kpPct >= 0 ? "+" : ""}${kpPct.toFixed(2)}%)</div>
+              </div>
+              <div class="idx-box">
+                <div class="idx-name">코스닥 ${kq.status === "OPEN" ? "(장중)" : ""}</div>
+                <div class="idx-val ${kqPct >= 0 ? "up" : "down"}">${esc(kq.price)} (${kqPct >= 0 ? "+" : ""}${kqPct.toFixed(2)}%)</div>
+              </div>
+            </div>
+            <div class="briefing-prose">
+              <p><strong>① 장 분위기:</strong> ${moodLine}</p>
+              <p><strong>② 자금 흐름:</strong> ${flowLine}</p>
+              <p><strong>③ 위험 주의보:</strong> ${riskLine}</p>
+            </div>
+            <div class="briefing-actions">
+              <button class="btn-order" onclick="openBrokerageApp()">📲 한투 앱에서 주문하기</button>
+              <button class="btn-brief-sub" onclick="loadFeed(true)">↻ 시황 갱신</button>
+            </div>
+          </div>`;
+
+        tagEl.textContent = `${d._fetchedAt || ""} 실시간 기준`;
+        const rows = d[liveRankTab] || [];
+        listBox.innerHTML = rows.length ? rows.map((st, idx) => {
+          const v = explainLiveRankStock(st);
+          const up = Number(st.pct) >= 0;
+          return `
+            <article class="card">
+              <div class="card-top">
+                <div class="stock-meta">
+                  <span class="mkt-tag">${idx + 1}위</span>
+                  <span class="stock-name">${esc(st.name)}</span>
+                  <span class="stock-code">${esc(st.code)}</span>
+                </div>
+                <span class="chg ${up ? "up" : "down"}" style="font-size:16px;">${up ? "+" : ""}${Number(st.pct).toFixed(2)}%</span>
+              </div>
+              <div class="price-row" style="margin:6px 0 4px;">
+                <span class="cur-price" style="font-size:19px;">${Math.round(Number(st.price)).toLocaleString()}원</span>
+                <span style="font-size:12px;color:var(--mute);font-weight:700;">거래대금 ${Number(st.val_eok || 0).toLocaleString()}억</span>
+              </div>
+              <div class="rank-verdict ${v.cls}">
+                <div><strong>${esc(v.badge)}</strong></div>
+                <div style="margin-top:3px;font-weight:500;">${esc(v.text)}</div>
+              </div>
+            </article>`;
+        }).join("") : `<div class="empty">해당 랭킹 데이터가 없습니다.</div>`;
+      } else {
+        // 웹 브라우저 또는 구버전 APK 폴백 브리핑
+        const mr = (appData && appData.market_regime) || {};
+        const krReg = (mr.KR && mr.KR.regime) || "혼조세";
+        const brCnt = ((appData && appData.breakout) || []).length;
+        const luCnt = ((appData && appData.limit_up) || []).length;
+        box.innerHTML = `
+          <div class="briefing-card">
+            <div class="briefing-top">
+              <span class="briefing-title">📢 실시간 시장 브리핑</span>
+              <span class="briefing-time">v5.0 앱 실시간 연동</span>
+            </div>
+            <div class="briefing-prose">
+              <p><strong>① 현재 시장 국면:</strong> 한국 증시는 현재 <strong>${esc(krReg)}</strong> 흐름이며, 급등 초입 <strong>${brCnt}종목</strong>·상한가 과열 <strong>${luCnt}종목</strong>이 포착됐습니다.</p>
+              <p><strong>② 실시간 4대 랭킹 안내:</strong> <strong>MyStockAssistant-v5.0.apk</strong> 앱으로 실행하시면 네이버 실시간 상승·하락·거래대금·거래량 TOP과 거래정지/과열 위험 경고가 즉시 표시됩니다.</p>
+            </div>
+            <div class="briefing-actions">
+              <button class="btn-order" onclick="openBrokerageApp()">📲 증권/시세 바로가기</button>
+              <button class="btn-brief-sub" onclick="loadFeed(true)">↻ 새로고침</button>
+            </div>
+          </div>`;
+        tagEl.textContent = "v5.0 앱에서 실시간 랭킹 지원";
+        listBox.innerHTML = `<div class="empty">v5.0 안드로이드 앱에서 <strong>상승·거래대금·거래량·하락 실시간 랭킹</strong>과 종목별 초보 판단 해설이 자동으로 채워집니다.</div>`;
+      }
+    }
+
     function renderMovers() {
+      renderLiveMarketBriefing();
       const br = appData.breakout || [];
       document.getElementById("breakoutList").innerHTML = br.length ? br.map(m => `
         <article class="card">
@@ -1076,6 +1304,7 @@
 
       try {
         window.AndroidStockBridge.fetchLiveQuotes(Array.from(syms).join(","));
+        requestLiveMarketBriefing();
         return true;
       } catch {
         return false;
@@ -1303,6 +1532,12 @@
       });
     });
     document.getElementById("watchSearch").addEventListener("input", renderWatch);
+    document.querySelectorAll("#liveRankFilter .pill").forEach(p => {
+      p.addEventListener("click", () => {
+        document.querySelectorAll("#liveRankFilter .pill").forEach(x => x.classList.remove("active"));
+        p.classList.add("active"); liveRankTab = p.dataset.rk; renderLiveMarketBriefing();
+      });
+    });
 
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch(() => {});
     loadFeed(false);

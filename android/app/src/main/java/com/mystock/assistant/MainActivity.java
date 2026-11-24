@@ -190,6 +190,40 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
+        public void openBrokerageApp() {
+            runOnUiThread(() -> {
+                String[] pkgs = new String[]{
+                        "com.truefriend.neosmartarenewal",
+                        "com.truefriend.neosmart"
+                };
+                PackageManager pm = getPackageManager();
+                for (String pkg : pkgs) {
+                    Intent launch = pm.getLaunchIntentForPackage(pkg);
+                    if (launch != null) {
+                        startActivity(launch);
+                        return;
+                    }
+                }
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://m.stock.naver.com/")));
+                } catch (Exception ignored) {
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void fetchLiveMarketBriefing() {
+            new Thread(() -> {
+                JSONObject data = MarketBriefingFetcher.fetchFullLiveMarket();
+                final String payload = data.toString();
+                runOnUiThread(() -> webView.evaluateJavascript(
+                        "window.onLiveMarketBriefingUpdated && window.onLiveMarketBriefingUpdated(" + payload + ");",
+                        null
+                ));
+            }).start();
+        }
+
+        @JavascriptInterface
         public void fetchLiveQuotes(final String symbolsCsv) {
             new Thread(() -> {
                 JSONObject result = new JSONObject();
