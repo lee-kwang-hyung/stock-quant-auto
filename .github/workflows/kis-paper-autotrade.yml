@@ -38,18 +38,10 @@ jobs:
       - name: Run KIS Paper Autotrade (Mock Only)
         env:
           TZ: Asia/Seoul
-          # 모의투자 전용 고정 (실계좌 주문 원천 차단)
-          KIS_PAPER_ONLY: "true"
-          KIS_BASE_URL: "https://openapivts.koreainvestment.com:29443"
-          KIS_TR_BUY: "VTTC0012U"
-          KIS_TR_SELL: "VTTC0011U"
-          KIS_TR_BALANCE: "VTTC8434R"
-          STOP_LOSS_PCT: "-7.0"
-          # GitHub Secrets 연동 (저장소 Secret 이름과 일치해야 함)
-          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
-          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
-          KIS_ACCOUNT_NO: ${{ secrets.KIS_ACCOUNT_NO }}
-          KIS_ACCOUNT_PRDT_CD: ${{ secrets.KIS_ACCOUNT_PRDT_CD }}
+          APP_PIN: ${{ secrets.APP_PIN }}
+          KIS_PAPER_APP_KEY: ${{ secrets.KIS_PAPER_APP_KEY }}
+          KIS_PAPER_APP_SECRET: ${{ secrets.KIS_PAPER_APP_SECRET }}
+          KIS_PAPER_ACCOUNT_NO: ${{ secrets.KIS_PAPER_ACCOUNT_NO }}
         run: |
           python scripts/kis_paper_trader.py
 
@@ -61,8 +53,7 @@ jobs:
           # live_feed.json 덮어쓰기 원천 방지
           git checkout -- docs/data/live_feed.json 2>/dev/null || true
 
-          git add docs/data/
-          git reset -- docs/data/live_feed.json 2>/dev/null || true
+          git add data/paper_ledger.json data/paper_trading_summary.json
 
           if ! git diff --cached --quiet; then
             git commit -m "chore: update KIS paper autotrade report [skip ci]"
