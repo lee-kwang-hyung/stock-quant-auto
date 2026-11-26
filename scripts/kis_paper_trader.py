@@ -333,6 +333,19 @@ def run_paper_autotrader(
     watchlist = payload.get("watchlist") or []
     candidates = payload.get("recommendations") or watchlist
     kr_regime = ((payload.get("market_regime") or {}).get("KR") or {}).get("regime", "혼조세")
+
+    # 매수 보류 원인 확인용 진단 로그 (전략/로직 변경 없음)
+    kr_cands = [c for c in candidates if c.get("market") == "KR"]
+    buy_cands = [
+        c for c in kr_cands
+        if c.get("status") == "buy"
+        and int(c.get("score", 0)) >= 65
+        and "주의" not in str(c.get("trust_label", ""))
+    ]
+    print(f"[진단] 한국국면={kr_regime} | KR후보={len(kr_cands)}개 | 매수조건통과(65점+)={len(buy_cands)}개")
+    if "약세" in (kr_regime or ""):
+        print("[진단] 약세장 현금 보호 발동 -> 신규 매수 자동 차단")
+
     price_map = {}
     for w in watchlist:
         if w.get("market") == "KR" and float(w.get("price_num") or 0) > 0:
