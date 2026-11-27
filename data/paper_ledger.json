@@ -1,10 +1,48 @@
 {
   "initial_cash": 10000000.0,
-  "cash": 10000000.0,
-  "positions": {},
-  "trades": [],
+  "cash": 7534730.26,
+  "positions": {
+    "302440": {
+      "code": "302440",
+      "name": "SK바이오사이언스",
+      "qty": 31,
+      "avg_price": 39500.0,
+      "cur_price": 39500.0,
+      "half_sold": false
+    },
+    "011200": {
+      "code": "011200",
+      "name": "HMM",
+      "qty": 56,
+      "avg_price": 22150.0,
+      "cur_price": 22150.0,
+      "half_sold": false
+    }
+  },
+  "trades": [
+    {
+      "time": "2026-11-27 09:51 KST",
+      "side": "BUY",
+      "code": "011200",
+      "name": "HMM",
+      "qty": 56,
+      "price": 22150,
+      "pnl": 0,
+      "reason": "방어형 정찰 모드(약세장) · 매수신호 (78점)"
+    },
+    {
+      "time": "2026-11-27 09:51 KST",
+      "side": "BUY",
+      "code": "302440",
+      "name": "SK바이오사이언스",
+      "qty": 31,
+      "price": 39500,
+      "pnl": 0,
+      "reason": "방어형 정찰 모드(약세장) · 매수신호 (84점)"
+    }
+  ],
   "wins": 0,
   "losses": 0,
-  "mode": "로컬 가상 시뮬레이터 (1,000만 원 · KIS 키 등록 전 자동 검증)",
-  "updated_kst": "2026-11-27 01:35 KST"
+  "mode": "로컬 가상 시뮬레이터 (1,000만 원 · 유동적 국면 대응)",
+  "updated_kst": "2026-11-27 09:51 KST"
 }
