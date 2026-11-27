@@ -1,13 +1,13 @@
 """
-v6.0 한국투자증권(KIS) 모의투자 전용 자동매매 엔진 (실계좌 주문 원천 차단).
+v6.1 한국투자증권(KIS) 모의투자 전용 자동매매 엔진 (유동적 국면 대응 · 실계좌 주문 원천 차단).
 - 모의투자 전용 도메인(https://openapivts.koreainvestment.com:29443) 및 모의 TR_ID(VTTC0012U/VTTC0011U/VTTC8434R)만 사용
 - KIS 모의투자 API 키가 아직 없을 때는 로컬 가상 시뮬레이터(1,000만 원 시작 · 수수료 0.015% + 매도세 0.18% 반영)로 즉시 자동 검증
-- 매매 원칙:
-  1) 최대 4종목 분산, 종목당 최대 25% 비중
-  2) -7.0% 손절 즉시 전량 매도
-  3) +10.0% 1차 목표가 절반(50%) 익절
-  4) +18.0% 2차 목표가 전량 익절 또는 1차 익절 후 +2.0% 회귀 시 본전 트레일링 매도
-  5) 코스피 약세 주의 국면에서는 신규 매수 자동 차단(현금 보호)
+- 유동적 매매 원칙 (안전장치 유지 + 시장 국면별 비중·진입 기준 자동 조절):
+  1) 상승/강세장: 최대 4종목 · 종목당 25% 비중 · 58점 이상 매수신호(또는 65점+ 우량주) 진입
+  2) 혼조/보합장: 최대 4종목 · 종목당 20% 비중 · 60점 이상 매수신호(또는 66점+ 우량주) 진입
+  3) 약세/하락장: 현금 75% 이상 보호하면서 최대 2종목 · 종목당 12.5% 소액 정찰 매수 (70점 이상 최상위 우량주 한정)
+  4) -7.0% 손절 즉시 전량 매도 (모든 국면 100% 고정)
+  5) +10.0% 1차 목표가 절반(50%) 익절 / +18.0% 2차 목표가 전량 익절 / 1차 익절 후 +2.0% 본전 트레일링
 """
 import datetime as dt
 import json
@@ -36,6 +36,34 @@ TRAILING_FLOOR_PCT = 2.0
 FEE_RATE = 0.00015       # 매수/매도 위탁수수료 0.015%
 SELL_TAX_RATE = 0.0018   # 코스피/코스닥 매도 증권거래세 0.18%
 INITIAL_SIM_CASH = 10_000_000
+
+
+def get_dynamic_regime_rules(kr_regime: str) -> dict:
+    """한국 시장 국면에 따라 최대 보유 종목 수, 종목당 비중, 최소 진입 점수를 유동적으로 반환."""
+    regime_str = kr_regime or "혼조세"
+    if "약세" in regime_str or "하락" in regime_str:
+        return {
+            "label": "방어형 정찰 모드(약세장)",
+            "max_positions": 2,
+            "max_weight": 0.125,     # 최대 25%만 투자, 현금 75% 보호
+            "buy_min_score": 68,     # buy 신호일 때 최소 점수
+            "strong_min_score": 72,  # 비-buy(관심/보유) 우량주 허용 점수
+        }
+    if "강세" in regime_str or "상승" in regime_str:
+        return {
+            "label": "적극 운용 모드(상승장)",
+            "max_positions": 4,
+            "max_weight": 0.25,      # 최대 100% 활용
+            "buy_min_score": 58,
+            "strong_min_score": 65,
+        }
+    return {
+        "label": "균형 운용 모드(혼조장)",
+        "max_positions": 4,
+        "max_weight": 0.20,          # 최대 80% 활용, 현금 20% 유지
+        "buy_min_score": 60,
+        "strong_min_score": 66,
+    }
 
 
 class KisPaperClient:
@@ -135,12 +163,13 @@ def plan_paper_orders(
     kr_regime: str = "혼조세",
 ) -> list:
     """
-    보유 포지션 점검(손절/1차·2차 익절/트레일링) 후 여유 슬롯에 안정형 매수 주문 계획 생성.
+    보유 포지션 점검(손절/1차·2차 익절/트레일링) 후 시장 국면에 맞춰 유동적으로 안정형 매수 주문 계획 생성.
     반환: [{"side": "SELL"|"BUY", "code": "005930", "name": "...", "qty": 10, "price": 75000, "reason": "..."}]
     """
     orders = []
     est_cash = float(cash)
     remaining_pos = dict(positions)
+    rules = get_dynamic_regime_rules(kr_regime)
 
     # 1) 보유 종목 매도 조건 점검 (손절 -> 2차 익절 -> 본전 트레일링 -> 1차 절반 익절)
     for code, pos in list(positions.items()):
@@ -181,26 +210,34 @@ def plan_paper_orders(
             })
             est_cash += cur * sell_q * (1.0 - FEE_RATE - SELL_TAX_RATE)
 
-    # 2) 하락 주의 국면에서는 신규 매수 차단 (현금 보호)
-    if "약세" in (kr_regime or ""):
-        return orders
-
-    # 3) 총자산 계산 및 빈 슬롯에 안정형 추천주 분할 매수
+    # 2) 총자산 계산 및 국면별 유동적 비중으로 고득점 우량주 분할 매수
     total_equity = est_cash + sum(
         int(p["qty"]) * float(price_map.get(c) or p.get("cur_price") or p.get("avg_price") or 0)
         for c, p in remaining_pos.items()
     )
-    max_per_stock = total_equity * MAX_WEIGHT_PER_STOCK
+    max_per_stock = total_equity * rules["max_weight"]
+    max_slots = rules["max_positions"]
 
-    for cand in candidates:
-        if len(remaining_pos) >= MAX_POSITIONS:
+    # 점수 높은 순으로 우선 검토
+    sorted_cands = sorted(candidates, key=lambda x: int(x.get("score", 0)), reverse=True)
+
+    for cand in sorted_cands:
+        if len(remaining_pos) >= max_slots:
             break
         if cand.get("market") != "KR":
             continue
-        if cand.get("status") != "buy" or int(cand.get("score", 0)) < 65:
-            continue
         if "주의" in str(cand.get("trust_label", "")):
             continue
+        status = str(cand.get("status", "")).lower()
+        if status == "sell" or "매도" in status:
+            continue
+
+        score = int(cand.get("score", 0))
+        is_buy_signal = (status == "buy") and (score >= rules["buy_min_score"])
+        is_strong_pick = score >= rules["strong_min_score"]
+        if not (is_buy_signal or is_strong_pick):
+            continue
+
         code = str(cand.get("symbol", "")).split(".")[0].strip()
         if not code or len(code) != 6 or code in remaining_pos:
             continue
@@ -211,9 +248,12 @@ def plan_paper_orders(
         qty = int(alloc // (price * (1.0 + FEE_RATE)))
         if qty <= 0:
             continue
+
+        tag = "매수신호" if is_buy_signal else "고득점우량"
         orders.append({
             "side": "BUY", "code": code, "name": cand.get("name", code),
-            "qty": qty, "price": price, "reason": f"안정형 매수 신호 ({cand.get('score')}점)",
+            "qty": qty, "price": price,
+            "reason": f"{rules['label']} · {tag} ({score}점)",
         })
         est_cash -= price * qty * (1.0 + FEE_RATE)
         remaining_pos[code] = {"code": code, "name": cand.get("name", code), "qty": qty, "avg_price": price, "cur_price": price}
@@ -333,18 +373,14 @@ def run_paper_autotrader(
     watchlist = payload.get("watchlist") or []
     candidates = payload.get("recommendations") or watchlist
     kr_regime = ((payload.get("market_regime") or {}).get("KR") or {}).get("regime", "혼조세")
+    rules = get_dynamic_regime_rules(kr_regime)
 
-    # 매수 보류 원인 확인용 진단 로그 (전략/로직 변경 없음)
     kr_cands = [c for c in candidates if c.get("market") == "KR"]
-    buy_cands = [
-        c for c in kr_cands
-        if c.get("status") == "buy"
-        and int(c.get("score", 0)) >= 65
-        and "주의" not in str(c.get("trust_label", ""))
-    ]
-    print(f"[진단] 한국국면={kr_regime} | KR후보={len(kr_cands)}개 | 매수조건통과(65점+)={len(buy_cands)}개")
-    if "약세" in (kr_regime or ""):
-        print("[진단] 약세장 현금 보호 발동 -> 신규 매수 자동 차단")
+    print(
+        f"[진단] 한국국면={kr_regime} -> {rules['label']} "
+        f"(최대 {rules['max_positions']}종목 · 비중 {int(rules['max_weight']*100)}% · "
+        f"매수기준 {rules['buy_min_score']}점 / 우량 {rules['strong_min_score']}점) | KR후보={len(kr_cands)}개"
+    )
 
     price_map = {}
     for w in watchlist:
@@ -386,7 +422,7 @@ def run_paper_autotrader(
             orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime)
             ledger, summary = apply_orders_to_local_ledger(ledger, orders, price_map, now_kst)
     else:
-        ledger["mode"] = "로컬 가상 시뮬레이터 (1,000만 원 · KIS 키 등록 전 자동 검증)"
+        ledger["mode"] = "로컬 가상 시뮬레이터 (1,000만 원 · 유동적 국면 대응)"
         orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime)
         ledger, summary = apply_orders_to_local_ledger(ledger, orders, price_map, now_kst)
         print(f"[로컬 모의시뮬 완료] 가상 체결 {len(orders)}건 · 총자산 {summary['total_equity']:,}원 ({summary['total_return_pct']}%)")
