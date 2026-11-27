@@ -7,9 +7,9 @@
       "name": "SK바이오사이언스",
       "qty": 31,
       "avg_price": 39500.0,
-      "cur_price": 40450.0,
+      "cur_price": 40600.0,
       "half_sold": false,
-      "peak_ret_pct": 2.53,
+      "peak_ret_pct": 2.78,
       "entry_date": "2026-11-27"
     },
     "011200": {
@@ -17,9 +17,9 @@
       "name": "HMM",
       "qty": 56,
       "avg_price": 22150.0,
-      "cur_price": 22150.0,
+      "cur_price": 22400.0,
       "half_sold": false,
-      "peak_ret_pct": 0.23,
+      "peak_ret_pct": 1.13,
       "entry_date": "2026-11-27"
     }
   },
@@ -48,5 +48,5 @@
   "wins": 0,
   "losses": 0,
   "mode": "로컬 가상 시뮬레이터 (1,000만 원 · 수익 실현형 스윙)",
-  "updated_kst": "2026-11-27 13:14 KST"
+  "updated_kst": "2026-11-27 15:54 KST"
 }
