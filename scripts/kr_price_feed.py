@@ -1,13 +1,108 @@
-"""한국 주식(KRX) 1원 단위 정확 시세 로더: 네이버 금융 차트 API 최우선 + pykrx 폴백 (yfinance 한국주 왜곡 원천 차단)."""
+"""한국 주식(KRX) 1원 단위 정확 시세 로더:
+- 당일 실시간 현재가: 한국투자증권(KIS) 모의투자 공식 API (1순위, 키 등록 시 자동 활성화)
+- 일봉 히스토리 및 폴백: 네이버 금융 차트 XML (2순위) + pykrx (3순위)
+"""
 import datetime as dt
+import os
+import time
 import xml.etree.ElementTree as ET
 
 import pandas as pd
 import requests
 
+# 모의투자 전용 도메인 (시세 조회 전용 — 주문 기능 없음)
+KIS_PAPER_BASE_URL = "https://openapivts.koreainvestment.com:29443"
+TR_INQUIRE_PRICE = "FHKST01010100"
+
+# 프로세스 실행 중 토큰 재사용 캐시 (KIS 1분당 1회 발급 제한 보호)
+_KIS_TOKEN_CACHE = {"token": "", "expires_at": 0.0, "failed": False}
+
 
 def _clean_kr_code(symbol: str) -> str:
     return str(symbol).split(".")[0].strip()
+
+
+def _get_kis_access_token() -> str:
+    """GitHub Secrets에 KIS_PAPER_APP_KEY / SECRET이 있을 때만 모의투자 접근 토큰을 발급·캐싱합니다."""
+    if _KIS_TOKEN_CACHE["failed"]:
+        return ""
+    now = time.time()
+    if _KIS_TOKEN_CACHE["token"] and now < _KIS_TOKEN_CACHE["expires_at"]:
+        return _KIS_TOKEN_CACHE["token"]
+
+    app_key = os.environ.get("KIS_PAPER_APP_KEY", "").strip()
+    app_secret = os.environ.get("KIS_PAPER_APP_SECRET", "").strip()
+    if not app_key or not app_secret:
+        return ""
+
+    try:
+        url = f"{KIS_PAPER_BASE_URL}/oauth2/tokenP"
+        payload = {
+            "grant_type": "client_credentials",
+            "appkey": app_key,
+            "appsecret": app_secret,
+        }
+        r = requests.post(url, json=payload, timeout=10)
+        r.raise_for_status()
+        token = r.json().get("access_token", "")
+        if token:
+            _KIS_TOKEN_CACHE["token"] = token
+            _KIS_TOKEN_CACHE["expires_at"] = now + 3600  # 1시간 캐시
+            return token
+    except Exception as e:
+        print(f"[KIS 시세 토큰 발급 실패 -> 네이버/pykrx 폴백] {e}")
+        _KIS_TOKEN_CACHE["failed"] = True
+    return ""
+
+
+def fetch_kis_current_price(symbol: str) -> dict | None:
+    """한국투자증권(KIS) 공식 API로 국내주식 실시간 현재가(시가·고가·저가·현재가·거래량)를 조회합니다."""
+    token = _get_kis_access_token()
+    if not token:
+        return None
+
+    code = _clean_kr_code(symbol)
+    if len(code) != 6 or not code.isdigit():
+        return None
+
+    app_key = os.environ.get("KIS_PAPER_APP_KEY", "").strip()
+    app_secret = os.environ.get("KIS_PAPER_APP_SECRET", "").strip()
+
+    try:
+        url = f"{KIS_PAPER_BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-price"
+        headers = {
+            "content-type": "application/json; charset=utf-8",
+            "authorization": f"Bearer {token}",
+            "appkey": app_key,
+            "appsecret": app_secret,
+            "tr_id": TR_INQUIRE_PRICE,
+            "custtype": "P",
+        }
+        params = {
+            "FID_COND_MRKT_DIV_CODE": "J",
+            "FID_INPUT_ISCD": code,
+        }
+        r = requests.get(url, headers=headers, params=params, timeout=8)
+        r.raise_for_status()
+        out = r.json().get("output") or {}
+        close_p = float(out.get("stck_prpr") or 0)
+        if close_p <= 0:
+            return None
+        open_p = float(out.get("stck_oprc") or close_p)
+        high_p = float(out.get("stck_hgpr") or close_p)
+        low_p = float(out.get("stck_lwpr") or close_p)
+        vol = float(out.get("acml_vol") or 0)
+        # KIS 모의투자 API 초당 호출 제한(TPS) 보호
+        time.sleep(0.08)
+        return {
+            "Open": open_p,
+            "High": high_p,
+            "Low": low_p,
+            "Close": close_p,
+            "Volume": vol,
+        }
+    except Exception:
+        return None
 
 
 def parse_naver_fchart_xml(xml_text: str) -> pd.DataFrame:
@@ -31,30 +126,73 @@ def parse_naver_fchart_xml(xml_text: str) -> pd.DataFrame:
     return df.sort_index()
 
 
+def _merge_kis_realtime_bar(df: pd.DataFrame, kis_quote: dict) -> pd.DataFrame:
+    """일봉 DataFrame의 최신 거래일(오늘) 행에 한투 공식 실시간 현재가를 반영합니다."""
+    if df is None or df.empty or not kis_quote:
+        return df
+    today_kst = pd.Timestamp(dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).date())
+    out = df.copy()
+    last_idx = out.index[-1]
+    if last_idx == today_kst:
+        out.loc[last_idx, ["Open", "High", "Low", "Close", "Volume"]] = [
+            kis_quote["Open"],
+            kis_quote["High"],
+            kis_quote["Low"],
+            kis_quote["Close"],
+            kis_quote["Volume"],
+        ]
+    elif today_kst > last_idx:
+        # 주말/공휴일 장외 시간에는 기존 마지막 거래일 종가 유지, 평일 장중/마감 후에만 당일 봉 반영
+        if today_kst.weekday() < 5:
+            out.loc[today_kst] = [
+                kis_quote["Open"],
+                kis_quote["High"],
+                kis_quote["Low"],
+                kis_quote["Close"],
+                kis_quote["Volume"],
+            ]
+    return out.sort_index()
+
+
 def fetch_kr_ohlcv_exact(symbol: str, count: int = 180) -> pd.DataFrame:
-    """네이버 금융 fchart API로 증권사 앱과 1원까지 일치하는 실제 KRX 일봉(당일 장중 현재가 포함)을 가져옵니다."""
+    """
+    1순위: KIS 공식 현재가(당일 실시간) + 네이버 금융 fchart 일봉 결합
+    2순위(폴백): 네이버 금융 fchart API 단독
+    3순위(폴백): pykrx 공식 KRX 일봉
+    """
     code = _clean_kr_code(symbol)
-    # 1순위: 네이버 금융 차트 XML (장중 실시간 현재가 반영 + 분할/배당 왜곡 없음!)
+    df = pd.DataFrame()
+
+    # 일봉 히스토리 로드 (네이버 금융 차트 XML 우선)
     try:
         url = f"https://fchart.stock.naver.com/sise.nhn?symbol={code}&timeframe=day&count={count}&requestType=0"
         r = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
         if r.status_code == 200 and "<item " in r.text:
-            df = parse_naver_fchart_xml(r.text)
-            if len(df) >= 25:
-                return df
+            parsed = parse_naver_fchart_xml(r.text)
+            if len(parsed) >= 25:
+                df = parsed
     except Exception:
         pass
 
-    # 2순위: pykrx 공식 KRX 일봉
-    try:
-        from pykrx import stock as krx
-        end_d = dt.datetime.now(dt.timezone(dt.timedelta(hours=9)))
-        start_d = end_d - dt.timedelta(days=int(count * 1.6))
-        df = krx.get_market_ohlcv_by_date(start_d.strftime("%Y%m%d"), end_d.strftime("%Y%m%d"), code)
-        if df is not None and not df.empty:
-            df = df.rename(columns={"시가": "Open", "고가": "High", "저가": "Low", "종가": "Close", "거래량": "Volume"})
-            return df[["Open", "High", "Low", "Close", "Volume"]].dropna()
-    except Exception:
-        pass
+    # 일봉 히스토리 폴백 (pykrx)
+    if df.empty:
+        try:
+            from pykrx import stock as krx
+            end_d = dt.datetime.now(dt.timezone(dt.timedelta(hours=9)))
+            start_d = end_d - dt.timedelta(days=int(count * 1.6))
+            raw = krx.get_market_ohlcv_by_date(start_d.strftime("%Y%m%d"), end_d.strftime("%Y%m%d"), code)
+            if raw is not None and not raw.empty:
+                raw = raw.rename(columns={"시가": "Open", "고가": "High", "저가": "Low", "종가": "Close", "거래량": "Volume"})
+                df = raw[["Open", "High", "Low", "Close", "Volume"]].dropna()
+        except Exception:
+            pass
 
-    return pd.DataFrame()
+    if df.empty:
+        return df
+
+    # 1순위 실시간 현재가: 한국투자증권(KIS) 공식 API 덮어쓰기 (키 미등록/오류 시 자동 생략 -> 네이버/pykrx 유지)
+    kis_quote = fetch_kis_current_price(code)
+    if kis_quote:
+        df = _merge_kis_realtime_bar(df, kis_quote)
+
+    return df
