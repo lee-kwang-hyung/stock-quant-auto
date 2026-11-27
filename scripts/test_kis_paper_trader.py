@@ -117,6 +117,60 @@ def test_local_ledger_accounting():
     assert summary["total_return_pct"] > 0
 
 
+
+
+def test_opening_window_blocks_buy_allows_sell():
+    """7. [v6.3] 09:00~09:15 장 초반 신규 매수 차단 및 손절/익절 매도 허용 검증."""
+    cands = [
+        {"market": "KR", "symbol": "005930.KS", "name": "삼성전자", "status": "buy", "score": 78, "price_num": 60000, "change_pct": 1.0, "trust_label": "우량", "sector": "반도체"},
+    ]
+    pos_sl = {"000660": {"name": "SK하이닉스", "qty": 10, "avg_price": 100000, "cur_price": 94000, "entry_date": "2026-11-25"}}
+    prices = {"005930": 60000, "000660": 94000}
+
+    # 09:05: 손절 매도는 즉시 실행되지만 신규 매수는 차단
+    o_0905 = kpt.plan_paper_orders(10_000_000, dict(pos_sl), cands, prices, kr_regime="혼조세", today_date="2026-11-27", now_hhmm="09:05")
+    assert len(o_0905) == 1 and o_0905[0]["side"] == "SELL" and o_0905[0]["code"] == "000660"
+
+    # 09:15: 장 초반 구간 종료 -> 매도 + 신규 매수 모두 허용
+    o_0915 = kpt.plan_paper_orders(10_000_000, dict(pos_sl), cands, prices, kr_regime="혼조세", today_date="2026-11-27", now_hhmm="09:15")
+    sides = {o["side"] for o in o_0915}
+    assert sides == {"SELL", "BUY"}
+
+
+def test_sector_diversification_limit():
+    """8. [v6.3] 동일 섹터 최대 2종목 분산 제한 검증."""
+    cands = [
+        {"market": "KR", "symbol": "005930.KS", "name": "삼성전자", "status": "buy", "score": 85, "price_num": 60000, "change_pct": 1.0, "trust_label": "우량", "sector": "반도체"},
+        {"market": "KR", "symbol": "000660.KS", "name": "SK하이닉스", "status": "buy", "score": 82, "price_num": 180000, "change_pct": 1.2, "trust_label": "우량", "sector": "반도체"},
+        {"market": "KR", "symbol": "042700.KS", "name": "한미반도체", "status": "buy", "score": 80, "price_num": 100000, "change_pct": 1.5, "trust_label": "우량", "sector": "반도체"},
+        {"market": "KR", "symbol": "005380.KS", "name": "현대차", "status": "buy", "score": 75, "price_num": 240000, "change_pct": 0.9, "trust_label": "우량", "sector": "자동차"},
+    ]
+    prices = {"005930": 60000, "000660": 180000, "042700": 100000, "005380": 240000}
+    orders = kpt.plan_paper_orders(10_000_000, {}, cands, prices, kr_regime="혼조세", today_date="2026-11-27", now_hhmm="10:05")
+    codes = {o["code"] for o in orders}
+    # 반도체 3개 중 상위 2개(005930, 000660)만 매수하고 042700은 스킵, 자동차(005380) 매수
+    assert codes == {"005930", "000660", "005380"}
+
+
+def test_weekly_circuit_breaker():
+    """9. [v6.3] 주간 누적 손실 -5% 서킷브레이커 발동 및 차주 자동 해제 검증."""
+    ledger = {"initial_cash": 10_000_000, "cash": 10_000_000, "positions": {}, "trades": []}
+    cb1, ret1 = kpt._update_weekly_circuit_breaker(ledger, 10_000_000, "2026-11-23")
+    assert cb1 is False and ret1 == 0.0
+
+    # 같은 주 수요일 총자산 945만 원(-5.5%) -> 서킷브레이커 발동
+    cb2, ret2 = kpt._update_weekly_circuit_breaker(ledger, 9_450_000, "2026-11-25")
+    assert cb2 is True and ret2 == -5.5
+
+    cands = [{"market": "KR", "symbol": "005930.KS", "name": "삼성전자", "status": "buy", "score": 85, "price_num": 60000, "change_pct": 1.0, "trust_label": "우량"}]
+    orders_blocked = kpt.plan_paper_orders(9_450_000, {}, cands, {"005930": 60000}, kr_regime="혼조세", today_date="2026-11-25", now_hhmm="10:05", allow_new_buys=not cb2)
+    assert len(orders_blocked) == 0
+
+    # 다음 주 월요일(2026-11-30) -> 주차 변경으로 서킷브레이커 자동 해제
+    cb3, ret3 = kpt._update_weekly_circuit_breaker(ledger, 9_450_000, "2026-11-30")
+    assert cb3 is False and ret3 == 0.0
+
+
 def run_all():
     tests = [
         test_safety_locks,
@@ -125,11 +179,14 @@ def run_all():
         test_take_profit_and_trailing_lock,
         test_stagnant_rotation_and_signal_exit,
         test_local_ledger_accounting,
+        test_opening_window_blocks_buy_allows_sell,
+        test_sector_diversification_limit,
+        test_weekly_circuit_breaker,
     ]
     for fn in tests:
         fn()
         print(f"[PASS] {fn.__name__}")
-    print(f"ALL {len(tests)}/{len(tests)} KIS PAPER TRADER v6.2 TESTS PASSED")
+    print(f"ALL {len(tests)}/{len(tests)} KIS PAPER TRADER v6.3 TESTS PASSED")
 
 
 if __name__ == "__main__":

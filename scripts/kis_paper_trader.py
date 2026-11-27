@@ -41,6 +41,52 @@ STAGNANT_HOLD_DAYS = 10         # 10일 이상 횡보 시 자금 회전(교체 �
 STAGNANT_LOW_PCT = -2.0
 STAGNANT_HIGH_PCT = 1.5
 MAX_INTRADAY_CHASE_PCT = 8.0    # 당일 +8% 이상 급등주 추격매수 금지
+OPENING_NO_BUY_START = (9, 0)   # 09:00 ~ 09:15 장 초반 호가 공백 구간 신규 매수 회피
+OPENING_NO_BUY_END = (9, 15)
+MAX_SAME_SECTOR = 2             # 동일 섹터 최대 2종목 분산
+WEEKLY_CIRCUIT_BREAKER_PCT = -5.0  # 주간 누적 손실 -5% 도달 시 해당 주 신규 매수 중단
+
+
+def _is_opening_no_buy_window(now_hhmm: str) -> bool:
+    """평일 09:00~09:14 KST 장 초반 호가 공백 구간 여부 판별 (매도는 허용, 신규 매수만 제한)."""
+    if not now_hhmm or ":" not in str(now_hhmm):
+        return False
+    try:
+        hh, mm = str(now_hhmm).strip().split(":")[:2]
+        cur = (int(hh), int(mm))
+        return OPENING_NO_BUY_START <= cur < OPENING_NO_BUY_END
+    except Exception:
+        return False
+
+
+def _resolve_sector(code: str, info: dict | None, sector_map: dict | None) -> str:
+    sec = ""
+    if isinstance(info, dict):
+        sec = str(info.get("sector") or "").strip()
+    if not sec and sector_map:
+        sec = str(sector_map.get(code) or "").strip()
+    return sec
+
+
+def _update_weekly_circuit_breaker(ledger: dict, total_equity: float, today_date: str) -> tuple[bool, float]:
+    """ISO 주차 기준 주간 누적 수익률을 추적하고 -5.0% 이하 시 서킷브레이커를 발동합니다."""
+    try:
+        d = dt.date.fromisoformat(str(today_date)[:10])
+    except Exception:
+        d = (dt.datetime.utcnow() + dt.timedelta(hours=9)).date()
+    iso_year, iso_week, _ = d.isocalendar()
+    week_key = f"{iso_year}-W{iso_week:02d}"
+
+    if ledger.get("weekly_key") != week_key or float(ledger.get("weekly_start_equity") or 0) <= 0:
+        ledger["weekly_key"] = week_key
+        ledger["weekly_start_equity"] = round(float(total_equity), 2)
+
+    start_eq = float(ledger["weekly_start_equity"])
+    weekly_ret = ((float(total_equity) / start_eq) - 1.0) * 100.0 if start_eq > 0 else 0.0
+    cb_active = weekly_ret <= WEEKLY_CIRCUIT_BREAKER_PCT
+    ledger["weekly_return_pct"] = round(weekly_ret, 2)
+    ledger["weekly_circuit_breaker"] = cb_active
+    return cb_active, round(weekly_ret, 2)
 FEE_RATE = 0.00015              # 매수/매도 위탁수수료 0.015%
 SELL_TAX_RATE = 0.0018          # 코스피/코스닥 매도 증권거래세 0.18%
 INITIAL_SIM_CASH = 10_000_000
@@ -184,6 +230,9 @@ def plan_paper_orders(
     price_map: dict,
     kr_regime: str = "혼조세",
     today_date: str = "",
+    now_hhmm: str = "",
+    sector_map: dict | None = None,
+    allow_new_buys: bool = True,
 ) -> list:
     """
     수익 실현형 스윙·로테이션 주문 계획 생성:
@@ -294,13 +343,24 @@ def plan_paper_orders(
                     est_cash += cur * qty * (1.0 - FEE_RATE - SELL_TAX_RATE)
                     remaining_pos.pop(code, None)
 
-    # 2) 총자산 계산 및 국면별 유동적 비중으로 고득점 우량주 분할 매수
+    # 2) 실전 방어 게이트: 장 초반(09:00~09:15) 또는 주간 서킷브레이커 발동 시 신규 매수 중단 (매도/손절은 정상 실행)
+    if (not allow_new_buys) or _is_opening_no_buy_window(now_hhmm):
+        return orders
+
+    # 총자산 계산 및 국면별 유동적 비중으로 고득점 우량주 분할 매수
     total_equity = est_cash + sum(
         int(p["qty"]) * float(price_map.get(c) or p.get("cur_price") or p.get("avg_price") or 0)
         for c, p in remaining_pos.items()
     )
     max_per_stock = total_equity * rules["max_weight"]
     max_slots = rules["max_positions"]
+
+    # 동일 섹터 최대 2종목 분산 카운트
+    sector_counts: dict[str, int] = {}
+    for c_code, p_info in remaining_pos.items():
+        sec = _resolve_sector(c_code, p_info, sector_map) or _resolve_sector(c_code, cand_by_code.get(c_code), sector_map)
+        if sec and sec != "기타":
+            sector_counts[sec] = sector_counts.get(sec, 0) + 1
 
     # 방금 매도한 종목은 같은 실행에서 바로 재매수하지 않도록 제외
     just_sold_codes = {o["code"] for o in orders if o["side"] == "SELL"}
@@ -333,6 +393,11 @@ def plan_paper_orders(
         code = str(cand.get("symbol", "")).split(".")[0].strip()
         if not code or len(code) != 6 or code in remaining_pos or code in just_sold_codes:
             continue
+
+        # 동일 섹터 최대 2종목 분산 제한
+        cand_sector = _resolve_sector(code, cand, sector_map)
+        if cand_sector and cand_sector != "기타" and sector_counts.get(cand_sector, 0) >= MAX_SAME_SECTOR:
+            continue
         price = float(price_map.get(code) or cand.get("price_num") or 0)
         if price <= 0:
             continue
@@ -352,7 +417,10 @@ def plan_paper_orders(
             "code": code, "name": cand.get("name", code),
             "qty": qty, "avg_price": price, "cur_price": price,
             "entry_date": today_date, "peak_ret_pct": 0.0,
+            "sector": cand_sector,
         }
+        if cand_sector and cand_sector != "기타":
+            sector_counts[cand_sector] = sector_counts.get(cand_sector, 0) + 1
 
     return orders
 
@@ -486,16 +554,37 @@ def run_paper_autotrader(
         f"손절 {rules['stop_loss_pct']}% · 1차익절 +{TAKE_PROFIT_1_PCT}% / 2차 +{TAKE_PROFIT_2_PCT}%) | KR후보={len(kr_cands)}개"
     )
 
+    now_hhmm = now_dt.strftime("%H:%M")
     price_map = {}
+    sector_map = {}
     for w in watchlist:
-        if w.get("market") == "KR" and float(w.get("price_num") or 0) > 0:
-            price_map[str(w.get("symbol", "")).split(".")[0]] = float(w["price_num"])
+        if w.get("market") == "KR":
+            c_code = str(w.get("symbol", "")).split(".")[0].strip()
+            if float(w.get("price_num") or 0) > 0:
+                price_map[c_code] = float(w["price_num"])
+            if w.get("sector"):
+                sector_map[c_code] = str(w["sector"]).strip()
+    for c in candidates:
+        if c.get("market") == "KR" and c.get("sector"):
+            c_code = str(c.get("symbol", "")).split(".")[0].strip()
+            if c_code and c_code not in sector_map:
+                sector_map[c_code] = str(c["sector"]).strip()
 
     ledger_path.parent.mkdir(parents=True, exist_ok=True)
     if ledger_path.exists():
         ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
     else:
         ledger = {"initial_cash": INITIAL_SIM_CASH, "cash": INITIAL_SIM_CASH, "positions": {}, "trades": [], "wins": 0, "losses": 0}
+
+    est_total_eq = float(ledger.get("cash", INITIAL_SIM_CASH)) + sum(
+        int(p.get("qty", 0)) * float(price_map.get(c) or p.get("cur_price") or p.get("avg_price") or 0)
+        for c, p in (ledger.get("positions") or {}).items()
+    )
+    cb_active, weekly_ret_pct = _update_weekly_circuit_breaker(ledger, est_total_eq, today_date)
+    if _is_opening_no_buy_window(now_hhmm):
+        print(f"[v6.3 방어] 장 초반({now_hhmm} KST) 호가 공백 구간 -> 매도/손절만 실행, 신규 매수 보류")
+    if cb_active:
+        print(f"[v6.3 서킷브레이커] 주간 수익률 {weekly_ret_pct:+.2f}% (기준 {WEEKLY_CIRCUIT_BREAKER_PCT}%) -> 이번 주 신규 매수 중단")
 
     app_key = os.environ.get("KIS_PAPER_APP_KEY", "").strip()
     app_secret = os.environ.get("KIS_PAPER_APP_SECRET", "").strip()
@@ -516,7 +605,7 @@ def run_paper_autotrader(
                 else:
                     pos["entry_date"] = today_date
                     pos["peak_ret_pct"] = 0.0
-            orders = plan_paper_orders(cash, positions, candidates, price_map, kr_regime=kr_regime, today_date=today_date)
+            orders = plan_paper_orders(cash, positions, candidates, price_map, kr_regime=kr_regime, today_date=today_date, now_hhmm=now_hhmm, sector_map=sector_map, allow_new_buys=not cb_active)
             executed = []
             for od in orders:
                 try:
@@ -533,11 +622,11 @@ def run_paper_autotrader(
         except Exception as e:
             print(f"[KIS API 연결 실패 -> 로컬 모의시뮬레이터 폴백] {e}")
             ledger["mode"] = "로컬 가상 시뮬레이터 (KIS 키 확인 필요)"
-            orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime, today_date=today_date)
+            orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime, today_date=today_date, now_hhmm=now_hhmm, sector_map=sector_map, allow_new_buys=not cb_active)
             ledger, summary = apply_orders_to_local_ledger(ledger, orders, price_map, now_kst)
     else:
         ledger["mode"] = "로컬 가상 시뮬레이터 (1,000만 원 · 수익 실현형 스윙)"
-        orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime, today_date=today_date)
+        orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime, today_date=today_date, now_hhmm=now_hhmm, sector_map=sector_map, allow_new_buys=not cb_active)
         ledger, summary = apply_orders_to_local_ledger(ledger, orders, price_map, now_kst)
         print(f"[로컬 모의시뮬 완료] 가상 체결 {len(orders)}건 · 총자산 {summary['total_equity']:,}원 ({summary['total_return_pct']}%)")
 
