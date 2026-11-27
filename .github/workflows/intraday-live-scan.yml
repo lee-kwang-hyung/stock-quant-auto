@@ -29,12 +29,14 @@ jobs:
           APP_PIN: ${{ secrets.APP_PIN }}
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
           MY_HOLDINGS_JSON: ${{ secrets.MY_HOLDINGS_JSON }}
+          KIS_PAPER_APP_KEY: ${{ secrets.KIS_PAPER_APP_KEY }}
+          KIS_PAPER_APP_SECRET: ${{ secrets.KIS_PAPER_APP_SECRET }}
         run: |
           python scripts/stock_analyzer.py --intraday
       - name: Commit updated PWA live feed
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git pull --rebase --autostash || true
           git add docs/data/ reports/latest_daily_report.md
           git diff --cached --quiet || git commit -m "data: intraday live PWA feed update"
