@@ -1,10 +1,10 @@
 {
   "mode": "로컬 가상 시뮬레이터 (1,000만 원 · 수익 실현형 스윙)",
-  "updated_kst": "2026-11-27 09:58 KST",
+  "updated_kst": "2026-11-27 12:59 KST",
   "initial_cash": 10000000,
   "cash": 7534730,
-  "total_equity": 9999630,
-  "total_return_pct": -0.0,
+  "total_equity": 10033430,
+  "total_return_pct": 0.33,
   "closed_trades": 0,
   "win_rate": null,
   "open_positions": [
@@ -13,16 +13,16 @@
       "name": "SK바이오사이언스",
       "qty": 31,
       "avg_price": 39500,
-      "cur_price": 39500,
-      "ret_pct": 0.0
+      "cur_price": 40500,
+      "ret_pct": 2.53
     },
     {
       "code": "011200",
       "name": "HMM",
       "qty": 56,
       "avg_price": 22150,
-      "cur_price": 22150,
-      "ret_pct": 0.0
+      "cur_price": 22200,
+      "ret_pct": 0.23
     }
   ],
   "recent_trades": [
