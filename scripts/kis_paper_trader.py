@@ -1,13 +1,14 @@
 """
-v6.1 한국투자증권(KIS) 모의투자 전용 자동매매 엔진 (유동적 국면 대응 · 실계좌 주문 원천 차단).
+v6.2 한국투자증권(KIS) 모의투자 전용 자동매매 엔진 (수익 실현형 스윙·로테이션 · 실계좌 주문 원천 차단).
 - 모의투자 전용 도메인(https://openapivts.koreainvestment.com:29443) 및 모의 TR_ID(VTTC0012U/VTTC0011U/VTTC8434R)만 사용
 - KIS 모의투자 API 키가 아직 없을 때는 로컬 가상 시뮬레이터(1,000만 원 시작 · 수수료 0.015% + 매도세 0.18% 반영)로 즉시 자동 검증
-- 유동적 매매 원칙 (안전장치 유지 + 시장 국면별 비중·진입 기준 자동 조절):
-  1) 상승/강세장: 최대 4종목 · 종목당 25% 비중 · 58점 이상 매수신호(또는 65점+ 우량주) 진입
-  2) 혼조/보합장: 최대 4종목 · 종목당 20% 비중 · 60점 이상 매수신호(또는 66점+ 우량주) 진입
-  3) 약세/하락장: 현금 75% 이상 보호하면서 최대 2종목 · 종목당 12.5% 소액 정찰 매수 (70점 이상 최상위 우량주 한정)
-  4) -7.0% 손절 즉시 전량 매도 (모든 국면 100% 고정)
-  5) +10.0% 1차 목표가 절반(50%) 익절 / +18.0% 2차 목표가 전량 익절 / 1차 익절 후 +2.0% 본전 트레일링
+- 수익 실현 + 원금 방어 핵심 구조:
+  1) 빠른 수익 확정 사다리: +5.0% 도달 시 절반(50%) 즉시 익절, +10.0% 도달 시 전량 익절
+  2) 고점 수익 잠금(트레일링): 최고 수익률 +4.0% 이상 기록 후 고점 대비 -2.5%p 밀리면 즉시 익절 (수익 -> 손실 전환 원천 차단)
+     · 1차 익절 후에는 잔여 물량에 +1.5% 본전 이상 방어선 고정
+  3) 정체 종목 자동 교체(타임스톱): 10일 이상 보유했는데 수익률이 -2.0% ~ +1.5%에 갇혀 있으면 매도 후 강한 종목으로 교체
+  4) 원금 방어 강화: 손절선 -5.0% 즉시 전량 매도 (약세장 -4.5%) + 당일 +8% 이상 급등주 추격매수 금지
+  5) 국면별 유동적 비중: 상승장(4종목·25%), 혼조장(4종목·20%), 약세장(2종목·12.5%, 현금 75% 보호)
 """
 import datetime as dt
 import json
@@ -29,17 +30,24 @@ TR_BALANCE_PAPER = "VTTC8434R"  # 모의투자 국내주식 잔고 조회
 
 MAX_POSITIONS = 4
 MAX_WEIGHT_PER_STOCK = 0.25
-STOP_LOSS_PCT = -7.0
-TAKE_PROFIT_1_PCT = 10.0
-TAKE_PROFIT_2_PCT = 18.0
-TRAILING_FLOOR_PCT = 2.0
-FEE_RATE = 0.00015       # 매수/매도 위탁수수료 0.015%
-SELL_TAX_RATE = 0.0018   # 코스피/코스닥 매도 증권거래세 0.18%
+STOP_LOSS_PCT = -5.0            # 원금 방어 강화 (-7.0% -> -5.0%)
+BEAR_STOP_LOSS_PCT = -4.5       # 약세장 추가 방어
+TAKE_PROFIT_1_PCT = 5.0         # 1차 절반 익절 (+5.0% 빠른 수익 확정)
+TAKE_PROFIT_2_PCT = 10.0        # 2차 전량 익절 (+10.0%)
+PEAK_TRAIL_ACTIVATE_PCT = 4.0   # 최고 수익 +4.0% 이상 달성 시 수익 잠금 가동
+PEAK_TRAIL_DROP_PCT = 2.5       # 고점 대비 -2.5%p 하락 시 즉시 수익 확정
+TRAILING_FLOOR_PCT = 1.5        # 1차 익절 후 잔여 물량 최소 수익 방어선(+1.5%)
+STAGNANT_HOLD_DAYS = 10         # 10일 이상 횡보 시 자금 회전(교체 매도)
+STAGNANT_LOW_PCT = -2.0
+STAGNANT_HIGH_PCT = 1.5
+MAX_INTRADAY_CHASE_PCT = 8.0    # 당일 +8% 이상 급등주 추격매수 금지
+FEE_RATE = 0.00015              # 매수/매도 위탁수수료 0.015%
+SELL_TAX_RATE = 0.0018          # 코스피/코스닥 매도 증권거래세 0.18%
 INITIAL_SIM_CASH = 10_000_000
 
 
 def get_dynamic_regime_rules(kr_regime: str) -> dict:
-    """한국 시장 국면에 따라 최대 보유 종목 수, 종목당 비중, 최소 진입 점수를 유동적으로 반환."""
+    """한국 시장 국면에 따라 최대 보유 종목 수, 종목당 비중, 최소 진입 점수, 손절선을 유동적으로 반환."""
     regime_str = kr_regime or "혼조세"
     if "약세" in regime_str or "하락" in regime_str:
         return {
@@ -47,23 +55,37 @@ def get_dynamic_regime_rules(kr_regime: str) -> dict:
             "max_positions": 2,
             "max_weight": 0.125,     # 최대 25%만 투자, 현금 75% 보호
             "buy_min_score": 68,     # buy 신호일 때 최소 점수
-            "strong_min_score": 72,  # 비-buy(관심/보유) 우량주 허용 점수
+            "strong_min_score": 72,  # 비-buy 우량주 허용 점수
+            "stop_loss_pct": BEAR_STOP_LOSS_PCT,
         }
     if "강세" in regime_str or "상승" in regime_str:
         return {
-            "label": "적극 운용 모드(상승장)",
+            "label": "적극 수익 모드(상승장)",
             "max_positions": 4,
             "max_weight": 0.25,      # 최대 100% 활용
             "buy_min_score": 58,
             "strong_min_score": 65,
+            "stop_loss_pct": STOP_LOSS_PCT,
         }
     return {
-        "label": "균형 운용 모드(혼조장)",
+        "label": "균형 스윙 모드(혼조장)",
         "max_positions": 4,
         "max_weight": 0.20,          # 최대 80% 활용, 현금 20% 유지
         "buy_min_score": 60,
         "strong_min_score": 66,
+        "stop_loss_pct": STOP_LOSS_PCT,
     }
+
+
+def _calc_hold_days(entry_date: str, today_date: str) -> int:
+    if not entry_date or not today_date:
+        return 0
+    try:
+        d1 = dt.date.fromisoformat(entry_date[:10])
+        d2 = dt.date.fromisoformat(today_date[:10])
+        return max(0, (d2 - d1).days)
+    except Exception:
+        return 0
 
 
 class KisPaperClient:
@@ -161,33 +183,53 @@ def plan_paper_orders(
     candidates: list,
     price_map: dict,
     kr_regime: str = "혼조세",
+    today_date: str = "",
 ) -> list:
     """
-    보유 포지션 점검(손절/1차·2차 익절/트레일링) 후 시장 국면에 맞춰 유동적으로 안정형 매수 주문 계획 생성.
-    반환: [{"side": "SELL"|"BUY", "code": "005930", "name": "...", "qty": 10, "price": 75000, "reason": "..."}]
+    수익 실현형 스윙·로테이션 주문 계획 생성:
+    1) 보유 종목 점검: 손절(-5%/-4.5%) -> 2차 익절(+10%) -> 고점 수익 잠금 -> 1차 절반 익절(+5%) -> 정체 종목 교체(10일+)
+    2) 여유 슬롯에 시장 국면별 비중으로 고득점 우량주 분할 매수 (급등주 추격 차단)
     """
     orders = []
     est_cash = float(cash)
     remaining_pos = dict(positions)
     rules = get_dynamic_regime_rules(kr_regime)
+    stop_loss_line = rules["stop_loss_pct"]
 
-    # 1) 보유 종목 매도 조건 점검 (손절 -> 2차 익절 -> 본전 트레일링 -> 1차 절반 익절)
+    if not today_date:
+        today_date = (dt.datetime.utcnow() + dt.timedelta(hours=9)).strftime("%Y-%m-%d")
+
+    cand_by_code = {}
+    for c in candidates:
+        if c.get("market") == "KR":
+            sym = str(c.get("symbol", "")).split(".")[0].strip()
+            if sym:
+                cand_by_code[sym] = c
+
+    # 1) 보유 종목 매도 조건 점검
     for code, pos in list(positions.items()):
         qty = int(pos.get("qty", 0))
         avg = float(pos.get("avg_price", 0))
         cur = float(price_map.get(code) or pos.get("cur_price") or 0)
         if qty <= 0 or avg <= 0 or cur <= 0:
             continue
-        ret_pct = ((cur / avg) - 1.0) * 100.0
-        half_sold = bool(pos.get("half_sold", False))
 
-        if ret_pct <= STOP_LOSS_PCT:
+        ret_pct = ((cur / avg) - 1.0) * 100.0
+        peak_ret = max(float(pos.get("peak_ret_pct", ret_pct)), ret_pct)
+        pos["peak_ret_pct"] = round(peak_ret, 2)
+        half_sold = bool(pos.get("half_sold", False))
+        hold_days = _calc_hold_days(str(pos.get("entry_date", "")), today_date)
+
+        # (A) 원금 방어 손절
+        if ret_pct <= stop_loss_line:
             orders.append({
                 "side": "SELL", "code": code, "name": pos.get("name", code),
-                "qty": qty, "price": cur, "reason": f"자동 손절 ({ret_pct:.1f}%)", "full_exit": True,
+                "qty": qty, "price": cur, "reason": f"원금 방어 손절 ({ret_pct:.1f}%)", "full_exit": True,
             })
             est_cash += cur * qty * (1.0 - FEE_RATE - SELL_TAX_RATE)
             remaining_pos.pop(code, None)
+
+        # (B) 2차 목표 전량 익절 (+10%)
         elif ret_pct >= TAKE_PROFIT_2_PCT:
             orders.append({
                 "side": "SELL", "code": code, "name": pos.get("name", code),
@@ -195,13 +237,28 @@ def plan_paper_orders(
             })
             est_cash += cur * qty * (1.0 - FEE_RATE - SELL_TAX_RATE)
             remaining_pos.pop(code, None)
-        elif half_sold and ret_pct <= TRAILING_FLOOR_PCT:
+
+        # (C) 고점 수익 잠금 트레일링 (최고 +4% 이상 찍고 고점 대비 -2.5%p 밀리면 즉시 수익 확정)
+        elif peak_ret >= PEAK_TRAIL_ACTIVATE_PCT and (peak_ret - ret_pct) >= PEAK_TRAIL_DROP_PCT and ret_pct > 0:
             orders.append({
                 "side": "SELL", "code": code, "name": pos.get("name", code),
-                "qty": qty, "price": cur, "reason": f"본전 트레일링 방어 (+{ret_pct:.1f}%)", "full_exit": True,
+                "qty": qty, "price": cur,
+                "reason": f"수익 잠금 트레일링 (고점 +{peak_ret:.1f}% -> +{ret_pct:.1f}%)",
+                "full_exit": True,
             })
             est_cash += cur * qty * (1.0 - FEE_RATE - SELL_TAX_RATE)
             remaining_pos.pop(code, None)
+
+        # (D) 1차 익절 후 잔여 물량 본전 이상(+1.5%) 방어
+        elif half_sold and ret_pct <= TRAILING_FLOOR_PCT:
+            orders.append({
+                "side": "SELL", "code": code, "name": pos.get("name", code),
+                "qty": qty, "price": cur, "reason": f"1차 익절 후 수익 방어 (+{ret_pct:.1f}%)", "full_exit": True,
+            })
+            est_cash += cur * qty * (1.0 - FEE_RATE - SELL_TAX_RATE)
+            remaining_pos.pop(code, None)
+
+        # (E) 1차 목표 절반 익절 (+5%)
         elif not half_sold and ret_pct >= TAKE_PROFIT_1_PCT and qty >= 2:
             sell_q = max(1, qty // 2)
             orders.append({
@@ -210,6 +267,33 @@ def plan_paper_orders(
             })
             est_cash += cur * sell_q * (1.0 - FEE_RATE - SELL_TAX_RATE)
 
+        # (F) 10일 이상 정체 종목 자동 교체 (한 달 묵히기 방지 -> 강한 종목으로 자금 회전)
+        elif hold_days >= STAGNANT_HOLD_DAYS and STAGNANT_LOW_PCT <= ret_pct <= STAGNANT_HIGH_PCT:
+            orders.append({
+                "side": "SELL", "code": code, "name": pos.get("name", code),
+                "qty": qty, "price": cur,
+                "reason": f"정체 종목 자금 회전 ({hold_days}일 보유 · {ret_pct:+.1f}%)",
+                "full_exit": True,
+            })
+            est_cash += cur * qty * (1.0 - FEE_RATE - SELL_TAX_RATE)
+            remaining_pos.pop(code, None)
+
+        # (G) 신호 약화 조기 이탈 (수익권이거나 약보합일 때 매도 신호/저점수 전환 시 선제 방어)
+        else:
+            c_info = cand_by_code.get(code)
+            if c_info:
+                c_status = str(c_info.get("status", "")).lower()
+                c_score = int(c_info.get("score", 60))
+                if (c_status == "sell" or "매도" in c_status or c_score < 45) and ret_pct >= -1.5:
+                    orders.append({
+                        "side": "SELL", "code": code, "name": pos.get("name", code),
+                        "qty": qty, "price": cur,
+                        "reason": f"신호 약화 선제 방어 (점수 {c_score}점 · {ret_pct:+.1f}%)",
+                        "full_exit": True,
+                    })
+                    est_cash += cur * qty * (1.0 - FEE_RATE - SELL_TAX_RATE)
+                    remaining_pos.pop(code, None)
+
     # 2) 총자산 계산 및 국면별 유동적 비중으로 고득점 우량주 분할 매수
     total_equity = est_cash + sum(
         int(p["qty"]) * float(price_map.get(c) or p.get("cur_price") or p.get("avg_price") or 0)
@@ -217,6 +301,9 @@ def plan_paper_orders(
     )
     max_per_stock = total_equity * rules["max_weight"]
     max_slots = rules["max_positions"]
+
+    # 방금 매도한 종목은 같은 실행에서 바로 재매수하지 않도록 제외
+    just_sold_codes = {o["code"] for o in orders if o["side"] == "SELL"}
 
     # 점수 높은 순으로 우선 검토
     sorted_cands = sorted(candidates, key=lambda x: int(x.get("score", 0)), reverse=True)
@@ -232,6 +319,11 @@ def plan_paper_orders(
         if status == "sell" or "매도" in status:
             continue
 
+        # 당일 급등주 추격매수 금지 (고점 물림 방지)
+        day_chg = float(cand.get("change_pct") or cand.get("chg_pct") or 0)
+        if day_chg >= MAX_INTRADAY_CHASE_PCT:
+            continue
+
         score = int(cand.get("score", 0))
         is_buy_signal = (status == "buy") and (score >= rules["buy_min_score"])
         is_strong_pick = score >= rules["strong_min_score"]
@@ -239,7 +331,7 @@ def plan_paper_orders(
             continue
 
         code = str(cand.get("symbol", "")).split(".")[0].strip()
-        if not code or len(code) != 6 or code in remaining_pos:
+        if not code or len(code) != 6 or code in remaining_pos or code in just_sold_codes:
             continue
         price = float(price_map.get(code) or cand.get("price_num") or 0)
         if price <= 0:
@@ -256,18 +348,23 @@ def plan_paper_orders(
             "reason": f"{rules['label']} · {tag} ({score}점)",
         })
         est_cash -= price * qty * (1.0 + FEE_RATE)
-        remaining_pos[code] = {"code": code, "name": cand.get("name", code), "qty": qty, "avg_price": price, "cur_price": price}
+        remaining_pos[code] = {
+            "code": code, "name": cand.get("name", code),
+            "qty": qty, "avg_price": price, "cur_price": price,
+            "entry_date": today_date, "peak_ret_pct": 0.0,
+        }
 
     return orders
 
 
 def apply_orders_to_local_ledger(ledger: dict, orders: list, price_map: dict, now_kst: str) -> dict:
-    """로컬 모의투자 원장에 체결 반영 (수수료 0.015% + 매도세 0.18% 정확 공제)."""
+    """로컬 모의투자 원장에 체결 반영 (수수료 0.015% + 매도세 0.18% 정확 공제, 보유일·최고수익률 추적)."""
     cash = float(ledger.get("cash", INITIAL_SIM_CASH))
     positions = dict(ledger.get("positions") or {})
     trades = list(ledger.get("trades") or [])
     wins = int(ledger.get("wins", 0))
     losses = int(ledger.get("losses", 0))
+    today_date = now_kst[:10]
 
     for od in orders:
         code = od["code"]
@@ -306,20 +403,24 @@ def apply_orders_to_local_ledger(ledger: dict, orders: list, price_map: dict, no
             positions[code] = {
                 "code": code, "name": od["name"], "qty": qty,
                 "avg_price": price, "cur_price": price, "half_sold": False,
+                "entry_date": today_date, "peak_ret_pct": 0.0,
             }
             trades.insert(0, {
                 "time": now_kst, "side": "BUY", "code": code, "name": od["name"],
                 "qty": qty, "price": int(round(price)), "pnl": 0, "reason": od["reason"],
             })
 
-    # 최신 평가가 반영
+    # 최신 평가가 및 최고 수익률(peak_ret_pct) 갱신
     eval_total = 0.0
     pos_list = []
     for code, p in positions.items():
         cur = float(price_map.get(code) or p.get("cur_price") or p.get("avg_price") or 0)
         p["cur_price"] = cur
+        if not p.get("entry_date"):
+            p["entry_date"] = today_date
         eval_total += cur * int(p["qty"])
         ret = ((cur / float(p["avg_price"])) - 1.0) * 100.0 if float(p["avg_price"]) > 0 else 0.0
+        p["peak_ret_pct"] = round(max(float(p.get("peak_ret_pct", ret)), ret), 2)
         pos_list.append({
             "code": code, "name": p["name"], "qty": int(p["qty"]),
             "avg_price": int(round(float(p["avg_price"]))), "cur_price": int(round(cur)),
@@ -361,7 +462,10 @@ def run_paper_autotrader(
     ledger_path: pathlib.Path = ROOT / "data/paper_ledger.json",
     summary_path: pathlib.Path = ROOT / "data/paper_trading_summary.json",
 ):
-    now_kst = (dt.datetime.utcnow() + dt.timedelta(hours=9)).strftime("%Y-%m-%d %H:%M KST")
+    now_dt = dt.datetime.utcnow() + dt.timedelta(hours=9)
+    now_kst = now_dt.strftime("%Y-%m-%d %H:%M KST")
+    today_date = now_dt.strftime("%Y-%m-%d")
+
     if not feed_path.exists():
         print("[WARN] live_feed.json 없음 — 먼저 스캔을 실행하세요.")
         return None
@@ -379,7 +483,7 @@ def run_paper_autotrader(
     print(
         f"[진단] 한국국면={kr_regime} -> {rules['label']} "
         f"(최대 {rules['max_positions']}종목 · 비중 {int(rules['max_weight']*100)}% · "
-        f"매수기준 {rules['buy_min_score']}점 / 우량 {rules['strong_min_score']}점) | KR후보={len(kr_cands)}개"
+        f"손절 {rules['stop_loss_pct']}% · 1차익절 +{TAKE_PROFIT_1_PCT}% / 2차 +{TAKE_PROFIT_2_PCT}%) | KR후보={len(kr_cands)}개"
     )
 
     price_map = {}
@@ -402,7 +506,17 @@ def run_paper_autotrader(
             client = KisPaperClient(app_key, app_secret, acc_no)
             client.authenticate()
             cash, positions = client.get_balance()
-            orders = plan_paper_orders(cash, positions, candidates, price_map, kr_regime=kr_regime)
+            # 기존 원장에 기록된 entry_date, peak_ret_pct, half_sold 메타데이터 유지
+            prev_pos = ledger.get("positions") or {}
+            for code, pos in positions.items():
+                if code in prev_pos:
+                    pos["entry_date"] = prev_pos[code].get("entry_date", today_date)
+                    pos["peak_ret_pct"] = prev_pos[code].get("peak_ret_pct", 0.0)
+                    pos["half_sold"] = prev_pos[code].get("half_sold", False)
+                else:
+                    pos["entry_date"] = today_date
+                    pos["peak_ret_pct"] = 0.0
+            orders = plan_paper_orders(cash, positions, candidates, price_map, kr_regime=kr_regime, today_date=today_date)
             executed = []
             for od in orders:
                 try:
@@ -419,11 +533,11 @@ def run_paper_autotrader(
         except Exception as e:
             print(f"[KIS API 연결 실패 -> 로컬 모의시뮬레이터 폴백] {e}")
             ledger["mode"] = "로컬 가상 시뮬레이터 (KIS 키 확인 필요)"
-            orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime)
+            orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime, today_date=today_date)
             ledger, summary = apply_orders_to_local_ledger(ledger, orders, price_map, now_kst)
     else:
-        ledger["mode"] = "로컬 가상 시뮬레이터 (1,000만 원 · 유동적 국면 대응)"
-        orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime)
+        ledger["mode"] = "로컬 가상 시뮬레이터 (1,000만 원 · 수익 실현형 스윙)"
+        orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime, today_date=today_date)
         ledger, summary = apply_orders_to_local_ledger(ledger, orders, price_map, now_kst)
         print(f"[로컬 모의시뮬 완료] 가상 체결 {len(orders)}건 · 총자산 {summary['total_equity']:,}원 ({summary['total_return_pct']}%)")
 
