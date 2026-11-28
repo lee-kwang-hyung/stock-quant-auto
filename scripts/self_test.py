@@ -397,13 +397,13 @@ def test_v60_kis_paper_autotrader():
     assert kpt.TR_BUY_PAPER == "VTTC0012U" and kpt.TR_SELL_PAPER == "VTTC0011U" and kpt.TR_BALANCE_PAPER == "VTTC8434R"
     assert (ROOT / ".github/workflows/kis-paper-autotrade.yml").exists()
 
-    # Verify stop-loss (-7%) full sell, +10% half TP, +18% full TP, and buy slot allocation
+    # Verify v6.3 stop-loss (-5%) full sell, +5% half TP, +10% full TP, and buy slot allocation
     positions = {
         "005930": {"code": "005930", "name": "삼성전자", "qty": 10, "avg_price": 70000, "cur_price": 64000, "half_sold": False},
-        "005380": {"code": "005380", "name": "현대차", "qty": 4, "avg_price": 200000, "cur_price": 222000, "half_sold": False},
-        "012450": {"code": "012450", "name": "한화에어로스페이스", "qty": 2, "avg_price": 500000, "cur_price": 600000, "half_sold": False},
+        "005380": {"code": "005380", "name": "현대차", "qty": 4, "avg_price": 200000, "cur_price": 212000, "half_sold": False},
+        "012450": {"code": "012450", "name": "한화에어로스페이스", "qty": 2, "avg_price": 500000, "cur_price": 560000, "half_sold": False},
     }
-    price_map = {"005930": 64000, "005380": 222000, "012450": 600000, "278470": 50000}
+    price_map = {"005930": 64000, "005380": 212000, "012450": 560000, "278470": 50000}
     candidates = [{"market": "KR", "symbol": "278470.KS", "name": "에이피알", "status": "buy", "score": 78, "trust_label": "재무 탄탄", "price_num": 50000}]
     orders = kpt.plan_paper_orders(3_000_000, positions, candidates, price_map, kr_regime="강세장")
     sells = {o["code"]: o for o in orders if o["side"] == "SELL"}
@@ -418,7 +418,7 @@ def test_v60_kis_paper_autotrader():
     assert summary["closed_trades"] == 3 and summary["win_rate"] == 66.7
     idx = (ROOT / "docs/index.html").read_text(encoding="utf-8")
     assert "paperBotCard" in idx and "renderPaperBotCard" in idx and "모의 자동매매 성적표" in idx
-    print("[PASS 23/23] v6.0 한국투자증권 모의투자(VTTC0012U/0011U) 자동매매·손절(-7%)/분할익절(+10/+18%)·성적표 UI 검증 통과")
+    print("[PASS 23/23] v6.0 한국투자증권 모의투자(VTTC0012U/0011U) 자동매매·손절(-5%)/분할익절(+5/+10%)·성적표 UI 검증 통과")
 
 test_v60_kis_paper_autotrader()
 print("=== ALL 23 STOCK QUANT V6.0 SELF-TESTS PASSED ===")
