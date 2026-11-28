@@ -171,6 +171,24 @@ def test_weekly_circuit_breaker():
     assert cb3 is False and ret3 == 0.0
 
 
+
+
+def test_intraday_crash_filter_and_daily_idempotency():
+    """10. [v6.4] 당일 -4% 이하 급락주 진입 차단 및 당일 동일 종목 중복 매수 방지(멱등성) 검증."""
+    cands = [
+        {"market": "KR", "symbol": "005930.KS", "name": "급락악재주", "status": "buy", "score": 88, "price_num": 60000, "change_pct": -5.2, "trust_label": "우량"},
+        {"market": "KR", "symbol": "000660.KS", "name": "중복매수대상", "status": "buy", "score": 85, "price_num": 150000, "change_pct": 1.1, "trust_label": "우량"},
+        {"market": "KR", "symbol": "005380.KS", "name": "정상우량주", "status": "buy", "score": 80, "price_num": 240000, "change_pct": 0.8, "trust_label": "우량"},
+    ]
+    prices = {"005930": 60000, "000660": 150000, "005380": 240000}
+    orders = kpt.plan_paper_orders(
+        10_000_000, {}, cands, prices, kr_regime="혼조세",
+        today_date="2026-11-28", now_hhmm="10:05", blocked_buy_codes={"000660"},
+    )
+    codes = {o["code"] for o in orders}
+    assert codes == {"005380"}, f"Expected only 005380, got {codes}"
+
+
 def run_all():
     tests = [
         test_safety_locks,
@@ -182,11 +200,12 @@ def run_all():
         test_opening_window_blocks_buy_allows_sell,
         test_sector_diversification_limit,
         test_weekly_circuit_breaker,
+        test_intraday_crash_filter_and_daily_idempotency,
     ]
     for fn in tests:
         fn()
         print(f"[PASS] {fn.__name__}")
-    print(f"ALL {len(tests)}/{len(tests)} KIS PAPER TRADER v6.3 TESTS PASSED")
+    print(f"ALL {len(tests)}/{len(tests)} KIS PAPER TRADER v6.4 TESTS PASSED")
 
 
 if __name__ == "__main__":

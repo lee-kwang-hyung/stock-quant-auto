@@ -41,6 +41,7 @@ STAGNANT_HOLD_DAYS = 10         # 10일 이상 횡보 시 자금 회전(교체 �
 STAGNANT_LOW_PCT = -2.0
 STAGNANT_HIGH_PCT = 1.5
 MAX_INTRADAY_CHASE_PCT = 8.0    # 당일 +8% 이상 급등주 추격매수 금지
+MIN_INTRADAY_CRASH_PCT = -4.0   # 당일 -4% 이하 돌발 악재 급락주 진입 차단
 OPENING_NO_BUY_START = (9, 0)   # 09:00 ~ 09:15 장 초반 호가 공백 구간 신규 매수 회피
 OPENING_NO_BUY_END = (9, 15)
 MAX_SAME_SECTOR = 2             # 동일 섹터 최대 2종목 분산
@@ -233,6 +234,7 @@ def plan_paper_orders(
     now_hhmm: str = "",
     sector_map: dict | None = None,
     allow_new_buys: bool = True,
+    blocked_buy_codes: set | None = None,
 ) -> list:
     """
     수익 실현형 스윙·로테이션 주문 계획 생성:
@@ -379,9 +381,9 @@ def plan_paper_orders(
         if status == "sell" or "매도" in status:
             continue
 
-        # 당일 급등주 추격매수 금지 (고점 물림 방지)
+        # 당일 급등주 추격매수 금지(+8%+) 및 돌발 악재 급락주(-4%-) 진입 차단
         day_chg = float(cand.get("change_pct") or cand.get("chg_pct") or 0)
-        if day_chg >= MAX_INTRADAY_CHASE_PCT:
+        if day_chg >= MAX_INTRADAY_CHASE_PCT or day_chg <= MIN_INTRADAY_CRASH_PCT:
             continue
 
         score = int(cand.get("score", 0))
@@ -392,6 +394,8 @@ def plan_paper_orders(
 
         code = str(cand.get("symbol", "")).split(".")[0].strip()
         if not code or len(code) != 6 or code in remaining_pos or code in just_sold_codes:
+            continue
+        if blocked_buy_codes and code in blocked_buy_codes:
             continue
 
         # 동일 섹터 최대 2종목 분산 제한
@@ -477,6 +481,12 @@ def apply_orders_to_local_ledger(ledger: dict, orders: list, price_map: dict, no
                 "time": now_kst, "side": "BUY", "code": code, "name": od["name"],
                 "qty": qty, "price": int(round(price)), "pnl": 0, "reason": od["reason"],
             })
+            bought_today = set(ledger.get("bought_today_codes") or [])
+            if ledger.get("bought_today_date") != today_date:
+                bought_today = set()
+            bought_today.add(code)
+            ledger["bought_today_date"] = today_date
+            ledger["bought_today_codes"] = sorted(bought_today)
 
     # 최신 평가가 및 최고 수익률(peak_ret_pct) 갱신
     eval_total = 0.0
@@ -584,7 +594,8 @@ def run_paper_autotrader(
     if _is_opening_no_buy_window(now_hhmm):
         print(f"[v6.3 방어] 장 초반({now_hhmm} KST) 호가 공백 구간 -> 매도/손절만 실행, 신규 매수 보류")
     if cb_active:
-        print(f"[v6.3 서킷브레이커] 주간 수익률 {weekly_ret_pct:+.2f}% (기준 {WEEKLY_CIRCUIT_BREAKER_PCT}%) -> 이번 주 신규 매수 중단")
+        print(f"[v6.4 서킷브레이커] 주간 수익률 {weekly_ret_pct:+.2f}% (기준 {WEEKLY_CIRCUIT_BREAKER_PCT}%) -> 이번 주 신규 매수 중단")
+    blocked_buy_codes = set(ledger.get("bought_today_codes") or []) if ledger.get("bought_today_date") == today_date else set()
 
     app_key = os.environ.get("KIS_PAPER_APP_KEY", "").strip()
     app_secret = os.environ.get("KIS_PAPER_APP_SECRET", "").strip()
@@ -605,7 +616,7 @@ def run_paper_autotrader(
                 else:
                     pos["entry_date"] = today_date
                     pos["peak_ret_pct"] = 0.0
-            orders = plan_paper_orders(cash, positions, candidates, price_map, kr_regime=kr_regime, today_date=today_date, now_hhmm=now_hhmm, sector_map=sector_map, allow_new_buys=not cb_active)
+            orders = plan_paper_orders(cash, positions, candidates, price_map, kr_regime=kr_regime, today_date=today_date, now_hhmm=now_hhmm, sector_map=sector_map, allow_new_buys=not cb_active, blocked_buy_codes=blocked_buy_codes)
             executed = []
             for od in orders:
                 try:
@@ -622,11 +633,11 @@ def run_paper_autotrader(
         except Exception as e:
             print(f"[KIS API 연결 실패 -> 로컬 모의시뮬레이터 폴백] {e}")
             ledger["mode"] = "로컬 가상 시뮬레이터 (KIS 키 확인 필요)"
-            orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime, today_date=today_date, now_hhmm=now_hhmm, sector_map=sector_map, allow_new_buys=not cb_active)
+            orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime, today_date=today_date, now_hhmm=now_hhmm, sector_map=sector_map, allow_new_buys=not cb_active, blocked_buy_codes=blocked_buy_codes)
             ledger, summary = apply_orders_to_local_ledger(ledger, orders, price_map, now_kst)
     else:
         ledger["mode"] = "로컬 가상 시뮬레이터 (1,000만 원 · 수익 실현형 스윙)"
-        orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime, today_date=today_date, now_hhmm=now_hhmm, sector_map=sector_map, allow_new_buys=not cb_active)
+        orders = plan_paper_orders(ledger["cash"], ledger["positions"], candidates, price_map, kr_regime=kr_regime, today_date=today_date, now_hhmm=now_hhmm, sector_map=sector_map, allow_new_buys=not cb_active, blocked_buy_codes=blocked_buy_codes)
         ledger, summary = apply_orders_to_local_ledger(ledger, orders, price_map, now_kst)
         print(f"[로컬 모의시뮬 완료] 가상 체결 {len(orders)}건 · 총자산 {summary['total_equity']:,}원 ({summary['total_return_pct']}%)")
 

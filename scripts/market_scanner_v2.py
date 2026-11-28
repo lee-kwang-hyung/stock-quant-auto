@@ -1,4 +1,6 @@
-"""v2.0 한국 전 종목 급등 초입(+3~15%)·상한가(+22~30%) 스캐너 및 5대 투자 촉매 뉴스 수집기."""
+"""v2.1 한국 전 종목 급등 초입(+3~15%)·상한가(+22~30%) 스캐너 및 5대 투자 촉매 뉴스 수집기.
+- KRX 로그인 오류를 유발하는 pykrx 대신 네이버 금융 모바일 실시간 랭킹 API(KOSPI/KOSDAQ)를 1순위로 사용합니다.
+"""
 import datetime as dt
 import urllib.parse
 import xml.etree.ElementTree as ET
@@ -47,75 +49,127 @@ def collect_catalyst_issues(news_fetcher=None) -> list:
     return sections
 
 
-def scan_kr_full_market_movers(min_trade_val_krw: int = 5_000_000_000, news_fetcher=None) -> dict:
+def _parse_num(val) -> float:
+    if val is None:
+        return 0.0
+    s = str(val).replace(",", "").replace("%", "").replace("+", "").strip()
+    try:
+        return float(s)
+    except Exception:
+        return 0.0
+
+
+def _fetch_naver_up_stocks(market: str = "KOSPI", page_size: int = 60) -> list[dict]:
+    """네이버 금융 모바일 상승률 상위 API에서 종목 리스트를 조회합니다."""
+    url = f"https://m.stock.naver.com/api/stocks/up/{market}?page=1&pageSize={page_size}"
+    headers = {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
+    try:
+        r = requests.get(url, headers=headers, timeout=10)
+        if r.status_code != 200:
+            return []
+        data = r.json()
+        return data.get("stocks") or []
+    except Exception:
+        return []
+
+
+def _is_excluded_name(name: str) -> bool:
+    bad_tokens = ("스팩", "SPAC", "ETN", "ETF", "KODEX", "TIGER", "KBSTAR", "ACE ", "SOL ", "ARIRANG", "HANARO", "RISE ", "PLUS ", "리츠", "인버스", "레버리지")
+    if any(tok in name for tok in bad_tokens):
+        return True
+    if name.endswith("우") or name.endswith("우B") or name.endswith("우(전환)"):
+        return True
+    return False
+
+
+def scan_kr_full_market_movers(min_trade_val_krw: int = 5_000_000_000, news_fetcher=None, rank_fetcher=None) -> dict:
     """
     코스피·코스닥 전 종목에서
     1) 급등 초입(+3.0% ~ +15.0%, 거래대금 50억 이상) 스몰캡·중형주 돌파 후보
     2) 당일 상한가/초급등(+22.0% ~ +30.5%) 종목 + 급등 원인 뉴스
-    를 자동 스캔합니다. (pykrx 사용, 실패 시 빈 리스트 안전 폴백)
+    를 네이버 금융 실시간 랭킹 API로 자동 스캔합니다.
     """
     _news = news_fetcher or fetch_rss_news
-    breakout_picks = []
-    limit_up_movers = []
-    try:
-        from pykrx import stock as krx
-        now_kst = dt.datetime.now(dt.timezone(dt.timedelta(hours=9)))
-        target_date = None
-        df_all = None
-        # 최근 7일 중 직전 영업일 자동 탐색
-        for back in range(0, 8):
-            d_str = (now_kst - dt.timedelta(days=back)).strftime("%Y%m%d")
-            try:
-                tmp = krx.get_market_ohlcv_by_ticker(d_str, market="ALL")
-                if tmp is not None and not tmp.empty and float(tmp["거래대금"].sum()) > 0:
-                    target_date = d_str
-                    df_all = tmp
-                    break
-            except Exception:
+    _rank = rank_fetcher or _fetch_naver_up_stocks
+    now_kst = dt.datetime.now(dt.timezone(dt.timedelta(hours=9)))
+    target_date = now_kst.strftime("%Y%m%d")
+
+    raw_items = []
+    seen = set()
+    for mkt in ("KOSPI", "KOSDAQ"):
+        for s in _rank(mkt, 60):
+            code = str(s.get("itemCode") or "").strip()
+            name = str(s.get("stockName") or "").strip()
+            if not code or len(code) != 6 or code in seen or not name or _is_excluded_name(name):
                 continue
+            seen.add(code)
+            close = _parse_num(s.get("closePrice"))
+            chg_pct = _parse_num(s.get("fluctuationsRatio"))
+            # 네이버 API accumulatedTradingValue는 백만원 단위인 경우가 많고, 없을 경우 거래량*현재가로 계산
+            vol = _parse_num(s.get("accumulatedTradingVolume"))
+            val_raw = _parse_num(s.get("accumulatedTradingValue"))
+            if val_raw > 0:
+                # 백만원 단위(< 10^8)면 1,000,000 곱함
+                trade_val_krw = val_raw * 1_000_000 if val_raw < 100_000_000 else val_raw
+            else:
+                trade_val_krw = close * vol
 
-        if df_all is None or df_all.empty:
-            return {"date": "", "breakout": [], "limit_up": []}
-
-        # 거래대금 50억 이상 + 종가 1,000원 이상(동전주·극소형 작전주 제외)
-        liquid = df_all[(df_all["거래대금"] >= min_trade_val_krw) & (df_all["종가"] >= 1000)].copy()
-
-        # 1) 급등 초입 (+3.0% ~ +15.0%), 거래대금 상위 12종목
-        bo = liquid[(liquid["등락률"] >= 3.0) & (liquid["등락률"] <= 15.0)].sort_values("거래대금", ascending=False).head(12)
-        for ticker, row in bo.iterrows():
-            name = krx.get_market_ticker_name(ticker) or ticker
-            close = float(row["종가"])
-            low_p = float(row["저가"]) if float(row["저가"]) > 0 else close * 0.95
-            est_atr = max((float(row["고가"]) - low_p), close * 0.035)
-            plan = compute_trade_plan(close, est_atr, low_p, market="KR")
-            news = _news(f"{name} 주가 급등 OR 수주 OR 실적", market="KR", limit=1)
-            breakout_picks.append({
-                "ticker": ticker,
+            if close < 1000 or trade_val_krw < min_trade_val_krw:
+                continue
+            raw_items.append({
+                "ticker": code,
                 "name": name,
-                "close": int(close),
-                "chg_pct": round(float(row["등락률"]), 2),
-                "trade_val_eok": round(float(row["거래대금"]) / 1e8, 1),
-                "news_title": news[0]["title"] if news else "수급·거래대금 급증",
-                "news_link": news[0]["link"] if news else "",
-                **plan,
+                "close": close,
+                "chg_pct": chg_pct,
+                "trade_val_krw": trade_val_krw,
             })
 
-        # 2) 당일 상한가/초급등 (+22.0% 이상) 원인 정리 (상위 8종목)
-        lu = liquid[liquid["등락률"] >= 22.0].sort_values("등락률", ascending=False).head(8)
-        for ticker, row in lu.iterrows():
-            name = krx.get_market_ticker_name(ticker) or ticker
-            news = _news(f"{name} 상한가 OR 급등 이유", market="KR", limit=1)
-            limit_up_movers.append({
-                "ticker": ticker,
-                "name": name,
-                "close": int(row["종가"]),
-                "chg_pct": round(float(row["등락률"]), 2),
-                "trade_val_eok": round(float(row["거래대금"]) / 1e8, 1),
-                "news_title": news[0]["title"] if news else "관련 공시·테마 확인 필요",
-                "news_link": news[0]["link"] if news else "",
-            })
+    if not raw_items:
+        return {"date": target_date, "breakout": [], "limit_up": []}
 
-        return {"date": target_date, "breakout": breakout_picks, "limit_up": limit_up_movers}
-    except Exception as e:
-        print(f"[전 종목 스캔 참고] {e}")
-        return {"date": "", "breakout": [], "limit_up": []}
+    # 1) 급등 초입 (+3.0% ~ +15.0%), 거래대금 상위 12종목
+    bo_list = sorted(
+        [x for x in raw_items if 3.0 <= x["chg_pct"] <= 15.0],
+        key=lambda x: x["trade_val_krw"],
+        reverse=True,
+    )[:12]
+
+    breakout_picks = []
+    for item in bo_list:
+        close = item["close"]
+        low_p = close * 0.95
+        est_atr = close * 0.04
+        plan = compute_trade_plan(close, est_atr, low_p, market="KR")
+        news = _news(f"{item['name']} 주가 급등 OR 수주 OR 실적", market="KR", limit=1)
+        breakout_picks.append({
+            "ticker": item["ticker"],
+            "name": item["name"],
+            "close": int(close),
+            "chg_pct": round(item["chg_pct"], 2),
+            "trade_val_eok": round(item["trade_val_krw"] / 1e8, 1),
+            "news_title": news[0]["title"] if news else "수급·거래대금 급증",
+            "news_link": news[0]["link"] if news else "",
+            **plan,
+        })
+
+    # 2) 상한가 / 초급등 (+22.0% ~ +30.5%), 등락률·거래대금 상위 8종목
+    lu_list = sorted(
+        [x for x in raw_items if 22.0 <= x["chg_pct"] <= 30.5],
+        key=lambda x: (x["chg_pct"], x["trade_val_krw"]),
+        reverse=True,
+    )[:8]
+
+    limit_up_movers = []
+    for item in lu_list:
+        news = _news(f"{item['name']} 상한가 OR 급등", market="KR", limit=1)
+        limit_up_movers.append({
+            "ticker": item["ticker"],
+            "name": item["name"],
+            "close": int(item["close"]),
+            "chg_pct": round(item["chg_pct"], 2),
+            "trade_val_eok": round(item["trade_val_krw"] / 1e8, 1),
+            "news_title": news[0]["title"] if news else "강한 수급 유입 상한가/초급등",
+            "news_link": news[0]["link"] if news else "",
+        })
+
+    return {"date": target_date, "breakout": breakout_picks, "limit_up": limit_up_movers}
