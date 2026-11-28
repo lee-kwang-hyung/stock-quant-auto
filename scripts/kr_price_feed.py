@@ -1,9 +1,13 @@
 """한국 주식(KRX) 1원 단위 정확 시세 로더 (시세 조회 전용 · 주문 기능 없음):
 - 당일 실시간 현재가: 한국투자증권(KIS) 공식 API (1순위: 실전 도메인 :9443 -> 2순위: 모의 도메인 :29443 자동 판별)
+- 토큰 캐싱: 로컬/Actions 캐시 파일(.kis_cache/kis_quote_token.json)에 18시간 저장해 하루 1회만 발급
 - 일봉 히스토리 및 폴백: 네이버 금융 차트 XML + pykrx
 """
 import datetime as dt
+import hashlib
+import json
 import os
+import pathlib
 import time
 import xml.etree.ElementTree as ET
 
@@ -14,8 +18,9 @@ import requests
 KIS_REAL_QUOTE_URL = "https://openapi.koreainvestment.com:9443"
 KIS_PAPER_QUOTE_URL = "https://openapivts.koreainvestment.com:29443"
 TR_INQUIRE_PRICE = "FHKST01010100"
+TOKEN_CACHE_TTL_SEC = 18 * 3600  # KIS 토큰 유효기간(24h) 대비 안전 마진 18시간
 
-# 프로세스 실행 중 토큰 재사용 캐시 (KIS 1분당 1회 발급 제한 보호)
+# 프로세스 실행 중 메모리 캐시
 _KIS_TOKEN_CACHE = {
     "token": "",
     "base_url": "",
@@ -43,21 +48,94 @@ def _get_kis_credentials() -> tuple[str, str]:
     return app_key, app_secret
 
 
-def _get_kis_session() -> tuple[str, str]:
+def _get_token_cache_path() -> pathlib.Path:
+    custom = os.environ.get("KIS_TOKEN_CACHE_PATH", "").strip()
+    if custom:
+        return pathlib.Path(custom)
+    return pathlib.Path(".kis_cache/kis_quote_token.json")
+
+
+def _key_fingerprint(app_key: str) -> str:
+    return hashlib.sha256(app_key.encode("utf-8")).hexdigest()[:12]
+
+
+def _load_token_from_disk(app_key: str, now: float) -> dict | None:
+    path = _get_token_cache_path()
+    if not path.exists():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if (
+            data.get("key_fp") == _key_fingerprint(app_key)
+            and data.get("token")
+            and data.get("base_url")
+            and float(data.get("expires_at", 0)) > now + 300
+        ):
+            return data
+    except Exception:
+        return None
+    return None
+
+
+def _save_token_to_disk(app_key: str, token: str, base_url: str, mode_label: str, expires_at: float) -> None:
+    path = _get_token_cache_path()
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "key_fp": _key_fingerprint(app_key),
+            "token": token,
+            "base_url": base_url,
+            "mode_label": mode_label,
+            "expires_at": expires_at,
+        }
+        path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        try:
+            os.chmod(path, 0o600)
+        except Exception:
+            pass
+    except Exception:
+        pass
+
+
+def _clear_token_cache() -> None:
+    _KIS_TOKEN_CACHE["token"] = ""
+    _KIS_TOKEN_CACHE["base_url"] = ""
+    _KIS_TOKEN_CACHE["expires_at"] = 0.0
+    path = _get_token_cache_path()
+    try:
+        if path.exists():
+            path.unlink()
+    except Exception:
+        pass
+
+
+def _get_kis_session(force_refresh: bool = False) -> tuple[str, str]:
     """
     시세 조회용 KIS 접근 토큰과 접속 도메인을 반환합니다.
-    - 등록된 키로 실전 시세 도메인(:9443) 인증을 먼저 시도하고,
-      실패 시 모의 시세 도메인(:29443)으로 자동 전환합니다.
+    1) 메모리 캐시 -> 2) 디스크/Actions 캐시 파일 -> 3) 신규 발급(실전 :9443 우선, 모의 :29443 폴백)
     """
-    if _KIS_TOKEN_CACHE["failed"]:
+    if _KIS_TOKEN_CACHE["failed"] and not force_refresh:
         return "", ""
     now = time.time()
-    if _KIS_TOKEN_CACHE["token"] and now < _KIS_TOKEN_CACHE["expires_at"]:
+    if not force_refresh and _KIS_TOKEN_CACHE["token"] and now < _KIS_TOKEN_CACHE["expires_at"]:
         return _KIS_TOKEN_CACHE["token"], _KIS_TOKEN_CACHE["base_url"]
 
     app_key, app_secret = _get_kis_credentials()
     if not app_key or not app_secret:
         return "", ""
+
+    # 디스크/Actions 캐시 우선 확인 (하루 1회 발급 유지)
+    if not force_refresh:
+        cached = _load_token_from_disk(app_key, now)
+        if cached:
+            _KIS_TOKEN_CACHE["token"] = cached["token"]
+            _KIS_TOKEN_CACHE["base_url"] = cached["base_url"]
+            _KIS_TOKEN_CACHE["mode_label"] = cached.get("mode_label", "캐시 도메인")
+            _KIS_TOKEN_CACHE["expires_at"] = float(cached["expires_at"])
+            if not _KIS_TOKEN_CACHE["logged_success"]:
+                print(f"[KIS 공식 시세 캐시 재사용] {_KIS_TOKEN_CACHE['mode_label']} · 토큰 재발급 생략 (주문 기능 없음)")
+                _KIS_TOKEN_CACHE["logged_success"] = True
+            return cached["token"], cached["base_url"]
 
     payload = {
         "grant_type": "client_credentials",
@@ -75,12 +153,15 @@ def _get_kis_session() -> tuple[str, str]:
             r.raise_for_status()
             token = r.json().get("access_token", "")
             if token:
+                exp = now + TOKEN_CACHE_TTL_SEC
                 _KIS_TOKEN_CACHE["token"] = token
                 _KIS_TOKEN_CACHE["base_url"] = base_url
                 _KIS_TOKEN_CACHE["mode_label"] = label
-                _KIS_TOKEN_CACHE["expires_at"] = now + 3600  # 1시간 캐시
+                _KIS_TOKEN_CACHE["expires_at"] = exp
+                _KIS_TOKEN_CACHE["failed"] = False
+                _save_token_to_disk(app_key, token, base_url, label, exp)
                 if not _KIS_TOKEN_CACHE["logged_success"]:
-                    print(f"[KIS 공식 시세 연동 성공] {label} · 시세 조회 전용 (주문 기능 없음)")
+                    print(f"[KIS 공식 시세 연동 성공] {label} · 시세 조회 전용 (토큰 18시간 캐시 저장)")
                     _KIS_TOKEN_CACHE["logged_success"] = True
                 return token, base_url
         except Exception as e:
@@ -93,51 +174,59 @@ def _get_kis_session() -> tuple[str, str]:
 
 def fetch_kis_current_price(symbol: str) -> dict | None:
     """한국투자증권(KIS) 공식 API로 국내주식 실시간 현재가(시가·고가·저가·현재가·거래량)를 조회합니다."""
-    token, base_url = _get_kis_session()
-    if not token or not base_url:
-        return None
-
     code = _clean_kr_code(symbol)
     if len(code) != 6 or not code.isdigit():
         return None
 
     app_key, app_secret = _get_kis_credentials()
-
-    try:
-        url = f"{base_url}/uapi/domestic-stock/v1/quotations/inquire-price"
-        headers = {
-            "content-type": "application/json; charset=utf-8",
-            "authorization": f"Bearer {token}",
-            "appkey": app_key,
-            "appsecret": app_secret,
-            "tr_id": TR_INQUIRE_PRICE,
-            "custtype": "P",
-        }
-        params = {
-            "FID_COND_MRKT_DIV_CODE": "J",
-            "FID_INPUT_ISCD": code,
-        }
-        r = requests.get(url, headers=headers, params=params, timeout=8)
-        r.raise_for_status()
-        out = r.json().get("output") or {}
-        close_p = float(out.get("stck_prpr") or 0)
-        if close_p <= 0:
-            return None
-        open_p = float(out.get("stck_oprc") or close_p)
-        high_p = float(out.get("stck_hgpr") or close_p)
-        low_p = float(out.get("stck_lwpr") or close_p)
-        vol = float(out.get("acml_vol") or 0)
-        # KIS API 초당 호출 제한(TPS) 보호
-        time.sleep(0.06)
-        return {
-            "Open": open_p,
-            "High": high_p,
-            "Low": low_p,
-            "Close": close_p,
-            "Volume": vol,
-        }
-    except Exception:
+    if not app_key or not app_secret:
         return None
+
+    for attempt in range(2):
+        token, base_url = _get_kis_session(force_refresh=(attempt == 1))
+        if not token or not base_url:
+            return None
+        try:
+            url = f"{base_url}/uapi/domestic-stock/v1/quotations/inquire-price"
+            headers = {
+                "content-type": "application/json; charset=utf-8",
+                "authorization": f"Bearer {token}",
+                "appkey": app_key,
+                "appsecret": app_secret,
+                "tr_id": TR_INQUIRE_PRICE,
+                "custtype": "P",
+            }
+            params = {
+                "FID_COND_MRKT_DIV_CODE": "J",
+                "FID_INPUT_ISCD": code,
+            }
+            r = requests.get(url, headers=headers, params=params, timeout=8)
+            if r.status_code == 401 and attempt == 0:
+                _clear_token_cache()
+                continue
+            r.raise_for_status()
+            out = r.json().get("output") or {}
+            close_p = float(out.get("stck_prpr") or 0)
+            if close_p <= 0:
+                return None
+            open_p = float(out.get("stck_oprc") or close_p)
+            high_p = float(out.get("stck_hgpr") or close_p)
+            low_p = float(out.get("stck_lwpr") or close_p)
+            vol = float(out.get("acml_vol") or 0)
+            # KIS API 초당 호출 제한(TPS) 보호
+            time.sleep(0.06)
+            return {
+                "Open": open_p,
+                "High": high_p,
+                "Low": low_p,
+                "Close": close_p,
+                "Volume": vol,
+            }
+        except Exception:
+            if attempt == 0:
+                continue
+            return None
+    return None
 
 
 def parse_naver_fchart_xml(xml_text: str) -> pd.DataFrame:
@@ -177,7 +266,6 @@ def _merge_kis_realtime_bar(df: pd.DataFrame, kis_quote: dict) -> pd.DataFrame:
             kis_quote["Volume"],
         ]
     elif today_kst > last_idx:
-        # 주말/공휴일 장외 시간에는 기존 마지막 거래일 종가 유지, 평일 장중/마감 후에만 당일 봉 반영
         if today_kst.weekday() < 5:
             out.loc[today_kst] = [
                 kis_quote["Open"],
@@ -191,14 +279,13 @@ def _merge_kis_realtime_bar(df: pd.DataFrame, kis_quote: dict) -> pd.DataFrame:
 
 def fetch_kr_ohlcv_exact(symbol: str, count: int = 180) -> pd.DataFrame:
     """
-    1순위: KIS 공식 현재가(당일 실시간, 실전 :9443 우선 / 모의 :29443 자동 폴백) + 네이버 금융 일봉 결합
+    1순위: KIS 공식 현재가(당일 실시간, 토큰 18h 캐싱) + 네이버 금융 일봉 결합
     2순위(폴백): 네이버 금융 fchart API 단독
     3순위(폴백): pykrx 공식 KRX 일봉
     """
     code = _clean_kr_code(symbol)
     df = pd.DataFrame()
 
-    # 일봉 히스토리 로드 (네이버 금융 차트 XML 우선)
     try:
         url = f"https://fchart.stock.naver.com/sise.nhn?symbol={code}&timeframe=day&count={count}&requestType=0"
         r = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
@@ -209,7 +296,6 @@ def fetch_kr_ohlcv_exact(symbol: str, count: int = 180) -> pd.DataFrame:
     except Exception:
         pass
 
-    # 일봉 히스토리 폴백 (pykrx)
     if df.empty:
         try:
             from pykrx import stock as krx
@@ -225,7 +311,6 @@ def fetch_kr_ohlcv_exact(symbol: str, count: int = 180) -> pd.DataFrame:
     if df.empty:
         return df
 
-    # 1순위 실시간 현재가: 한국투자증권(KIS) 공식 API 덮어쓰기 (키 미등록/오류 시 자동 생략 -> 네이버/pykrx 유지)
     kis_quote = fetch_kis_current_price(code)
     if kis_quote:
         df = _merge_kis_realtime_bar(df, kis_quote)
