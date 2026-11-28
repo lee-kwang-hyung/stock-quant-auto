@@ -5,29 +5,29 @@
 ## 1. 오늘의 5대 투자 이슈 · 급등 촉매 뉴스 (공시 · 수주 · 실적 · 바이오 · 미장)
 
 ### 대형 수주 · 공급계약 공시
-- [[특징주] 에스오에스랩, '연 매출 143%' 북미 빅테크와 87억 라이다 공급계약에 19% 껑충 - 와이드경제](https://news.google.com/rss/articles/CBMibEFVX3lxTFB5aVoyY1Uwb2NKXzdUSzU5a2lXbHZZWl9KOEdBeExLRWpQWWg1Vl95VTFWWXQ2b1U1YS1PRVdYMDZsZzl4YmIwcWtkNEdDSE1DeEZfeDluQTQtWVJkdjU0TXZkSWhlM2tnWE9Xbg?oc=5)
 - [아스플로 수주공시 - 단일판매ㆍ공급계약체결 297.9억원 (매출액대비 43.86 %) - 한국경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE5XTkEwa2RZWlZHX2R2bHp0TG83dWpsTjdzV2dvTW13Uk1GeXdXdUlBZ3pHOVFOQjhzeEppcFNmR3Y3TXBtc2JFVEpQU21LYjdXM2JjODNIMHZQQQ?oc=5)
-- [[종목 포커스] 산일전기, 美 블룸에너지 데이터센터향 수주 등으로 주가 상승세? - 데일리인베스트](https://news.google.com/rss/articles/CBMia0FVX3lxTE1IZ0VDd3Z6SDBYNHZpR1ZUaUdLc3RVRUV4aXNDS0hhUUZCUFcwTE9ETFphQnVCNVFURUlHWEFWYWVXa19UN2owWlQtaG52QkNvU2lxbjlRS1Fld2FiOUhnNUdGX215OFhYeWJB0gFvQVVfeXFMT2pIblFfTVgzZFoyQmczMi1YQ0tKR19JTTJqendyQlBReVd0VktxMmpIVkd6UU9mMnNYaFBwTktwamNyS1pVVGZZRmkzbXNPTVVxMjJvNHRGanl0aV9HSm9JQ1R1X3hIMUQ5YUM3MWtZ?oc=5)
+- [[공시학개론] 대박 수주와 단발 계약 사이… 단일판매·공급계약 공시 들여다보기 - 아주경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE1CVG9zQUk4V3N3bTBOaUwxd21YZlZsekw1Z3k5Zjl1MUd6YzJvYzBoa3ptTVFpNDFPd0xKVGZqMVJjYVVOaC1KekNjZVdpSGpSakZPWWQxb28zd9IBWEFVX3lxTE1QLUlGZjBodWJ3cEkwUlNwWU1BQndPWlJ0UnE0NU02TTV2T1h1VG1uYzBCZWJZd2oyajNyZFR4M0o3ZkZyMUk2Wk5GUnFYOUxZZ0JtUzBaRWw?oc=5)
+- [한화시스템 수주공시 - 단일판매ㆍ공급계약체결 - 한국경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE0wMXpkX2tFeHdIR01YUGJhY0JoWDZYSGpLZFprOFNlclZVMUJFTTNhSEp4MVprTE9iUnpVejVKRDFNR1d0Wjh3Y0F1cEUxNTVxS1BYRTljUHZqQQ?oc=5)
 
 ### 실적 서프라이즈 · 어닝
 - [MS, 애저 매출 48% 급증에 '어닝 서프라이즈'…시간외 주가 급등 - 지디넷코리아](https://news.google.com/rss/articles/CBMiVkFVX3lxTE1FLVNqdk9vMnJ1X0p1RmVDcHVNOXBjNkxjTElnZ1ZXRFhtSmZFT2p5ZmdMd0lDakNFZ3lXNzcwaWFvMF9kSk4xZFpJY1A0X0ZJZTdYaHJn?oc=5)
 - [옥타, 에이전트 AI 보안 수요 급증에 '어닝 서프라이즈'…시간외 19%↑ - 연합인포맥스](https://news.google.com/rss/articles/CBMicEFVX3lxTE5heEtPSm5lUjBkVVpJcGJReXhacy11NFl2QTUxY0hmVDJtcC1NaXYwYkhTSmRLWExNRkk0QVRnVlJYQzhJMWk5ekFCR19DaUoybkxMQzFhRWtRWW9VbG5VQmR5Mjh5UFNhNDV4VnQtWGnSAXRBVV95cUxPNElLZXc3Zm1YZUl6TWhiMHZYOFdaa3U5MUJkY0ZDa0YzLVRWUklDOHN5Q3VxYm9lUGRBS0gzUmNkaXdjMkQzdG1GSW5ra2FUUHlxMXNVM09NbnF1X1owdmRMMU9jSGRnQUZOekQxNlJjUkZXQw?oc=5)
-- [팔란티어 매출 2배 급증…어닝 서프라이즈에 주가 10%↑ - 마켓인](https://news.google.com/rss/articles/CBMic0FVX3lxTFBJYUhlTVk2ZnRsQVpXNV9JVUZjNndrQ19NWFpqUTJicW95SDdvbVlVZ3B5SmFZRExQdGtSS19ZYVQ3N1FFeFlEc09WcDc2M0ZfczdYbTBEX3djaVNtSUx6ZzNaSzMwUExaZERaSWlaUW9Sa0k?oc=5)
+- [팔로알토, AI 보안특수에 ‘어닝 서프라이즈’…시간외서주가 7%대 급등[마켓무버] - 서울경제](https://news.google.com/rss/articles/CBMiUkFVX3lxTE04SnBkNTFidE8xeU9UNnhaMWFna2RsU1NGcFBCdVhkbmxsQ2hoclp3WjZUd1h1QXNudmRzYWtWTVVmWWVKZmRZdVljVkVWSFJGNUHSAVNBVV95cUxQenh3c1hSSk1wdVRaaTZnWXVEYXAxM1RodjZLbi1Fek80QTVjM2syUEJHaVhUTDdSeUN2Y0pVbklQWk9XX0ItUGhyd2U4cjJZYk8xdw?oc=5)
 
 ### 신약 · 임상 · FDA 바이오
+- [카프리코, 뒤센근이영양증 세포치료제 FDA 승인 또 불발…주가 70% 폭락 - 메디컬투데이](https://news.google.com/rss/articles/CBMibEFVX3lxTE5GT0F6YkRCelRwa1pGR29JV044aXN4QUJXWHNzV1dJeEtBYzBrV1Q5Y0stTWhwRHU5Qy1SUG0tc3lnaTVGdUVYWWhHaFdmSEc5VjU2RHlUUXU3T05Gb1lidGNKRGFrcGV5YzBzVw?oc=5)
 - [[HIT알공] 페니트리움바이오, 고형암 임상 2a상 FDA 승인 - 히트뉴스](https://news.google.com/rss/articles/CBMia0FVX3lxTE9XZHRNUWpoNTBLQWNWdm44WUEwTlRRNkR2eVNHQ2ZJZXlUaGNYZ3VNYXRNSjNkQWNkUmh5aGc0Y1pZS3JYbEJpd0xtUUVOenlBTE1vV1JQMVlackxoY3luRklTb1VjOXFncWVN?oc=5)
 - [에이비엘바이오 'ABL001' 연내 美 허가 신청 제동?…FDA, 추가 임상 권고 - 팜이데일리](https://news.google.com/rss/articles/CBMibkFVX3lxTE44SEw2bWdtdllBemlOMGhnVFptVTRQNFRwR3RvRnJBT0lCSlBxVlVaMGNSbEt5YnBjcWtvVHM1XzBaUDJZOUpyWkdlZG8wbVRVamwtaE9FZWMzZjhZWEloSkl2aFBRVlpMMVRBWFFR?oc=5)
-- [K-바이오, 잇단 악재에 주가 급락…투자심리 냉각·불신 확산 - 데일리팜](https://news.google.com/rss/articles/CBMiVkFVX3lxTFBzRU5jNzJ5Ul9pU0ZuRjFpT0ZCeDlxRExsSkE4T2J0S3h5bXpUWXdadHRnQWVmZDI0VnlwMkRqaVpHaTdCckNFc2VtZmRfUVNTa0NwVkRn?oc=5)
 
 ### 정부 정책 · 주도 테마 수혜
+- [엔비디아발 'AI 조정' 잦아드나…코스피·코스닥, 급등 마감(종합) - 연합뉴스](https://news.google.com/rss/articles/CBMiW0FVX3lxTE9veUI5eUJaOWYzLTV3UlR6TkVxbXVTZzJuV2N3cXN4VXBjMkVsUTFJRmZZZnY0Q1BmdW5mWS1OY0kzd0IzRHAzeEhoREpzQ2o1SlZDNE9PdHhweFHSAWBBVV95cUxNcFlWOFJMSkpDWWJ5aTV1SFpHYVU4aDlUOTl1VGZFR0VscHdBZVhSb1V3X2hTVjBGLTlFc1RWUmJ2V25Jc0VabWplT3hHNHlKMTJvckVTbGxMZDE4RVlnQWg?oc=5)
 - [엔비디아발 AI 조정 잦아드나…코스피·코스닥 급등 마감 - 스페셜타임스](https://news.google.com/rss/articles/CBMic0FVX3lxTE56TUQ5QUR5NkpFYkpzLTdYQmo2cG9uQkhkOVRaeXpkUzBiUmpHUUxpbTZwSUczRTNWUzlRWnR1aE5ocTV1Zl9NY1FTY2VxWFZBdHhFUjNGRVdPbmJkMGx6blR4Y1o0RVdRN0tQRWJPbWYxeEU?oc=5)
-- [[증시 오늘(27일) 주요 특징주] 로봇·보안·바이오가 이끈 코스닥 4%대 급등…코스피 4750선 안착속 테마 순환매 가속 - 더페어](https://news.google.com/rss/articles/CBMicEFVX3lxTFBrSVJPck1YS1NDYnpZcHRIVURlOHpfRzlhbXU1UU52ZmotbFFFRFZSeEc5ems2X3M5MC04ZWh0b3oteVBWTHJ6WTdIM3FFc2VFXzlBTGdRbjlOaWxxWGlKaDVySWVDbHpBclpBS1pXajDSAXRBVV95cUxOd0hhcW1ZTXVZZXp4ZjZvOGN0SVRXenV3SmxMaGZoV3Rtb1ZoUlZkNDlQTi1aU3ZKR1htem4xUUEtend0emw5N3RyVlZRSDlkZl8wVU1HU0V1dkpmVTJCS3NBTVo4a0lpMHUzT3ZhdWNnUGxwUg?oc=5)
-- [11월12(목) 장전 예상 테마 - 네이버 프리미엄콘텐츠](https://news.google.com/rss/articles/CBMiggFBVV95cUxQSWxjTVJjQUU0bE45RjJ3MlBNWnJuaHJvdktCTjdrNzF4Wl9Rb01OT3pIU2RlVTQ1WE9ZRlJIcmdvQmpaOUFZa0VmMVAzZllpSnk0cjNwbGptY0ZZTkE0U1VHdURvenlLbEJuRVRVc21JdGlmWlBqM0tvdkVMNEVGMnJ3?oc=5)
+- [[ETF 시황] 코스닥 700선 회복에 관련 ETF 급등…반도체 상품도 강세 - 뉴스핌](https://news.google.com/rss/articles/CBMiXEFVX3lxTE1NcVJ2OHRfWGRoVmo0WFNkT1o5bFpzQWZmODRzVmJCaTJpWU42ZnlfMHVzRkl1NjgtcEpuUnBJRkdlOE96UEFKajV6a2lTem1VZUp6OW5uTGtsWUxq?oc=5)
 
 ### 미국 증시 핵심 급등 촉매
 - [Binary Events In Biotech Stocks: Risk, Reward, And How To Stay Informed - RTTNews](https://news.google.com/rss/articles/CBMiqAFBVV95cUxPbklqYlNzY1pfd29ZM3hKNEhMcmdnMW1fY0V3d1JRbWtuY2NRN21CemNBaEdzRDg2N1kwM0JqU0Q1bVpMXzJJM0p4R3Mydk5SYXZheVJOTEVDRmFZdGZvTUpzeVdLSnp2WERZN25aVkVLV1plZTREYVdUX0d1a3JFQlNYczdFQlRlXzhaZFRQN01SZ1FHUXRjWTdPRUxtdzRVR0dLcGV5anc?oc=5)
-- [What Drove Glaukos Stock's 48% Rally Since the End of September? - TradingView](https://news.google.com/rss/articles/CBMiugFBVV95cUxPY1B0UC05Yl9uWXVkNHJvV3d6bUpsWlUxUzFsQzI3WUZVU3ByMW0zSk42cUJya2VObm1wQ3RjMjBXNDZWRndERWNDYllmbXFoUktha21YdkRQQ3pkQUtJNFdZeDlDNkt3dVhtWUowUkNRVDBtVjQ5blRMbExrWWRZTzRJdXFSY3VwNTBzVFhCNmt0VnBGR2NsUm5PR1RyYldlU3VwNWZLc1RXVTRJZDVNVS1pTDh6ZnlvM3c?oc=5)
-- [3 Biotech Stocks That Actually Pay Dividends and Keep Raising Them - 24/7 Wall St.](https://news.google.com/rss/articles/CBMirwFBVV95cUxOR2dPcEZDMkVDdnFjX3hRN09ES1kyUFhEdnlxZHVEczF6d2h5M2tPWW55MjViSE9lQllSZ283Y0puVjJycFF0XzVhTWRsUnpuYWVndi03NkRkbm5WbERaWGs4NFJFN1o1cVFTd3ZnWUpCLW5rNmkxaFUwTEc4UkY2cHBzaGl3U3V0RVZYYTZSWXdjVGYwR2N0TURhMGtzR055WXNNX1BiSjAtaThxNDlB?oc=5)
+- [Three New Stock Themes Are in Focus as the AI Trade Gyrates - Goldman Sachs](https://news.google.com/rss/articles/CBMiqgFBVV95cUxOc3VTUWRYaHNZWjJWanNsMS1uaUo3cDZCbGFNaU5NaU1Mek15V0NTcHBYVFZmYU96Y3Q1UVVJZFhCV290LTU0SDA2Z2xiSE1WYUFpRDFnb041OHBnZGUyR1ZLazl5SDBTQXhKbjBtQVoyT01EekZVck9LUzZpNklKbElpQ3FOSkkxLTRhcVhBdE5vZTJIekdmRXZwZ0F3djFZYkpVZGxNNUVWdw?oc=5)
+- [Today’s top U.S. stock movers: Fermi, NIQ and others surge on AI and biotech catalysts - Investing.com](https://news.google.com/rss/articles/CBMi2wFBVV95cUxNNGduVjFqQkNBQmlFTm52bHpUUHRKOUNrXy1XSXJQcERXS2NSMG5XSmtESjY5a2FIb3dKRk5SVUVZYzd1UUdaMXVVa2ZuR1czcjNnVDNYN3Qya05WU2RVanE3N1d4a2JLa01FODRqRm5RaHlycHh0bHY0SVctOEgybkNwV0d4aXpWWkNTZmtBcWt3MVBvbS1ZOVlrZ0p4d08wMTNtRE03cHJhNklXb1h3T2pBWGRRR1JFLW1ReWtfaHhqX29pdDdzUVlCb1FIVEMzTzEta04yVG9sbFE?oc=5)
 
 ## 2. 한국 전 종목 급등 초입 포착 (+3~15% · 거래대금 50억+ · 실전 가격 시나리오)
 
@@ -84,28 +84,28 @@
 
 | 순위 | 종목 | 점수(등급) | 종가(일간) | 진입 참고 구간 | 손절 기준가 | 1차 목표가 | 2차 목표가 | 핵심 근거 |
 | :---: | :--- | :---: | ---: | :--- | :--- | :--- | :--- | :--- |
-| 1 | **Apple** (`AAPL`) | **94점** (매수 관심) | $358.22 (+0.7%) | $352.85 ~ $360.01 | $345.69 (-3.5%) | $380.79 (+6.3%) | $395.84 (+10.5%) | 중기 상승 정배열 / MACD 상승 가속 |
-| 2 | **Tesla** (`TSLA`) | **88점** (매수 관심) | $400.58 (+5.4%) | $394.57 ~ $402.58 | $370.41 (-7.5%) | $454.88 (+13.6%) | $491.09 (+22.6%) | 중기 상승 정배열 / MACD 상승 가속 |
-| 3 | **SCHD 배당 ETF** (`SCHD`) | **81점** (매수 관심) | $35.68 (+1.1%) | $35.14 ~ $35.86 | $34.43 (-3.5%) | $37.93 (+6.3%) | $39.43 (+10.5%) | 중기 상승 정배열 |
-| 4 | **Berkshire Hathaway** (`BRK-B`) | **79점** (매수 관심) | $581.65 (+0.4%) | $572.93 ~ $584.56 | $561.29 (-3.5%) | $618.29 (+6.3%) | $642.72 (+10.5%) | 중기 상승 정배열 |
-| 5 | **Meta** (`META`) | **78점** (매수 관심) | $630.65 (+3.4%) | $621.19 ~ $633.80 | $593.51 (-5.9%) | $697.50 (+10.6%) | $742.07 (+17.7%) | 20일선 상회 / MACD 상승 가속 |
-| 6 | **Palantir** (`PLTR`) | **78점** (매수 관심) | $172.60 (+5.5%) | $170.01 ~ $173.46 | $158.79 (-8.0%) | $197.45 (+14.4%) | $214.02 (+24.0%) | 20일선 상회 / MACD 상승 가속 |
-| 7 | **Qualcomm** (`QCOM`) | **78점** (매수 관심) | $179.68 (+6.5%) | $176.99 ~ $180.58 | $165.31 (-8.0%) | $205.56 (+14.4%) | $222.81 (+24.0%) | 20일선 상회 / MACD 상승 가속 |
-| 8 | **Visa** (`V`) | **73점** (매수 관심) | $431.17 (+1.6%) | $424.70 ~ $433.32 | $416.07 (-3.5%) | $458.33 (+6.3%) | $476.44 (+10.5%) | 중기 상승 정배열 |
-| 9 | **Costco** (`COST`) | **66점** (관찰) | $1,095.40 (+0.8%) | $1,078.97 ~ $1,100.88 | $1,057.06 (-3.5%) | $1,164.41 (+6.3%) | $1,210.42 (+10.5%) | 중기 상승 정배열 |
-| 10 | **Amazon** (`AMZN`) | **63점** (관찰) | $253.99 (+3.9%) | $250.18 ~ $255.26 | $237.82 (-6.4%) | $283.09 (+11.5%) | $302.49 (+19.1%) | 중립 흐름 |
-| 11 | **Eli Lilly** (`LLY`) | **63점** (관찰) | $1,393.34 (+0.1%) | $1,372.44 ~ $1,400.31 | $1,335.73 (-4.1%) | $1,497.04 (+7.4%) | $1,566.18 (+12.4%) | 중립 흐름 |
-| 12 | **Alphabet** (`GOOGL`) | **55점** (관찰) | $273.85 (+0.3%) | $269.74 ~ $275.22 | $260.10 (-5.0%) | $298.60 (+9.0%) | $315.09 (+15.1%) | 하락 역배열 주의 / MACD 상승 가속 |
-| 13 | **Netflix** (`NFLX`) | **55점** (관찰) | $60.72 (+2.2%) | $59.81 ~ $61.03 | $57.88 (-4.7%) | $65.85 (+8.4%) | $69.26 (+14.1%) | 하락 역배열 주의 / MACD 상승 가속 |
-| 14 | **NVIDIA** (`NVDA`) | **48점** (관찰) | $149.40 (+0.1%) | $147.16 ~ $150.15 | $137.45 (-8.0%) | $170.91 (+14.4%) | $185.26 (+24.0%) | 하락 역배열 주의 |
-| 15 | **Microsoft** (`MSFT`) | **48점** (관찰) | $491.54 (+0.3%) | $484.17 ~ $494.00 | $472.62 (-3.8%) | $525.60 (+6.9%) | $548.31 (+11.5%) | 하락 역배열 주의 |
-| 16 | **Broadcom** (`AVGO`) | **48점** (관찰) | $311.65 (+3.6%) | $306.98 ~ $313.21 | $286.72 (-8.0%) | $356.53 (+14.4%) | $386.45 (+24.0%) | 하락 역배열 주의 |
-| 17 | **AMD** (`AMD`) | **48점** (관찰) | $418.92 (+3.2%) | $412.64 ~ $421.02 | $385.41 (-8.0%) | $479.25 (+14.4%) | $519.46 (+24.0%) | 하락 역배열 주의 |
-| 18 | **S&P 500 ETF** (`SPY`) | **48점** (관찰) | $727.19 (+1.5%) | $716.28 ~ $730.83 | $701.65 (-3.5%) | $773.17 (+6.3%) | $803.82 (+10.5%) | 하락 역배열 주의 |
-| 19 | **Nasdaq 100 ETF** (`QQQ`) | **48점** (관찰) | $647.27 (+2.1%) | $637.56 ~ $650.51 | $612.60 (-5.4%) | $709.67 (+9.6%) | $751.28 (+16.1%) | 하락 역배열 주의 |
-| 20 | **TSMC** (`TSM`) | **48점** (관찰) | $352.57 (+3.0%) | $347.28 ~ $354.33 | $324.36 (-8.0%) | $403.34 (+14.4%) | $437.19 (+24.0%) | 하락 역배열 주의 |
-| 21 | **JPMorgan Chase** (`JPM`) | **48점** (관찰) | $324.72 (+2.5%) | $319.85 ~ $326.35 | $313.19 (-3.6%) | $345.49 (+6.4%) | $359.33 (+10.7%) | 하락 역배열 주의 |
-| 22 | **Oracle** (`ORCL`) | **48점** (관찰) | $107.16 (+3.2%) | $105.55 ~ $107.70 | $98.59 (-8.0%) | $122.59 (+14.4%) | $132.88 (+24.0%) | 하락 역배열 주의 |
-| 23 | **Salesforce** (`CRM`) | **48점** (관찰) | $197.98 (+0.4%) | $195.01 ~ $198.96 | $185.79 (-6.2%) | $219.90 (+11.1%) | $234.52 (+18.5%) | 하락 역배열 주의 |
-| 24 | **Micron** (`MU`) | **48점** (관찰) | $643.11 (+7.0%) | $633.46 ~ $646.33 | $591.66 (-8.0%) | $735.72 (+14.4%) | $797.46 (+24.0%) | 하락 역배열 주의 |
+| 1 | **Apple** (`AAPL`) | **94점** (매수 관심) | $358.54 (+0.8%) | $353.16 ~ $360.33 | $345.99 (-3.5%) | $381.13 (+6.3%) | $396.19 (+10.5%) | 중기 상승 정배열 / MACD 상승 가속 |
+| 2 | **Tesla** (`TSLA`) | **88점** (매수 관심) | $400.00 (+5.2%) | $394.00 ~ $402.00 | $369.83 (-7.5%) | $454.30 (+13.6%) | $490.51 (+22.6%) | 중기 상승 정배열 / MACD 상승 가속 |
+| 3 | **Visa** (`V`) | **81점** (매수 관심) | $429.56 (+1.2%) | $423.12 ~ $431.71 | $414.53 (-3.5%) | $456.62 (+6.3%) | $474.66 (+10.5%) | 중기 상승 정배열 |
+| 4 | **SCHD 배당 ETF** (`SCHD`) | **81점** (매수 관심) | $35.67 (+1.1%) | $35.13 ~ $35.85 | $34.42 (-3.5%) | $37.92 (+6.3%) | $39.42 (+10.5%) | 중기 상승 정배열 |
+| 5 | **Berkshire Hathaway** (`BRK-B`) | **79점** (매수 관심) | $580.79 (+0.2%) | $572.08 ~ $583.69 | $560.46 (-3.5%) | $617.38 (+6.3%) | $641.77 (+10.5%) | 중기 상승 정배열 |
+| 6 | **Meta** (`META`) | **78점** (매수 관심) | $628.96 (+3.1%) | $619.53 ~ $632.10 | $591.82 (-5.9%) | $695.81 (+10.6%) | $740.38 (+17.7%) | 20일선 상회 / MACD 상승 가속 |
+| 7 | **Palantir** (`PLTR`) | **78점** (매수 관심) | $172.17 (+5.2%) | $169.59 ~ $173.03 | $158.40 (-8.0%) | $196.96 (+14.4%) | $213.49 (+24.0%) | 20일선 상회 / MACD 상승 가속 |
+| 8 | **Qualcomm** (`QCOM`) | **78점** (매수 관심) | $179.27 (+6.3%) | $176.58 ~ $180.17 | $164.93 (-8.0%) | $205.08 (+14.4%) | $222.29 (+24.0%) | 20일선 상회 / MACD 상승 가속 |
+| 9 | **Costco** (`COST`) | **66점** (관찰) | $1,097.81 (+1.0%) | $1,081.34 ~ $1,103.30 | $1,059.39 (-3.5%) | $1,166.97 (+6.3%) | $1,213.08 (+10.5%) | 중기 상승 정배열 |
+| 10 | **Amazon** (`AMZN`) | **63점** (관찰) | $254.12 (+4.0%) | $250.31 ~ $255.39 | $237.87 (-6.4%) | $283.37 (+11.5%) | $302.87 (+19.2%) | 중립 흐름 |
+| 11 | **Eli Lilly** (`LLY`) | **63점** (관찰) | $1,392.38 (+0.0%) | $1,371.49 ~ $1,399.34 | $1,334.77 (-4.1%) | $1,496.08 (+7.4%) | $1,565.21 (+12.4%) | 중립 흐름 |
+| 12 | **Alphabet** (`GOOGL`) | **55점** (관찰) | $274.96 (+0.7%) | $270.84 ~ $276.33 | $260.10 (-5.4%) | $301.70 (+9.7%) | $319.53 (+16.2%) | 하락 역배열 주의 / MACD 상승 가속 |
+| 13 | **Netflix** (`NFLX`) | **55점** (관찰) | $60.93 (+2.6%) | $60.02 ~ $61.23 | $58.07 (-4.7%) | $66.08 (+8.4%) | $69.51 (+14.1%) | 하락 역배열 주의 / MACD 상승 가속 |
+| 14 | **NVIDIA** (`NVDA`) | **48점** (관찰) | $150.49 (+0.8%) | $148.23 ~ $151.24 | $138.45 (-8.0%) | $172.16 (+14.4%) | $186.61 (+24.0%) | 하락 역배열 주의 |
+| 15 | **Microsoft** (`MSFT`) | **48점** (관찰) | $492.85 (+0.6%) | $485.46 ~ $495.31 | $472.62 (-4.1%) | $529.27 (+7.4%) | $553.55 (+12.3%) | 하락 역배열 주의 |
+| 16 | **Broadcom** (`AVGO`) | **48점** (관찰) | $312.34 (+3.8%) | $307.65 ~ $313.90 | $287.35 (-8.0%) | $357.32 (+14.4%) | $387.30 (+24.0%) | 하락 역배열 주의 |
+| 17 | **AMD** (`AMD`) | **48점** (관찰) | $424.54 (+4.6%) | $418.17 ~ $426.66 | $390.58 (-8.0%) | $485.67 (+14.4%) | $526.43 (+24.0%) | 하락 역배열 주의 |
+| 18 | **S&P 500 ETF** (`SPY`) | **48점** (관찰) | $728.32 (+1.6%) | $717.40 ~ $731.96 | $702.65 (-3.5%) | $774.52 (+6.3%) | $805.32 (+10.6%) | 하락 역배열 주의 |
+| 19 | **Nasdaq 100 ETF** (`QQQ`) | **48점** (관찰) | $650.99 (+2.7%) | $641.23 ~ $654.24 | $616.01 (-5.4%) | $713.95 (+9.7%) | $755.92 (+16.1%) | 하락 역배열 주의 |
+| 20 | **TSMC** (`TSM`) | **48점** (관찰) | $353.34 (+3.2%) | $348.04 ~ $355.11 | $325.07 (-8.0%) | $404.22 (+14.4%) | $438.14 (+24.0%) | 하락 역배열 주의 |
+| 21 | **JPMorgan Chase** (`JPM`) | **48점** (관찰) | $322.96 (+2.0%) | $318.12 ~ $324.57 | $311.42 (-3.6%) | $343.73 (+6.4%) | $357.57 (+10.7%) | 하락 역배열 주의 |
+| 22 | **Oracle** (`ORCL`) | **48점** (관찰) | $107.13 (+3.1%) | $105.52 ~ $107.67 | $98.56 (-8.0%) | $122.56 (+14.4%) | $132.84 (+24.0%) | 하락 역배열 주의 |
+| 23 | **Salesforce** (`CRM`) | **48점** (관찰) | $198.21 (+0.5%) | $195.24 ~ $199.20 | $186.02 (-6.1%) | $220.14 (+11.1%) | $234.77 (+18.4%) | 하락 역배열 주의 |
+| 24 | **Micron** (`MU`) | **48점** (관찰) | $646.95 (+7.6%) | $637.25 ~ $650.18 | $595.19 (-8.0%) | $740.11 (+14.4%) | $802.22 (+24.0%) | 하락 역배열 주의 |
 
