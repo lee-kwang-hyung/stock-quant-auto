@@ -1,0 +1,19 @@
+{
+  "period_days": 252,
+  "start_date": "2025-11-18",
+  "end_date": "2026-11-27",
+  "initial_cash": 10000000,
+  "final_equity": 7573688,
+  "total_return_pct": -24.26,
+  "benchmark_bh_pct": 7.88,
+  "alpha_pct": -32.14,
+  "closed_trades": 251,
+  "wins": 132,
+  "losses": 119,
+  "win_rate_pct": 52.6,
+  "profit_factor": 0.81,
+  "mdd_pct": -33.55,
+  "slippage_pct": 0.3,
+  "circuit_breaker_weeks": 2,
+  "live_ready_pass": false
+}
