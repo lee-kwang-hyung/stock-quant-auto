@@ -1,23 +1,19 @@
-# v2.0 한국·미국 실전 매매 시나리오 & 급등 촉매 브리핑 (2026-11-28 KST)
+# v2.0 한국·미국 실전 매매 시나리오 & 급등 촉매 브리핑 (2026-11-29 KST)
 
 > 본 리포트는 변동성(ATR)·수급·공시 뉴스 기반 정량 참고 시나리오입니다. 분할 매수 및 손절 기준 준수 등 최종 투자 판단은 본인 책임 하에 진행하세요.
 
 ## 1. 오늘의 5대 투자 이슈 · 급등 촉매 뉴스 (공시 · 수주 · 실적 · 바이오 · 미장)
 
 ### 대형 수주 · 공급계약 공시
-- [아스플로 수주공시 - 단일판매ㆍ공급계약체결 297.9억원 (매출액대비 43.86 %) - 한국경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE5XTkEwa2RZWlZHX2R2bHp0TG83dWpsTjdzV2dvTW13Uk1GeXdXdUlBZ3pHOVFOQjhzeEppcFNmR3Y3TXBtc2JFVEpQU21LYjdXM2JjODNIMHZQQQ?oc=5)
-- [[공시학개론] 대박 수주와 단발 계약 사이… 단일판매·공급계약 공시 들여다보기 - 아주경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE1CVG9zQUk4V3N3bTBOaUwxd21YZlZsekw1Z3k5Zjl1MUd6YzJvYzBoa3ptTVFpNDFPd0xKVGZqMVJjYVVOaC1KekNjZVdpSGpSakZPWWQxb28zd9IBWEFVX3lxTE1QLUlGZjBodWJ3cEkwUlNwWU1BQndPWlJ0UnE0NU02TTV2T1h1VG1uYzBCZWJZd2oyajNyZFR4M0o3ZkZyMUk2Wk5GUnFYOUxZZ0JtUzBaRWw?oc=5)
+- [[특징주] 에스오에스랩, '연 매출 143%' 북미 빅테크와 87억 라이다 공급계약에 19% 껑충 - 와이드경제](https://news.google.com/rss/articles/CBMibEFVX3lxTFB5aVoyY1Uwb2NKXzdUSzU5a2lXbHZZWl9KOEdBeExLRWpQWWg1Vl95VTFWWXQ2b1U1YS1PRVdYMDZsZzl4YmIwcWtkNEdDSE1DeEZfeDluQTQtWVJkdjU0TXZkSWhlM2tnWE9Xbg?oc=5)
 - [한화시스템 수주공시 - 단일판매ㆍ공급계약체결 - 한국경제](https://news.google.com/rss/articles/CBMiWkFVX3lxTE0wMXpkX2tFeHdIR01YUGJhY0JoWDZYSGpLZFprOFNlclZVMUJFTTNhSEp4MVprTE9iUnpVejVKRDFNR1d0Wjh3Y0F1cEUxNTVxS1BYRTljUHZqQQ?oc=5)
+- [[종목 포커스] 산일전기, 美 블룸에너지 데이터센터향 수주 등으로 주가 상승세? - 데일리인베스트](https://news.google.com/rss/articles/CBMia0FVX3lxTE1IZ0VDd3Z6SDBYNHZpR1ZUaUdLc3RVRUV4aXNDS0hhUUZCUFcwTE9ETFphQnVCNVFURUlHWEFWYWVXa19UN2owWlQtaG52QkNvU2lxbjlRS1Fld2FiOUhnNUdGX215OFhYeWJB0gFvQVVfeXFMT2pIblFfTVgzZFoyQmczMi1YQ0tKR19JTTJqendyQlBReVd0VktxMmpIVkd6UU9mMnNYaFBwTktwamNyS1pVVGZZRmkzbXNPTVVxMjJvNHRGanl0aV9HSm9JQ1R1X3hIMUQ5YUM3MWtZ?oc=5)
 
 ### 실적 서프라이즈 · 어닝
-- [MS, 애저 매출 48% 급증에 '어닝 서프라이즈'…시간외 주가 급등 - 지디넷코리아](https://news.google.com/rss/articles/CBMiVkFVX3lxTE1FLVNqdk9vMnJ1X0p1RmVDcHVNOXBjNkxjTElnZ1ZXRFhtSmZFT2p5ZmdMd0lDakNFZ3lXNzcwaWFvMF9kSk4xZFpJY1A0X0ZJZTdYaHJn?oc=5)
-- [옥타, 에이전트 AI 보안 수요 급증에 '어닝 서프라이즈'…시간외 19%↑ - 연합인포맥스](https://news.google.com/rss/articles/CBMicEFVX3lxTE5heEtPSm5lUjBkVVpJcGJReXhacy11NFl2QTUxY0hmVDJtcC1NaXYwYkhTSmRLWExNRkk0QVRnVlJYQzhJMWk5ekFCR19DaUoybkxMQzFhRWtRWW9VbG5VQmR5Mjh5UFNhNDV4VnQtWGnSAXRBVV95cUxPNElLZXc3Zm1YZUl6TWhiMHZYOFdaa3U5MUJkY0ZDa0YzLVRWUklDOHN5Q3VxYm9lUGRBS0gzUmNkaXdjMkQzdG1GSW5ra2FUUHlxMXNVM09NbnF1X1owdmRMMU9jSGRnQUZOekQxNlJjUkZXQw?oc=5)
-- [팔로알토, AI 보안특수에 ‘어닝 서프라이즈’…시간외서주가 7%대 급등[마켓무버] - 서울경제](https://news.google.com/rss/articles/CBMiUkFVX3lxTE04SnBkNTFidE8xeU9UNnhaMWFna2RsU1NGcFBCdVhkbmxsQ2hoclp3WjZUd1h1QXNudmRzYWtWTVVmWWVKZmRZdVljVkVWSFJGNUHSAVNBVV95cUxQenh3c1hSSk1wdVRaaTZnWXVEYXAxM1RodjZLbi1Fek80QTVjM2syUEJHaVhUTDdSeUN2Y0pVbklQWk9XX0ItUGhyd2U4cjJZYk8xdw?oc=5)
+- 수집된 신규 기사 없음
 
 ### 신약 · 임상 · FDA 바이오
-- [카프리코, 뒤센근이영양증 세포치료제 FDA 승인 또 불발…주가 70% 폭락 - 메디컬투데이](https://news.google.com/rss/articles/CBMibEFVX3lxTE5GT0F6YkRCelRwa1pGR29JV044aXN4QUJXWHNzV1dJeEtBYzBrV1Q5Y0stTWhwRHU5Qy1SUG0tc3lnaTVGdUVYWWhHaFdmSEc5VjU2RHlUUXU3T05Gb1lidGNKRGFrcGV5YzBzVw?oc=5)
-- [[HIT알공] 페니트리움바이오, 고형암 임상 2a상 FDA 승인 - 히트뉴스](https://news.google.com/rss/articles/CBMia0FVX3lxTE9XZHRNUWpoNTBLQWNWdm44WUEwTlRRNkR2eVNHQ2ZJZXlUaGNYZ3VNYXRNSjNkQWNkUmh5aGc0Y1pZS3JYbEJpd0xtUUVOenlBTE1vV1JQMVlackxoY3luRklTb1VjOXFncWVN?oc=5)
-- [에이비엘바이오 'ABL001' 연내 美 허가 신청 제동?…FDA, 추가 임상 권고 - 팜이데일리](https://news.google.com/rss/articles/CBMibkFVX3lxTE44SEw2bWdtdllBemlOMGhnVFptVTRQNFRwR3RvRnJBT0lCSlBxVlVaMGNSbEt5YnBjcWtvVHM1XzBaUDJZOUpyWkdlZG8wbVRVamwtaE9FZWMzZjhZWEloSkl2aFBRVlpMMVRBWFFR?oc=5)
+- 수집된 신규 기사 없음
 
 ### 정부 정책 · 주도 테마 수혜
 - [엔비디아발 'AI 조정' 잦아드나…코스피·코스닥, 급등 마감(종합) - 연합뉴스](https://news.google.com/rss/articles/CBMiW0FVX3lxTE9veUI5eUJaOWYzLTV3UlR6TkVxbXVTZzJuV2N3cXN4VXBjMkVsUTFJRmZZZnY0Q1BmdW5mWS1OY0kzd0IzRHAzeEhoREpzQ2o1SlZDNE9PdHhweFHSAWBBVV95cUxNcFlWOFJMSkpDWWJ5aTV1SFpHYVU4aDlUOTl1VGZFR0VscHdBZVhSb1V3X2hTVjBGLTlFc1RWUmJ2V25Jc0VabWplT3hHNHlKMTJvckVTbGxMZDE4RVlnQWg?oc=5)
@@ -26,16 +22,31 @@
 
 ### 미국 증시 핵심 급등 촉매
 - [Binary Events In Biotech Stocks: Risk, Reward, And How To Stay Informed - RTTNews](https://news.google.com/rss/articles/CBMiqAFBVV95cUxPbklqYlNzY1pfd29ZM3hKNEhMcmdnMW1fY0V3d1JRbWtuY2NRN21CemNBaEdzRDg2N1kwM0JqU0Q1bVpMXzJJM0p4R3Mydk5SYXZheVJOTEVDRmFZdGZvTUpzeVdLSnp2WERZN25aVkVLV1plZTREYVdUX0d1a3JFQlNYczdFQlRlXzhaZFRQN01SZ1FHUXRjWTdPRUxtdzRVR0dLcGV5anc?oc=5)
-- [Three New Stock Themes Are in Focus as the AI Trade Gyrates - Goldman Sachs](https://news.google.com/rss/articles/CBMiqgFBVV95cUxOc3VTUWRYaHNZWjJWanNsMS1uaUo3cDZCbGFNaU5NaU1Mek15V0NTcHBYVFZmYU96Y3Q1UVVJZFhCV290LTU0SDA2Z2xiSE1WYUFpRDFnb041OHBnZGUyR1ZLazl5SDBTQXhKbjBtQVoyT01EekZVck9LUzZpNklKbElpQ3FOSkkxLTRhcVhBdE5vZTJIekdmRXZwZ0F3djFZYkpVZGxNNUVWdw?oc=5)
-- [Today’s top U.S. stock movers: Fermi, NIQ and others surge on AI and biotech catalysts - Investing.com](https://news.google.com/rss/articles/CBMi2wFBVV95cUxNNGduVjFqQkNBQmlFTm52bHpUUHRKOUNrXy1XSXJQcERXS2NSMG5XSmtESjY5a2FIb3dKRk5SVUVZYzd1UUdaMXVVa2ZuR1czcjNnVDNYN3Qya05WU2RVanE3N1d4a2JLa01FODRqRm5RaHlycHh0bHY0SVctOEgybkNwV0d4aXpWWkNTZmtBcWt3MVBvbS1ZOVlrZ0p4d08wMTNtRE03cHJhNklXb1h3T2pBWGRRR1JFLW1ReWtfaHhqX29pdDdzUVlCb1FIVEMzTzEta04yVG9sbFE?oc=5)
+- [3 Biotech Stocks That Actually Pay Dividends and Keep Raising Them - 24/7 Wall St.](https://news.google.com/rss/articles/CBMirwFBVV95cUxOR2dPcEZDMkVDdnFjX3hRN09ES1kyUFhEdnlxZHVEczF6d2h5M2tPWW55MjViSE9lQllSZ283Y0puVjJycFF0XzVhTWRsUnpuYWVndi03NkRkbm5WbERaWGs4NFJFN1o1cVFTd3ZnWUpCLW5rNmkxaFUwTEc4UkY2cHBzaGl3U3V0RVZYYTZSWXdjVGYwR2N0TURhMGtzR055WXNNX1BiSjAtaThxNDlB?oc=5)
+- [Can Western Digital Sustain 44% Revenue Growth in Fiscal 2027? - TradingView](https://news.google.com/rss/articles/CBMitwFBVV95cUxPeHFaUk03Z0Y3Y0NIUUdIS2NSMTNRZ3FjM09zTElEZ2ppcGpPM256cC1NT0p3N0RmYWcyRVJIUmpHTTlNTVVnaUJPMWdRNzFMUDhNWjZMUGFtM2VjYjIwRGdyOUVhVlZvcUlralk0RF9HRTVONmNZUnZnV3VwelJwMG9ULUdKSkRNekh0cThVVGkzeFlwcDI1MDlWeGVHX0pjellwZ0U3U2V2Qmg1Zms3VkVWZmcyaGM?oc=5)
 
 ## 2. 한국 전 종목 급등 초입 포착 (+3~15% · 거래대금 50억+ · 실전 가격 시나리오)
 
-- 휴장일 또는 조건 충족 종목 없음
+| 종목 | 종가 | 등락률 | 거래대금 | 진입 참고 구간 | 손절 기준가 | 1차 목표가 | 2차 목표가 | 손익비 | 관련 촉매 뉴스 |
+| :--- | ---: | ---: | ---: | :--- | :--- | :--- | :--- | :---: | :--- |
+| **한화시스템** (`272210`) | 55,600원 | +13.35% | 478억 | 54,766원 ~ 55,878원 | 52,292원 (-5.9%) | 61,555원 (+10.7%) | 65,525원 (+17.8%) | 1 : 1.8 ~ 3.0 | [[모닝 리포트] "한화시스템, 연말 방산 수주 기대…'매수' 유지" ](https://news.google.com/rss/articles/CBMiXEFVX3lxTE94RlZXMTAwMExqZzZWWmp4VWJkaV9iVWc3NWI2Y2QwcmRtMDRFbnI1ZmZfMkJBR3ItTS1LN0IycXFlSGlhMjZDaUg4UUNYdFJuN08xQTE4LUQ1d2lV?oc=5) |
+| **NHN** (`181710`) | 60,000원 | +14.94% | 372억 | 59,100원 ~ 60,300원 | 56,430원 (-5.9%) | 66,426원 (+10.7%) | 70,710원 (+17.9%) | 1 : 1.8 ~ 3.0 | [NHN 주가 15.9% 폭등...보름 새 무슨 일이? - 게임와이](https://news.google.com/rss/articles/CBMiakFVX3lxTFBTV1c2NXVncjBrR1MxOWdGR1cya0N0MWdtMVEtU0lJclM0OE9IcHZqY2pXcE15NS16WEtMWl9IVEFMS3czOXJsdlgwajFVSlNSQVpGQUcxT19wcGlzX0wyVGxSTGx6eklZRVHSAWpBVV95cUxQU1dXNjV1Z3Iwa0dTMTlnRkdXMmtDdDFnbTFRLVNJSXJTNDhPSHB2amNqV3BNeTUtelhLTFpfSFRBTEt3MzlybHZYMGoxVUpTUkFaRkFHMU9fcHBpc19MMlRsUkxsenpJWUVR?oc=5) |
+| **한국금융지주** (`071050`) | 144,000원 | +14.29% | 340억 | 141,840원 ~ 144,720원 | 135,432원 (-5.9%) | 159,422원 (+10.7%) | 169,704원 (+17.9%) | 1 : 1.8 ~ 3.0 | [미국 금융서비스 업종 상승 확산…미래에셋증권·한국금융지주에 시선 - ](https://news.google.com/rss/articles/CBMic0FVX3lxTE1jZENBTHdpWVBaVjJNaGUxeTRBTlFPVnNQQ0xQcWJ4N3hPSFVEOTBJX0ZxcGd1X082UWhIOGZ2XzJSQlpXbDVqV1ZwLVd3THZCODNSMUs5c1JkSzBTd1lTd0IzdGQtNkxGMWVIaExoMmlEa03SAXdBVV95cUxNNXo1LWhicERkeWpmNmJzZGVnSE9mTzJ4ZGducHRvMnNoUk0tYlktZGM4VExUZnRHOGdfR0ZxQzhnMnJkaEJfWHlER0tnOGNCWm0zY0Q3QjhoTXVXSzE2Z1FpSFVUZFZSWmoxNjdKR0tsTGJFUF9YZw?oc=5) |
+| **후성** (`093370`) | 8,870원 | +12.85% | 179억 | 8,737원 ~ 8,914원 | 8,342원 (-5.9%) | 9,820원 (+10.7%) | 10,453원 (+17.8%) | 1 : 1.8 ~ 3.0 | [후성, 712억 공급 계약에도 주가 약 9% 급락 - CNews](https://news.google.com/rss/articles/CBMid0FVX3lxTE8yYXE5cmo4UnZFdUlmeTZIckIyREMxN0hDM3EtdEYxV3pCQmpqZUEtbHhMcVhVUUVwazhpazB1NTE0Q04yUWctZXpFd3hsSXRBckNYTVBUUm5meDhxQTJDT0p6VTNSbDhnTE5RVG9EM1d1UWVIcTIw?oc=5) |
+| **혜인** (`003010`) | 6,500원 | +14.04% | 78억 | 6,402원 ~ 6,532원 | 6,113원 (-5.9%) | 7,196원 (+10.7%) | 7,660원 (+17.9%) | 1 : 1.8 ~ 3.0 | [혜인 | 포항 AIDC 464억원 계약 확보, 엔진 매출 회복과 자사](https://news.google.com/rss/articles/CBMiiAFBVV95cUxNSW5kUE9aclNpaDRjTlpBUGRlOThCaUh4a0xEbmxUYjI1STFCcmtQYnhkbFFvcS1fU250aW9Oa24xbWV1RGVtbGNvTEFGQ0U0UzJ5Sm95NWY4WXN3X05zZXRBQVVzU0pzVmFWcVBLdGdpQ19pWVpVN2NSQjNUU0hTdjVhRnYwaWxW?oc=5) |
 
 ## 3. 당일 상한가 · 초급등(+22~30%) 소형주 원인 정리 (추격 매수 주의 · 테마 파악용)
 
-- 당일 거래대금 50억 이상 +22% 급등 종목 없음
+| 종목 | 종가 | 등락률 | 거래대금 | 급등 원인 뉴스 / 공시 |
+| :--- | ---: | ---: | ---: | :--- |
+| **코스모로보틱스** (`439960`) | 5,720원 | **+30.00%** | 352억 | [[특징주] 코스모로보틱스, 휴머노이드 시장 성장 기대에 29%대 급등 - 브릿지경제](https://news.google.com/rss/articles/CBMiV0FVX3lxTE5NM1VobzBCX3N5U2YwMk40cWpCaFF4Q2I2RFdVeVFkc1cwNUpjNDIzSDZDcXBtejdSTWFzcFREQm14aUYzTGl3UGRndGZodFhxTnJFZkdqaw?oc=5) |
+| **큐리언트** (`115180`) | 15,730원 | **+30.00%** | 76억 | [[숏폼] 큐리언트, 706억 유상증자 초과청약에 상한가 - 히트뉴스](https://news.google.com/rss/articles/CBMia0FVX3lxTE83UjA0X2hSME8tX3Y2a0ZiaXJ3Z1dKVWQ3T1AxOTJFSWFhOGJxeXFDUDJRdXlSMElkM0kyVm9PMm5oREZwcVNTQlBNOFhLUkZvdFJBeF94TG9fRUZKekYwWk43Wk5JX2lhM0lz?oc=5) |
+| **제닉스로보틱스** (`381620`) | 8,020원 | **+29.98%** | 178억 | [삼성전자 로봇에 힘주자 관련주 줄줄이 급등…제닉스로보틱스 상한가 - 매일경제](https://news.google.com/rss/articles/CBMiUkFVX3lxTE1SRml5a3BCcDJnUG1FYW5uTV9aQXplcXJzSWx4TThQSERYenY1MXZUR0lsYU9EckVDSHZUQWhwWmJoVmN2d0tfTEJUUGRqdUhqblE?oc=5) |
+| **앤로보틱스** (`138360`) | 1,483원 | **+29.97%** | 296억 | 강한 수급 유입 상한가/초급등 |
+| **휴림에이텍** (`078590`) | 4,405원 | **+29.94%** | 237억 | [[베스트&워스트] 휴림에이텍 107% 급등…코스닥 반등 이끈 로봇·보안주 - 이투데이](https://news.google.com/rss/articles/CBMiVEFVX3lxTFA2OVhjRmxoTEFMamF4d09vZmFwendkOGRiWUVyVWMwZlhQNl9NX09RNmJaak1sSkxfcGFLanhlelZ1N1Ztenhyd0FGS1ZSZk5ETi1pQg?oc=5) |
+| **대성하이텍** (`129920`) | 7,950원 | **+29.90%** | 188억 | [대성하이텍, 28억 中 회사와 225억 계약…상한가 뒤 공시 - 리드경제](https://news.google.com/rss/articles/CBMicEFVX3lxTE9ubWhCLS03Z2NyZ0Y3WGQydEJSQnk5a2FacUctRG13V0Z3VzYybTBzTkFWbVZSTTBDNTdFZDBkVHV4WTE5eTVCX1JXUm5wdmQwVjF5MF84NHFDS2ZmbjUyN25MNVdyb21JTVRzUngxaU8?oc=5) |
+| **클로봇** (`466100`) | 23,650원 | **+29.87%** | 681억 | [[속보] 클로봇 주가 상한가 도달…코스닥 7%대 급등 속 '불기둥' - CBC뉴스](https://news.google.com/rss/articles/CBMiaEFVX3lxTE55SVJwRldfeVZVZmZ0T1dnV1FpZzVCbUZnZ1B3RGVmeTV4c0dpX094eDdpZ25JQU1wRVN4UHVDc0k0bGg5STM3eU9tRk1UTFlGN1VOVEZOYzBsLTVMSDl4Ty1Ba3hlV0hD?oc=5) |
+| **에이비엘바이오** (`298380`) | 47,900원 | **+29.63%** | 693억 | [[바이오맥짚기]에이비엘바이오는 '기술료', 지씨지놈은 '美 상용화'로 급등 - 팜이데일리](https://news.google.com/rss/articles/CBMibkFVX3lxTE12UVJpN2ltSkRKYlQ2NVlfVG1ld3ZDMFFpaVo1UEIzWFJIRElJZmxrUzFqaWNaZXgzaUhrNl82SVRrTGpkeEtmdW1nQkNoREpKbm14U0Q3TktRWTlPcXJkaTZDUlJmenhXeXZnemRB?oc=5) |
 
 ## 4. 한국 핵심 관심 종목 실전 가격 시나리오
 
