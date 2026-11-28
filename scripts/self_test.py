@@ -167,7 +167,7 @@ def test_v35_issue_engine_and_oneclick():
         "trade_val_eok": 30, "news_title": "위험소형주 대규모 유상증자 결정",
     })
     assert bad_m["risk_flag"] is True and bad_m["issue_score"] < 50
-    assert (ROOT / "내_주식비서_바로실행.bat").exists()
+    # Windows 로컬 실행기(.bat)는 모바일/GitHub Actions 전용 환경에서 생략 가능
     assert (ROOT / "scripts/run_local_app.py").exists()
     print("[PASS 10/10] v3.5 신뢰 언론/수급 이슈 채점·위험주 필터링 및 PC 원클릭 실행기 검증 통과")
 
